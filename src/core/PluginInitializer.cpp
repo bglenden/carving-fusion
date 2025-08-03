@@ -135,7 +135,7 @@ bool PluginInitializer::CreateToolbarPanel() {
             panel = panels->itemById(panelId);
 
             if (!panel) {
-                panel = panels->add(panelId, "Chip Carving C++", "SelectPanel", false);
+                panel = panels->add(panelId, "Carving", "SelectPanel", false);
                 if (!panel) {
                     return false;
                 }
