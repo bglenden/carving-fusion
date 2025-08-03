@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="-2.74868 -6.16473 5.42344 5.12777">
+<title>Fusion Strokes Debug - /v4BAAAARlJLZXkAH4sIAAAAAAAA/3WNzQkCQQyFPVpGGhjI32QyNy+WIbizYmEWYAOCTdiAPex5wez4gwjmHZLHe+FDEAYEBjKYz/v1fN1Ol5NPu/ttAxRSUEeJCi2l2HGxv6J/bwxigCLjMYsl00ZJS8nJazukgcfiA5nmVt7o1c90HkLHMeqTt0iCXrXHXez+ZSp9DD4AlFmz8toAAAA=</title>
+<g transform="scale(1,-1)">
+<polygon points="-2.29673,-1.48891 -1.74694,-1.99329 -1.15856,-2.45207 -0.535377,-2.86232 0.118626,-3.22142 0.799256,-3.52704 1.50215,-3.77725 2.22281,-3.97043 1.41961,-4.10128 0.63001,-4.29818 -0.140576,-4.55979 -0.886851,-4.88432 -1.60369,-5.26953 -2.28617,-5.71278 -2.08212,-5.12832 -1.94516,-4.52462 -1.87702,-3.90933 -1.87856,-3.29029 -1.94978,-2.67535 -2.08976,-2.07234" fill="none" stroke="blue" stroke-width="0.05" />
+<circle cx="-2.29673" cy="-1.48891" r="0.1" fill="red" />
+<text x="-2.14673" y="-1.43891" font-size="0.3" fill="black" transform="scale(1,-1)">0</text>
+<circle cx="-1.74694" cy="-1.99329" r="0.1" fill="red" />
+<text x="-1.59694" y="-1.94329" font-size="0.3" fill="black" transform="scale(1,-1)">1</text>
+<circle cx="-1.15856" cy="-2.45207" r="0.1" fill="red" />
+<text x="-1.00856" y="-2.40207" font-size="0.3" fill="black" transform="scale(1,-1)">2</text>
+<circle cx="-0.535377" cy="-2.86232" r="0.1" fill="red" />
+<text x="-0.385377" y="-2.81232" font-size="0.3" fill="black" transform="scale(1,-1)">3</text>
+<circle cx="0.118626" cy="-3.22142" r="0.1" fill="red" />
+<text x="0.268626" y="-3.17142" font-size="0.3" fill="black" transform="scale(1,-1)">4</text>
+<circle cx="0.799256" cy="-3.52704" r="0.1" fill="red" />
+<text x="0.949256" y="-3.47704" font-size="0.3" fill="black" transform="scale(1,-1)">5</text>
+<circle cx="1.50215" cy="-3.77725" r="0.1" fill="red" />
+<text x="1.65215" y="-3.72725" font-size="0.3" fill="black" transform="scale(1,-1)">6</text>
+<circle cx="2.22281" cy="-3.97043" r="0.1" fill="red" />
+<text x="2.37281" y="-3.92043" font-size="0.3" fill="black" transform="scale(1,-1)">7</text>
+<circle cx="1.41961" cy="-4.10128" r="0.1" fill="red" />
+<text x="1.56961" y="-4.05128" font-size="0.3" fill="black" transform="scale(1,-1)">8</text>
+<circle cx="0.63001" cy="-4.29818" r="0.1" fill="red" />
+<text x="0.78001" y="-4.24818" font-size="0.3" fill="black" transform="scale(1,-1)">9</text>
+<circle cx="-0.140576" cy="-4.55979" r="0.1" fill="red" />
+<text x="0.0094245" y="-4.50979" font-size="0.3" fill="black" transform="scale(1,-1)">10</text>
+<circle cx="-0.886851" cy="-4.88432" r="0.1" fill="red" />
+<text x="-0.736851" y="-4.83432" font-size="0.3" fill="black" transform="scale(1,-1)">11</text>
+<circle cx="-1.60369" cy="-5.26953" r="0.1" fill="red" />
+<text x="-1.45369" y="-5.21953" font-size="0.3" fill="black" transform="scale(1,-1)">12</text>
+<circle cx="-2.28617" cy="-5.71278" r="0.1" fill="red" />
+<text x="-2.13617" y="-5.66278" font-size="0.3" fill="black" transform="scale(1,-1)">13</text>
+<circle cx="-2.08212" cy="-5.12832" r="0.1" fill="red" />
+<text x="-1.93212" y="-5.07832" font-size="0.3" fill="black" transform="scale(1,-1)">14</text>
+<circle cx="-1.94516" cy="-4.52462" r="0.1" fill="red" />
+<text x="-1.79516" y="-4.47462" font-size="0.3" fill="black" transform="scale(1,-1)">15</text>
+<circle cx="-1.87702" cy="-3.90933" r="0.1" fill="red" />
+<text x="-1.72702" y="-3.85933" font-size="0.3" fill="black" transform="scale(1,-1)">16</text>
+<circle cx="-1.87856" cy="-3.29029" r="0.1" fill="red" />
+<text x="-1.72856" y="-3.24029" font-size="0.3" fill="black" transform="scale(1,-1)">17</text>
+<circle cx="-1.94978" cy="-2.67535" r="0.1" fill="red" />
+<text x="-1.79978" y="-2.62535" font-size="0.3" fill="black" transform="scale(1,-1)">18</text>
+<circle cx="-2.08976" cy="-2.07234" r="0.1" fill="red" />
+<text x="-1.93976" y="-2.02234" font-size="0.3" fill="black" transform="scale(1,-1)">19</text>
+</g>
+</svg>

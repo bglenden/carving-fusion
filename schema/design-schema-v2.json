@@ -1,0 +1,166 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/bglenden/CNC_Chip_Carving/interface/design-schema-v2.json",
+  "title": "CNC Chip Carving Design v2.0",
+  "description": "Unified schema for CNC chip carving design files using vertex-based geometry",
+  "type": "object",
+  "required": ["version", "shapes"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "Schema version",
+      "enum": ["2.0"]
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Optional metadata about the design",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Design name"
+        },
+        "author": {
+          "type": "string",
+          "description": "Design author"
+        },
+        "created": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Creation timestamp"
+        },
+        "modified": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Last modification timestamp"
+        },
+        "description": {
+          "type": "string",
+          "description": "Design description"
+        }
+      }
+    },
+    "shapes": {
+      "type": "array",
+      "description": "Array of shapes in the design",
+      "items": {
+        "oneOf": [
+          { "$ref": "#/definitions/leafShape" },
+          { "$ref": "#/definitions/triArcShape" }
+        ]
+      }
+    },
+    "backgroundImages": {
+      "type": "array",
+      "description": "Array of background reference images",
+      "items": {
+        "$ref": "#/definitions/backgroundImage"
+      }
+    }
+  },
+  "definitions": {
+    "point": {
+      "type": "object",
+      "required": ["x", "y"],
+      "properties": {
+        "x": { "type": "number" },
+        "y": { "type": "number" }
+      }
+    },
+    "leafShape": {
+      "type": "object",
+      "required": ["type", "vertices", "radius"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["LEAF"]
+        },
+        "id": {
+          "type": "string",
+          "description": "Optional unique identifier"
+        },
+        "vertices": {
+          "type": "array",
+          "description": "Two vertices defining the leaf foci in world coordinates",
+          "items": { "$ref": "#/definitions/point" },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "radius": {
+          "type": "number",
+          "minimum": 0.1,
+          "description": "Radius of the leaf arc in world units"
+        }
+      }
+    },
+    "triArcShape": {
+      "type": "object",
+      "required": ["type", "vertices", "curvatures"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["TRI_ARC"]
+        },
+        "id": {
+          "type": "string",
+          "description": "Optional unique identifier"
+        },
+        "vertices": {
+          "type": "array",
+          "description": "Three vertices defining the triangle in world coordinates",
+          "items": { "$ref": "#/definitions/point" },
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "curvatures": {
+          "type": "array",
+          "description": "Curvature values for each edge: negative=concave, positive=convex, zero=straight",
+          "items": { "type": "number" },
+          "minItems": 3,
+          "maxItems": 3
+        }
+      }
+    },
+    "backgroundImage": {
+      "type": "object",
+      "required": ["id", "imageData", "position", "rotation", "scale", "opacity", "naturalWidth", "naturalHeight"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the image"
+        },
+        "imageData": {
+          "type": "string",
+          "description": "Base64 encoded image data"
+        },
+        "position": {
+          "$ref": "#/definitions/point",
+          "description": "Top-left corner position in world coordinates"
+        },
+        "rotation": {
+          "type": "number",
+          "description": "Rotation angle in radians"
+        },
+        "scale": {
+          "type": "number",
+          "minimum": 0.1,
+          "maximum": 10,
+          "description": "Scale factor"
+        },
+        "opacity": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Opacity value (0-1)"
+        },
+        "naturalWidth": {
+          "type": "number",
+          "description": "Original image width in pixels"
+        },
+        "naturalHeight": {
+          "type": "number",
+          "description": "Original image height in pixels"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "autodeskProduct": "Fusion360",
+  "type": "addin",
+  "id": "chip_carving_paths_cpp",
+  "author": "CNC Chip Carving Project",
+  "description": "C++ implementation of chip carving toolpath generation",
+  "supportedOS": "windows|mac",
+  "version": "0.9.87",
+  "runOnStartup": false,
+  "editEnabled": true,
+  "libraryFileNames": ["chip_carving_paths_cpp.dylib", "chip_carving_paths_cpp.dll"]
+}

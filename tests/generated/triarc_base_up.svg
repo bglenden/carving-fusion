@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="400.000" height="400.000" viewBox="0 0 400.000 400.000" xmlns="http://www.w3.org/2000/svg">
+  <!-- Grid -->
+  <line x1="0.000" y1="0" x2="0.000" y2="400.000" stroke="#f0f0f0" stroke-width="0.5"/>
+  <line x1="20.000" y1="0" x2="20.000" y2="400.000" stroke="#f0f0f0" stroke-width="0.5"/>
+  <line x1="40.000" y1="0" x2="40.000" y2="400.000" stroke="#f0f0f0" stroke-width="0.5"/>
+  <line x1="60.000" y1="0" x2="60.000" y2="400.000" stroke="#f0f0f0" stroke-width="0.5"/>
+  <line x1="80.000" y1="0" x2="80.000" y2="400.000" stroke="#f0f0f0" stroke-width="0.5"/>
+  <line x1="100.000" y1="0" x2="100.000" y2="400.000" stroke="#f0f0f0" stroke-width="0.5"/>
+  <line x1="120.000" y1="0" x2="120.000" y2="400.000" stroke="#f0f0f0" stroke-width="0.5"/>
+  <line x1="140.000" y1="0" x2="140.000" y2="400.000" stroke="#f0f0f0" stroke-width="0.5"/>
+  <line x1="160.000" y1="0" x2="160.000" y2="400.000" stroke="#f0f0f0" stroke-width="0.5"/>
+  <line x1="180.000" y1="0" x2="180.000" y2="400.000" stroke="#f0f0f0" stroke-width="0.5"/>
+  <line x1="200.000" y1="0" x2="200.000" y2="400.000" stroke="#f0f0f0" stroke-width="0.5"/>
+  <line x1="220.000" y1="0" x2="220.000" y2="400.000" stroke="#f0f0f0" stroke-width="0.5"/>
+  <line x1="240.000" y1="0" x2="240.000" y2="400.000" stroke="#f0f0f0" stroke-width="0.5"/>
+  <line x1="260.000" y1="0" x2="260.000" y2="400.000" stroke="#f0f0f0" stroke-width="0.5"/>
+  <line x1="280.000" y1="0" x2="280.000" y2="400.000" stroke="#f0f0f0" stroke-width="0.5"/>
+  <line x1="300.000" y1="0" x2="300.000" y2="400.000" stroke="#f0f0f0" stroke-width="0.5"/>
+  <line x1="320.000" y1="0" x2="320.000" y2="400.000" stroke="#f0f0f0" stroke-width="0.5"/>
+  <line x1="340.000" y1="0" x2="340.000" y2="400.000" stroke="#f0f0f0" stroke-width="0.5"/>
+  <line x1="360.000" y1="0" x2="360.000" y2="400.000" stroke="#f0f0f0" stroke-width="0.5"/>
+  <line x1="380.000" y1="0" x2="380.000" y2="400.000" stroke="#f0f0f0" stroke-width="0.5"/>
+  <line x1="400.000" y1="0" x2="400.000" y2="400.000" stroke="#f0f0f0" stroke-width="0.5"/>
+  <line x1="0" y1="0.000" x2="400.000" y2="0.000" stroke="#f0f0f0" stroke-width="0.5"/>
+  <line x1="0" y1="20.000" x2="400.000" y2="20.000" stroke="#f0f0f0" stroke-width="0.5"/>
+  <line x1="0" y1="40.000" x2="400.000" y2="40.000" stroke="#f0f0f0" stroke-width="0.5"/>
+  <line x1="0" y1="60.000" x2="400.000" y2="60.000" stroke="#f0f0f0" stroke-width="0.5"/>
+  <line x1="0" y1="80.000" x2="400.000" y2="80.000" stroke="#f0f0f0" stroke-width="0.5"/>
+  <line x1="0" y1="100.000" x2="400.000" y2="100.000" stroke="#f0f0f0" stroke-width="0.5"/>
+  <line x1="0" y1="120.000" x2="400.000" y2="120.000" stroke="#f0f0f0" stroke-width="0.5"/>
+  <line x1="0" y1="140.000" x2="400.000" y2="140.000" stroke="#f0f0f0" stroke-width="0.5"/>
+  <line x1="0" y1="160.000" x2="400.000" y2="160.000" stroke="#f0f0f0" stroke-width="0.5"/>
+  <line x1="0" y1="180.000" x2="400.000" y2="180.000" stroke="#f0f0f0" stroke-width="0.5"/>
+  <line x1="0" y1="200.000" x2="400.000" y2="200.000" stroke="#f0f0f0" stroke-width="0.5"/>
+  <line x1="0" y1="220.000" x2="400.000" y2="220.000" stroke="#f0f0f0" stroke-width="0.5"/>
+  <line x1="0" y1="240.000" x2="400.000" y2="240.000" stroke="#f0f0f0" stroke-width="0.5"/>
+  <line x1="0" y1="260.000" x2="400.000" y2="260.000" stroke="#f0f0f0" stroke-width="0.5"/>
+  <line x1="0" y1="280.000" x2="400.000" y2="280.000" stroke="#f0f0f0" stroke-width="0.5"/>
+  <line x1="0" y1="300.000" x2="400.000" y2="300.000" stroke="#f0f0f0" stroke-width="0.5"/>
+  <line x1="0" y1="320.000" x2="400.000" y2="320.000" stroke="#f0f0f0" stroke-width="0.5"/>
+  <line x1="0" y1="340.000" x2="400.000" y2="340.000" stroke="#f0f0f0" stroke-width="0.5"/>
+  <line x1="0" y1="360.000" x2="400.000" y2="360.000" stroke="#f0f0f0" stroke-width="0.5"/>
+  <line x1="0" y1="380.000" x2="400.000" y2="380.000" stroke="#f0f0f0" stroke-width="0.5"/>
+  <line x1="0" y1="400.000" x2="400.000" y2="400.000" stroke="#f0f0f0" stroke-width="0.5"/>
+  <!-- Content -->
+  <path d="M 200.000,247.236 A 166.190,166.190 0 0,0 159.091,176.382 A 166.193,166.193 0 0,0 240.909,176.382 A 166.190,166.190 0 0,0 200.000,247.236 Z" stroke="black" stroke-width="2.000" fill="none"/>
+  <circle cx="200.000" cy="247.236" r="3.000" fill="red"/>
+  <text x="200.000" y="255.418" font-family="Arial, sans-serif" font-size="10.000" fill="red" text-anchor="middle">V0</text>
+  <circle cx="159.091" cy="176.382" r="3.000" fill="red"/>
+  <text x="159.091" y="184.564" font-family="Arial, sans-serif" font-size="10.000" fill="red" text-anchor="middle">V1</text>
+  <circle cx="240.909" cy="176.382" r="3.000" fill="red"/>
+  <text x="240.909" y="184.564" font-family="Arial, sans-serif" font-size="10.000" fill="red" text-anchor="middle">V2</text>
+  <circle cx="200.000" cy="200.000" r="2.000" fill="green"/>
+  <text x="200.000" y="208.182" font-family="Arial, sans-serif" font-size="10.000" fill="green" text-anchor="middle">Center</text>
+  <circle cx="40.051" cy="292.349" r="2.000" fill="blue"/>
+  <text x="40.051" y="300.531" font-family="Arial, sans-serif" font-size="10.000" fill="blue" text-anchor="middle">C0</text>
+  <line x1="40.051" y1="292.349" x2="200.000" y2="247.236" stroke="lightblue" stroke-width="0.500" stroke-dasharray="1,1"/>
+  <line x1="40.051" y1="292.349" x2="159.091" y2="176.382" stroke="lightblue" stroke-width="0.500" stroke-dasharray="1,1"/>
+  <line x1="200.000" y1="247.236" x2="159.091" y2="176.382" stroke="gray" stroke-width="0.500" stroke-dasharray="2,2"/>
+  <line x1="179.545" y1="211.809" x2="165.374" y2="219.991" stroke="orange" stroke-width="1.000"/>
+  <circle cx="179.545" cy="211.809" r="1.500" fill="orange"/>
+  <text x="179.545" y="219.991" font-family="Arial, sans-serif" font-size="10.000" fill="orange" text-anchor="middle">M0</text>
+  <circle cx="200.000" cy="15.302" r="2.000" fill="blue"/>
+  <text x="200.000" y="23.484" font-family="Arial, sans-serif" font-size="10.000" fill="blue" text-anchor="middle">C1</text>
+  <line x1="200.000" y1="15.302" x2="159.091" y2="176.382" stroke="lightblue" stroke-width="0.500" stroke-dasharray="1,1"/>
+  <line x1="200.000" y1="15.302" x2="240.909" y2="176.382" stroke="lightblue" stroke-width="0.500" stroke-dasharray="1,1"/>
+  <line x1="159.091" y1="176.382" x2="240.909" y2="176.382" stroke="gray" stroke-width="0.500" stroke-dasharray="2,2"/>
+  <line x1="200.000" y1="176.382" x2="200.000" y2="160.018" stroke="orange" stroke-width="1.000"/>
+  <circle cx="200.000" cy="176.382" r="1.500" fill="orange"/>
+  <text x="200.000" y="184.564" font-family="Arial, sans-serif" font-size="10.000" fill="orange" text-anchor="middle">M1</text>
+  <circle cx="359.949" cy="292.349" r="2.000" fill="blue"/>
+  <text x="359.949" y="300.531" font-family="Arial, sans-serif" font-size="10.000" fill="blue" text-anchor="middle">C2</text>
+  <line x1="359.949" y1="292.349" x2="240.909" y2="176.382" stroke="lightblue" stroke-width="0.500" stroke-dasharray="1,1"/>
+  <line x1="359.949" y1="292.349" x2="200.000" y2="247.236" stroke="lightblue" stroke-width="0.500" stroke-dasharray="1,1"/>
+  <line x1="240.909" y1="176.382" x2="200.000" y2="247.236" stroke="gray" stroke-width="0.500" stroke-dasharray="2,2"/>
+  <line x1="220.455" y1="211.809" x2="234.626" y2="219.991" stroke="orange" stroke-width="1.000"/>
+  <circle cx="220.455" cy="211.809" r="1.500" fill="orange"/>
+  <text x="220.455" y="219.991" font-family="Arial, sans-serif" font-size="10.000" fill="orange" text-anchor="middle">M2</text>
+  <text x="179.545" y="224.082" font-family="Arial, sans-serif" font-size="8.000" fill="purple" text-anchor="middle">b0=-0.12</text>
+  <text x="200.000" y="188.655" font-family="Arial, sans-serif" font-size="8.000" fill="purple" text-anchor="middle">b1=-0.12</text>
+  <text x="220.455" y="224.082" font-family="Arial, sans-serif" font-size="8.000" fill="purple" text-anchor="middle">b2=-0.12</text>
+  <text x="36.364" y="28.182" font-family="Arial, sans-serif" font-size="14.000" fill="black" text-anchor="middle">triarc_base_up</text>
+</svg>

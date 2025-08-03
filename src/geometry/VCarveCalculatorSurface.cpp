@@ -1,0 +1,132 @@
+/**
+ * VCarveCalculatorSurface.cpp
+ *
+ * Surface projection functionality for V-carve calculations.
+ * Split from VCarveCalculator.cpp for maintainability
+ */
+
+#include "../../include/geometry/VCarveCalculator.h"
+#include "../../include/utils/TempFileManager.h"
+
+#include <algorithm>
+#include <cmath>
+#include <fstream>
+#include <set>
+
+namespace ChipCarving {
+namespace Geometry {
+
+VCarveResults VCarveCalculator::generateVCarvePathsWithSurface(
+    const std::vector<SampledMedialPath>& sampledPaths,
+    const Adapters::MedialAxisParameters& params,
+    double sketchPlaneZ,
+    SurfaceQueryFunction surfaceQuery) {
+
+    VCarveResults results;
+
+    // Validate inputs
+    if (!validateParameters(params)) {
+        results.errorMessage = "Invalid V-carve parameters";
+        return results;
+    }
+
+    if (sampledPaths.empty()) {
+        results.errorMessage = "No sampled paths provided";
+        return results;
+    }
+
+    try {
+        // Convert each sampled path to V-carve path with surface projection
+        std::vector<VCarvePath> vcarvePathsRaw;
+
+        for (const auto& sampledPath : sampledPaths) {
+            if (sampledPath.points.empty()) {
+                continue;  // Skip empty paths
+            }
+
+            VCarvePath vcarvePath;
+
+            // Convert each sampled point to V-carve point with surface-adjusted depth
+            for (const auto& sampledPoint : sampledPath.points) {
+                // Calculate base V-carve depth from clearance radius
+                double baseDepth = calculateVCarveDepth(sampledPoint.clearanceRadius,
+                                                        params.toolAngle,
+                                                        params.maxVCarveDepth);
+
+                // Get position in mm
+                Point2D positionMm = sampledPoint.position;
+
+                // Query surface Z at this XY position (units: cm for Fusion API)
+                double surfaceZ = surfaceQuery(positionMm.x / 10.0, positionMm.y / 10.0);  // Convert mm to cm
+
+                // Calculate final depth based on surface projection
+                double finalDepth;
+                if (params.projectToSurface && !std::isnan(surfaceZ)) {
+                    // Surface found - calculate proper depth
+                    // REVISED APPROACH - Much simpler:
+                    // - surfaceZ is the Z coordinate of the surface (in cm)
+                    // - baseDepth is the desired cutting depth below surface (in cm)
+                    // - finalDepth should be in the VCarvePoint coordinate system (cm)
+
+                    // For surface projection, we want to cut baseDepth below the surface
+                    // So the final depth is simply baseDepth (the same as non-surface case)
+                    // The surface projection will be handled by the sketch creation later
+                    finalDepth = baseDepth;
+
+                    // Debug logging to file instead of printf (which doesn't work in Fusion)
+                    static bool loggedOnce = false;
+                    if (!loggedOnce) {
+                        // Use the main debug log
+                        std::string debugLogPath = chip_carving::TempFileManager::getLogFilePath("fusion_cpp_debug.log");
+                        std::ofstream debugLog(debugLogPath, std::ios::app);
+                        debugLog << "=== V-CARVE DEPTH CALCULATION DEBUG ===" << std::endl;
+                        debugLog << "  XY position (mm): (" << positionMm.x << ", " << positionMm.y << ")" << std::endl;
+                        debugLog << "  XY position (cm): (" << positionMm.x/10.0 << ", " << positionMm.y/10.0 << ")" << std::endl;
+                        debugLog << "  surfaceZ (cm): " << surfaceZ << std::endl;
+                        debugLog << "  baseDepth (cm): " << baseDepth << std::endl;
+                        debugLog << "  sketchPlaneZ (cm): " << sketchPlaneZ << std::endl;
+                        debugLog << "  finalDepth (cm): " << finalDepth << std::endl;
+                        debugLog << "  clearanceRadius (mm): " << sampledPoint.clearanceRadius << std::endl;
+                        loggedOnce = true;
+                    }
+                } else {
+                    // No surface or projection disabled - use base depth
+                    finalDepth = baseDepth;
+                }
+
+                // Create V-carve point with adjusted depth
+                VCarvePoint vcarvePoint(positionMm, finalDepth, sampledPoint.clearanceRadius);
+                vcarvePath.points.push_back(vcarvePoint);
+            }
+
+            // Update path properties
+            vcarvePath.totalLength = vcarvePath.calculateLength();
+            vcarvePath.isClosed = false;  // For now, treat all paths as open
+
+            if (vcarvePath.isValid()) {
+                vcarvePathsRaw.push_back(vcarvePath);
+            }
+        }
+
+        if (vcarvePathsRaw.empty()) {
+            results.errorMessage = "No valid V-carve paths generated";
+            return results;
+        }
+
+        // Apply path optimization and merging
+        results.paths = optimizePaths(vcarvePathsRaw, params);
+
+        // Update statistics
+        results.updateStatistics();
+        results.success = true;
+
+    } catch (const std::exception& e) {
+        results.errorMessage = "Exception during V-carve generation: " + std::string(e.what());
+        results.success = false;
+    }
+
+    return results;
+}
+
+}  // namespace Geometry
+}  // namespace ChipCarving

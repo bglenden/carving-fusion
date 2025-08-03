@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0.478646 -6.4572 3.20072 6.19495">
+<title>Fusion Strokes Debug - /v4BAAAARlJLZXkAH4sIAAAAAAAA/zNQMDZSMFAwUjA0U3jUv+D3pUTn7Uu+3b78/+W+DQqGQGiiYGRoZAZUYghSBKSBLCMLmBQObUYKxmYKhsnJhknJyea6qSYmibomKUkpuolJpga6hhbJpokWFhbmpmlwqxnQANg+AwWwdUYGJhD7IHYaGxgagqVBEMgxQuYYI3MM4BwDAA/6O3/nAAAA</title>
+<g transform="scale(1,-1)">
+<polygon points="3.16312,-0.778496 3.16312,-5.94095 0.994891,-5.94095 0.994891,-0.778496" fill="none" stroke="blue" stroke-width="0.05" />
+<circle cx="3.16312" cy="-0.778496" r="0.1" fill="red" />
+<text x="3.31312" y="-0.728496" font-size="0.3" fill="black" transform="scale(1,-1)">0</text>
+<circle cx="3.16312" cy="-5.94095" r="0.1" fill="red" />
+<text x="3.31312" y="-5.89095" font-size="0.3" fill="black" transform="scale(1,-1)">1</text>
+<circle cx="0.994891" cy="-5.94095" r="0.1" fill="red" />
+<text x="1.14489" y="-5.89095" font-size="0.3" fill="black" transform="scale(1,-1)">2</text>
+<circle cx="0.994891" cy="-0.778496" r="0.1" fill="red" />
+<text x="1.14489" y="-0.728496" font-size="0.3" fill="black" transform="scale(1,-1)">3</text>
+</g>
+</svg>

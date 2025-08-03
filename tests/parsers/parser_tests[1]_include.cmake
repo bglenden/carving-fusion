@@ -1,0 +1,5 @@
+if(EXISTS "/Users/brianglendenning/SoftwareProjects/CNC_Chip_Carving/fusion_plugin_cpp/tests/parsers/parser_tests[1]_tests.cmake")
+  include("/Users/brianglendenning/SoftwareProjects/CNC_Chip_Carving/fusion_plugin_cpp/tests/parsers/parser_tests[1]_tests.cmake")
+else()
+  add_test(parser_tests_NOT_BUILT parser_tests_NOT_BUILT)
+endif()

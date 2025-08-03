@@ -1,0 +1,5 @@
+if(EXISTS "/Users/brianglendenning/SoftwareProjects/CNC_Chip_Carving/fusion_plugin_cpp/tests/chip_carving_tests[1]_tests.cmake")
+  include("/Users/brianglendenning/SoftwareProjects/CNC_Chip_Carving/fusion_plugin_cpp/tests/chip_carving_tests[1]_tests.cmake")
+else()
+  add_test(chip_carving_tests_NOT_BUILT chip_carving_tests_NOT_BUILT)
+endif()

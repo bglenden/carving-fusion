@@ -1,0 +1,46 @@
+# Build directories
+build/
+build_simple/
+.vs/
+.vscode/
+
+# Compiled binaries
+*.dylib
+*.dll
+*.exe
+*.o
+*.obj
+
+# Log files - current and rotated
+*.log
+debug.log
+fusion_plugin.log
+chip_carving_debug.log
+fusion_cpp_debug_*.log
+
+# macOS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# CMake files
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+
+# Test output
+tests/build/
+tests/coverage/
+
+# IDE files
+*.swp
+*.swo
+*~
+
+# Version backup files
+src/version.h.bak

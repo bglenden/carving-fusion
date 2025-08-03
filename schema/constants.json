@@ -1,0 +1,41 @@
+{
+  "geometry": {
+    "leaf": {
+      "defaultRadiusFactor": 0.65,
+      "description": "Factor for calculating default leaf radius from vertex distance"
+    },
+    "triarc": {
+      "defaultBulge": -0.125,
+      "bulgeRangeMin": -0.2,
+      "bulgeRangeMax": -0.001,
+      "description": "TriArc curvature parameters for concave arcs"
+    },
+    "epsilon": {
+      "tolerance": 1e-9,
+      "description": "Floating point comparison tolerance for geometric calculations"
+    },
+    "arc": {
+      "minSagittaRatio": 0.001,
+      "maxSagittaRatio": 0.5,
+      "description": "Valid range for arc sagitta as ratio of chord length"
+    }
+  },
+  "medialAxis": {
+    "defaultThreshold": 0.8,
+    "minClearanceRadius": 1e-6,
+    "maxInterpolationDistance": 2.0,
+    "description": "OpenVoronoi medial axis computation parameters"
+  },
+  "rendering": {
+    "defaultStrokeWidth": 2.0,
+    "selectionStrokeWidth": 3.0,
+    "constructionStrokeWidth": 1.0,
+    "hitTestTolerance": 5.0,
+    "description": "Canvas rendering and interaction parameters"
+  },
+  "units": {
+    "displayPrecision": 3,
+    "coordinateScale": 1.0,
+    "description": "Display formatting and coordinate system parameters"
+  }
+}
