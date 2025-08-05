@@ -5,9 +5,10 @@
  */
 
 #include "ErrorHandler.h"
-#include "../../include/utils/logging.h"
 
 #include <iostream>
+
+#include "../../include/utils/logging.h"
 
 namespace ChipCarving {
 namespace Utils {
@@ -17,115 +18,113 @@ ErrorCallback ErrorHandler::globalErrorCallback_ = nullptr;
 bool ErrorHandler::consoleLoggingEnabled_ = true;
 bool ErrorHandler::userMessagesEnabled_ = false;
 
-bool ErrorHandler::executeFusionOperation(
-    const std::string& operation,
-    std::function<bool()> func,
-    bool showMessageToUser) {
+bool ErrorHandler::executeFusionOperation(const std::string& operation,
+                                          std::function<bool()> func,
+                                          bool showMessageToUser) {
+  LOG_DEBUG("Executing Fusion operation: " << operation);
 
-    LOG_DEBUG("Executing Fusion operation: " << operation);
-
-    try {
-        bool result = func();
-        if (result) {
-            LOG_DEBUG("Fusion operation succeeded: " << operation);
-        } else {
-            LOG_WARNING("Fusion operation returned false: " << operation);
-        }
-        return result;
-    } catch (const std::exception& e) {
-        std::string errorMsg = "Exception in " + operation + ": " + e.what();
-        LOG_ERROR(errorMsg);
-
-        if (showMessageToUser && userMessagesEnabled_) {
-            // TODO(dev): Show message to user via UI
-            // For now, just log as error
-            LOG_ERROR("User should be notified: " << errorMsg);
-        }
-
-        if (globalErrorCallback_) {
-            globalErrorCallback_(errorMsg, operation);
-        }
-
-        return false;
-    } catch (...) {
-        std::string errorMsg = "Unknown exception in " + operation;
-        LOG_ERROR(errorMsg);
-
-        if (showMessageToUser && userMessagesEnabled_) {
-            // TODO(dev): Show generic error message to user
-            LOG_ERROR("User should be notified: " << errorMsg);
-        }
-
-        if (globalErrorCallback_) {
-            globalErrorCallback_(errorMsg, operation);
-        }
-
-        return false;
+  try {
+    bool result = func();
+    if (result) {
+      LOG_DEBUG("Fusion operation succeeded: " << operation);
+    } else {
+      LOG_WARNING("Fusion operation returned false: " << operation);
     }
+    return result;
+  } catch (const std::exception& e) {
+    std::string errorMsg = "Exception in " + operation + ": " + e.what();
+    LOG_ERROR(errorMsg);
+
+    if (showMessageToUser && userMessagesEnabled_) {
+      // TODO(dev): Show message to user via UI
+      // For now, just log as error
+      LOG_ERROR("User should be notified: " << errorMsg);
+    }
+
+    if (globalErrorCallback_) {
+      globalErrorCallback_(errorMsg, operation);
+    }
+
+    return false;
+  } catch (...) {
+    std::string errorMsg = "Unknown exception in " + operation;
+    LOG_ERROR(errorMsg);
+
+    if (showMessageToUser && userMessagesEnabled_) {
+      // TODO(dev): Show generic error message to user
+      LOG_ERROR("User should be notified: " << errorMsg);
+    }
+
+    if (globalErrorCallback_) {
+      globalErrorCallback_(errorMsg, operation);
+    }
+
+    return false;
+  }
 }
 
-void ErrorHandler::executeWithLogging(
-    const std::string& operation,
-    std::function<void()> func) {
+void ErrorHandler::executeWithLogging(const std::string& operation,
+                                      std::function<void()> func) {
+  LOG_DEBUG("Executing operation with logging: " << operation);
 
-    LOG_DEBUG("Executing operation with logging: " << operation);
-
-    try {
-        func();
-        LOG_DEBUG("Operation completed successfully: " << operation);
-    } catch (const std::exception& e) {
-        handleStandardException(operation, e);
-    } catch (...) {
-        handleUnknownException(operation);
-    }
+  try {
+    func();
+    LOG_DEBUG("Operation completed successfully: " << operation);
+  } catch (const std::exception& e) {
+    handleStandardException(operation, e);
+  } catch (...) {
+    handleUnknownException(operation);
+  }
 }
 
 void ErrorHandler::setGlobalErrorCallback(ErrorCallback callback) {
-    globalErrorCallback_ = callback;
+  globalErrorCallback_ = callback;
 
-    if (callback) {
-        LOG_DEBUG("Global error callback registered");
-    } else {
-        LOG_DEBUG("Global error callback cleared");
-    }
+  if (callback) {
+    LOG_DEBUG("Global error callback registered");
+  } else {
+    LOG_DEBUG("Global error callback cleared");
+  }
 }
 
 void ErrorHandler::enableConsoleLogging(bool enabled) {
-    consoleLoggingEnabled_ = enabled;
+  consoleLoggingEnabled_ = enabled;
 
-    LOG_DEBUG("Console logging " << (enabled ? "enabled" : "disabled"));
+  LOG_DEBUG("Console logging " << (enabled ? "enabled" : "disabled"));
 }
 
 void ErrorHandler::enableUserMessages(bool enabled) {
-    userMessagesEnabled_ = enabled;
+  userMessagesEnabled_ = enabled;
 
-    LOG_DEBUG("User messages " << (enabled ? "enabled" : "disabled"));
+  LOG_DEBUG("User messages " << (enabled ? "enabled" : "disabled"));
 }
 
-void ErrorHandler::handleStandardException(const std::string& operation, const std::exception& e) {
-    std::string errorMsg = "Exception in " + operation + ": " + e.what();
-    logError(operation, errorMsg);
+void ErrorHandler::handleStandardException(const std::string& operation,
+                                           const std::exception& e) {
+  std::string errorMsg = "Exception in " + operation + ": " + e.what();
+  logError(operation, errorMsg);
 
-    if (globalErrorCallback_) {
-        globalErrorCallback_(errorMsg, operation);
-    }
+  if (globalErrorCallback_) {
+    globalErrorCallback_(errorMsg, operation);
+  }
 }
 
 void ErrorHandler::handleUnknownException(const std::string& operation) {
-    std::string errorMsg = "Unknown exception in " + operation;
-    logError(operation, errorMsg);
+  std::string errorMsg = "Unknown exception in " + operation;
+  logError(operation, errorMsg);
 
-    if (globalErrorCallback_) {
-        globalErrorCallback_(errorMsg, operation);
-    }
+  if (globalErrorCallback_) {
+    globalErrorCallback_(errorMsg, operation);
+  }
 }
 
-void ErrorHandler::logError(const std::string& operation, const std::string& error) {
-    LOG_ERROR("[" << operation << "] " << error);
+void ErrorHandler::logError(const std::string& operation,
+                            const std::string& error) {
+  LOG_ERROR("[" << operation << "] " << error);
 
-    if (consoleLoggingEnabled_) {
-        LOG_ERROR("[ErrorHandler] " << operation << ": " << error);
-    }
+  if (consoleLoggingEnabled_) {
+    LOG_ERROR("[ErrorHandler] " << operation << ": " << error);
+  }
 }
 
 }  // namespace Utils

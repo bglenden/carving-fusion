@@ -82,16 +82,18 @@ class GeneratePathsCommandHandler : public BaseCommandHandler {
 
   // Immediate geometry extraction (prevents stale tokens)
   void clearCachedGeometry();
-  void extractAndCacheProfileGeometry(adsk::core::Ptr<adsk::fusion::Profile> profile, int index);
-  
+  void extractAndCacheProfileGeometry(
+      adsk::core::Ptr<adsk::fusion::Profile> profile, int index);
+
   // Selection validation
   bool isPartOfClosedProfile(adsk::core::Ptr<adsk::fusion::SketchCurve> curve);
-  void validateAndCleanSelection(adsk::core::Ptr<adsk::core::SelectionCommandInput> selectionInput);
+  void validateAndCleanSelection(
+      adsk::core::Ptr<adsk::core::SelectionCommandInput> selectionInput);
 
   // Sketch tracking for incremental generation
   std::map<std::string, std::string>
       toolToSketchMap_;  // Maps tool name to sketch name
-  
+
   // Cached geometry to avoid stale token issues
   std::vector<Adapters::ProfileGeometry> cachedProfiles_;
 };

@@ -7,5 +7,5 @@
 
 // Include all split implementation files
 #include "TriArcCore.cpp"
-#include "TriArcSketch.cpp"
 #include "TriArcGeometry.cpp"
+#include "TriArcSketch.cpp"

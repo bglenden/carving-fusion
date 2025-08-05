@@ -1,8 +1,9 @@
 /**
  * MedialAxisProcessor.cpp
  *
- * Main implementation file that includes all split MedialAxisProcessor components
- * Split for maintainability - see individual files for implementations
+ * Main implementation file that includes all split MedialAxisProcessor
+ * components Split for maintainability - see individual files for
+ * implementations
  */
 
 // Include all split implementation files

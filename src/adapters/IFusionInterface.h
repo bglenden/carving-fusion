@@ -79,8 +79,10 @@ struct ProfileGeometry;
  */
 struct SketchSelection {
   std::vector<std::string>
-      selectedEntityIds;     // Fusion entity IDs of selected paths (DEPRECATED - use selectedProfiles)
-  std::vector<ProfileGeometry> selectedProfiles;  // NEW: Extracted profile geometry
+      selectedEntityIds;  // Fusion entity IDs of selected paths (DEPRECATED -
+                          // use selectedProfiles)
+  std::vector<ProfileGeometry>
+      selectedProfiles;      // NEW: Extracted profile geometry
   int closedPathCount = 0;   // Number of valid closed paths
   bool isValid = false;      // Whether selection is valid for processing
   std::string errorMessage;  // Error message if invalid
@@ -209,12 +211,14 @@ class IWorkspace {
  * Structure to store extracted profile geometry
  */
 struct ProfileGeometry {
-  std::vector<std::pair<double, double>> vertices;  // Profile vertices in world coordinates (cm)
-  IWorkspace::TransformParams transform;            // Transform parameters for the profile
-  std::string sketchName;                          // Parent sketch name for debugging
-  double area = 0.0;                               // Area from areaProperties (sq cm)
-  std::pair<double, double> centroid;              // Centroid from areaProperties (cm)
-  std::string planeEntityId;                       // Entity ID of the sketch plane
+  std::vector<std::pair<double, double>>
+      vertices;  // Profile vertices in world coordinates (cm)
+  IWorkspace::TransformParams
+      transform;                       // Transform parameters for the profile
+  std::string sketchName;              // Parent sketch name for debugging
+  double area = 0.0;                   // Area from areaProperties (sq cm)
+  std::pair<double, double> centroid;  // Centroid from areaProperties (cm)
+  std::string planeEntityId;           // Entity ID of the sketch plane
 };
 
 /**

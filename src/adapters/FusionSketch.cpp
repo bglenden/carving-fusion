@@ -6,6 +6,6 @@
  */
 
 // Include all split implementation files
-#include "FusionSketchCore.cpp"
-#include "FusionSketchConstruction.cpp"
 #include "FusionSketch3D.cpp"
+#include "FusionSketchConstruction.cpp"
+#include "FusionSketchCore.cpp"

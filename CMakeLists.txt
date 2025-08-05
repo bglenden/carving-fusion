@@ -157,8 +157,8 @@ target_link_libraries(chip_carving_paths_cpp
 
 # Set output directory
 set_target_properties(chip_carving_paths_cpp PROPERTIES
-    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
+    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
 )
 
 
@@ -186,14 +186,7 @@ install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/resources
     DESTINATION "${FUSION_ADDINS_DIR}"
 )
 
-# Custom install target specifically for Fusion 360
-# This can be invoked by 'make install-fusion'
-add_custom_target(install-fusion
-    COMMAND bash ${CMAKE_CURRENT_SOURCE_DIR}/install.sh
-    DEPENDS chip_carving_paths_cpp
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-    COMMENT "Installing plugin to Fusion 360 add-ins directory"
-)
+
 
 # Enable testing (optional - only if tests are available)
 if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/tests/CMakeLists.txt")

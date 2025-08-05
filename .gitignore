@@ -36,6 +36,7 @@ Makefile
 # Test output
 tests/build/
 tests/coverage/
+*.xml
 
 # Temporary output directory (logs and debug SVGs)
 temp_output/

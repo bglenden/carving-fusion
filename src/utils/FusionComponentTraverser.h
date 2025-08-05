@@ -22,7 +22,7 @@ namespace Utils {
  * Returns: true to continue traversal, false to stop
  */
 using ComponentCallback =
-std::function<bool(adsk::core::Ptr<adsk::fusion::Component>, size_t)>;
+    std::function<bool(adsk::core::Ptr<adsk::fusion::Component>, size_t)>;
 
 /**
  * Utility class to abstract common Fusion 360 component traversal patterns
@@ -39,32 +39,32 @@ std::function<bool(adsk::core::Ptr<adsk::fusion::Component>, size_t)>;
  */
 class FusionComponentTraverser {
  public:
-    explicit FusionComponentTraverser(
-        adsk::core::Ptr<adsk::fusion::Component> rootComponent);
+  explicit FusionComponentTraverser(
+      adsk::core::Ptr<adsk::fusion::Component> rootComponent);
 
-    // Get all components (root + all occurrences) as a vector
-    std::vector<adsk::core::Ptr<adsk::fusion::Component>> getAllComponents();
+  // Get all components (root + all occurrences) as a vector
+  std::vector<adsk::core::Ptr<adsk::fusion::Component>> getAllComponents();
 
-    // Apply callback to each component (root + all occurrences)
-    void forEachComponent(ComponentCallback callback);
+  // Apply callback to each component (root + all occurrences)
+  void forEachComponent(ComponentCallback callback);
 
-    // Count total components
-    size_t getComponentCount();
+  // Count total components
+  size_t getComponentCount();
 
-    // Search for specific component by criteria
-    adsk::core::Ptr<adsk::fusion::Component> findComponent(
-        std::function<bool(adsk::core::Ptr<adsk::fusion::Component>)> predicate);
+  // Search for specific component by criteria
+  adsk::core::Ptr<adsk::fusion::Component> findComponent(
+      std::function<bool(adsk::core::Ptr<adsk::fusion::Component>)> predicate);
 
-    // Get components containing specific entity type
-    template <typename T>
-    std::vector<adsk::core::Ptr<adsk::fusion::Component>>
-    getComponentsContaining();
+  // Get components containing specific entity type
+  template <typename T>
+  std::vector<adsk::core::Ptr<adsk::fusion::Component>>
+  getComponentsContaining();
 
  private:
-    adsk::core::Ptr<adsk::fusion::Component> rootComponent_;
+  adsk::core::Ptr<adsk::fusion::Component> rootComponent_;
 
-    void collectComponents(
-        std::vector<adsk::core::Ptr<adsk::fusion::Component>>& components);
+  void collectComponents(
+      std::vector<adsk::core::Ptr<adsk::fusion::Component>>& components);
 };
 
 // Template specializations for common entity types
@@ -78,3 +78,4 @@ FusionComponentTraverser::getComponentsContaining<adsk::fusion::BRepBodies>();
 
 }  // namespace Utils
 }  // namespace ChipCarving
+

@@ -143,10 +143,10 @@ class FusionWorkspace : public IWorkspace {
   // Extract plane entity ID from a profile's parent sketch
   std::string extractPlaneEntityIdFromProfile(
       const std::string& profileEntityId) override;
-  
+
   // Extract ProfileGeometry directly from a profile object
   bool extractProfileGeometry(adsk::core::Ptr<adsk::fusion::Profile> profile,
-                            ProfileGeometry& geometry);
+                              ProfileGeometry& geometry);
 
   // Surface query methods for projection
   double getSurfaceZAtXY(const std::string& surfaceId, double x,

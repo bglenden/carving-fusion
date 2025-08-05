@@ -6,6 +6,6 @@
  */
 
 // Include all split implementation files
+#include "SVGGeneratorComparator.cpp"
 #include "SVGGeneratorCore.cpp"
 #include "SVGGeneratorShapes.cpp"
-#include "SVGGeneratorComparator.cpp"

@@ -6,8 +6,8 @@
  */
 
 // Include all split implementation files
-#include "FusionWorkspaceSketch.cpp"
-#include "FusionWorkspaceProfile.cpp"
 #include "FusionWorkspaceCurve.cpp"
+#include "FusionWorkspaceProfile.cpp"
+#include "FusionWorkspaceSketch.cpp"
 
 // All implementations are now in the included files above

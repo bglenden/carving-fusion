@@ -7,7 +7,7 @@
 
 // Include all split implementation files
 #include "PluginManagerPathsCore.cpp"
-#include "PluginManagerPathsVisualization.cpp"
 #include "PluginManagerPathsGeometry.cpp"
+#include "PluginManagerPathsVisualization.cpp"
 
 // All implementations are now in the included files above

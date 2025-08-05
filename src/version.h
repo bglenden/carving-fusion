@@ -7,14 +7,14 @@
 
 #define ADDIN_VERSION_MAJOR 0
 #define ADDIN_VERSION_MINOR 9
-#define ADDIN_VERSION_PATCH 210
+#define ADDIN_VERSION_PATCH 223
 
 // Dynamic version string based on build type
 #define CMAKE_BUILD_TYPE_DEBUG 0
 #if CMAKE_BUILD_TYPE_DEBUG
-#define ADDIN_VERSION_STRING "0.9.210-debug"
+#define ADDIN_VERSION_STRING "0.9.223-debug"
 #else
-#define ADDIN_VERSION_STRING "0.9.210-release"
+#define ADDIN_VERSION_STRING "0.9.223-release"
 #endif
 
 #define ADDIN_NAME "Chip Carving Paths C++"

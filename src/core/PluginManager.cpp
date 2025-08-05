@@ -8,8 +8,8 @@
 // Include all split implementation files
 #include "PluginManagerCore.cpp"
 #include "PluginManagerImport.cpp"
-#include "PluginManagerPaths.cpp"
 #include "PluginManagerLegacyPaths.cpp"
+#include "PluginManagerPaths.cpp"
 #include "PluginManagerUtils.cpp"
 #include "PluginManagerVCarve.cpp"
 

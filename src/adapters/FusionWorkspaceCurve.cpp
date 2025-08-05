@@ -13,7 +13,8 @@
 namespace ChipCarving {
 namespace Adapters {
 
-// No additional implementation needed - all functionality is in the included files
+// No additional implementation needed - all functionality is in the included
+// files
 
 }  // namespace Adapters
 }  // namespace ChipCarving
