@@ -15,7 +15,7 @@
 #include "FusionAPIAdapter.h"
 #include "FusionWorkspaceProfileTypes.h"
 #include "../../include/utils/TempFileManager.h"
-#include "../utils/DebugLogger.h"
+#include "../../include/utils/logging.h"
 
 using namespace adsk::core;
 
@@ -32,29 +32,28 @@ bool FusionWorkspace::extractProfileVertices(const std::string& entityId,
     vertices.clear();
 
     // Use centralized debug logging
-    auto logger = ChipCarving::Utils::DebugLogger::getInstance();
-    logger->logSectionHeader("PROFILE EXTRACTION", "extractProfileVertices called for: " + entityId);
-    logger->createIndicatorFile("extraction_called.txt", "extractProfileVertices called for: " + entityId);
+    LOG_DEBUG("=== PROFILE EXTRACTION === extractProfileVertices called for: " << entityId);
+    // TODO(developer): Remove indicator file creation
 
     try {
         // Use extracted profile search method
         Ptr<adsk::fusion::Profile> profile = findProfileByEntityToken(entityId);
         if (!profile) {
-            logger->logError("Could not find selected profile with entityId: " + entityId);
+            LOG_ERROR("Could not find selected profile with entityId: " << entityId);
             return false;
         }
 
-        logger->logDebug("Processing selected profile");
+        LOG_DEBUG("Processing selected profile");
 
         // Extract curves from profile using extracted method
         std::vector<CurveData> allCurves;
         if (!extractCurvesFromProfile(profile, allCurves, transform)) {
-            logger->logError("Failed to extract curves from profile");
+            LOG_ERROR("Failed to extract curves from profile");
             return false;
         }
 
         // Now chain the curves in the correct order to form a closed polygon
-        logger->logDebug("Starting curve chaining algorithm...");
+        LOG_DEBUG("Starting curve chaining algorithm...");
 
         std::vector<size_t> chainOrder;
         const double tolerance = 0.001;  // 0.01mm tolerance for point matching
@@ -64,7 +63,7 @@ bool FusionWorkspace::extractProfileVertices(const std::string& entityId,
         allCurves[0].used = true;
 
         Ptr<adsk::core::Point3D> currentEndPoint = allCurves[0].endPoint;
-        logger->logDebug("Starting chain with curve 0, end point: (" + std::to_string(currentEndPoint->x()) + ", " + std::to_string(currentEndPoint->y()) + ")");
+        LOG_DEBUG("Starting chain with curve 0, end point: (" << currentEndPoint->x() << ", " << currentEndPoint->y() << ")");
 
         // Find the next connected curve
         for (size_t chainPos = 1; chainPos < allCurves.size(); ++chainPos) {
@@ -90,7 +89,7 @@ bool FusionWorkspace::extractProfileVertices(const std::string& entityId,
                     allCurves[i].used = true;
                     currentEndPoint = allCurves[i].endPoint;
                     foundNext = true;
-                    logger->logDebug("Chained curve " + std::to_string(i) + " (normal), end point: (" + std::to_string(currentEndPoint->x()) + ", " + std::to_string(currentEndPoint->y()) + ")");
+                    LOG_DEBUG("Chained curve " << i << " (normal), end point: (" << currentEndPoint->x() << ", " << currentEndPoint->y() << ")");
                     break;
                 } else if (distToEnd < tolerance) {
                     // Reverse direction connection - need to reverse the stroke points
@@ -98,13 +97,13 @@ bool FusionWorkspace::extractProfileVertices(const std::string& entityId,
                     allCurves[i].used = true;
                     currentEndPoint = allCurves[i].startPoint;
                     foundNext = true;
-                    logger->logDebug("Chained curve " + std::to_string(i) + " (REVERSED), end point: (" + std::to_string(currentEndPoint->x()) + ", " + std::to_string(currentEndPoint->y()) + ")");
+                    LOG_DEBUG("Chained curve " << i << " (REVERSED), end point: (" << currentEndPoint->x() << ", " << currentEndPoint->y() << ")");
                     break;
                 }
             }
 
             if (!foundNext) {
-                logger->logWarning("Could not find next curve to chain at position " + std::to_string(chainPos));
+                LOG_WARNING("Could not find next curve to chain at position " << chainPos);
                 break;
             }
         }
@@ -115,7 +114,7 @@ bool FusionWorkspace::extractProfileVertices(const std::string& entityId,
             size_t curveIdx = idx & 0x7FFFFFFF;
             chainOrderStr += std::to_string(curveIdx) + (reversed ? "R" : "") + " ";
         }
-        logger->logDebug(chainOrderStr);
+        LOG_DEBUG(chainOrderStr);
 
         // Now build the final vertex list from the chained curves
         for (size_t i = 0; i < chainOrder.size(); ++i) {
@@ -125,7 +124,7 @@ bool FusionWorkspace::extractProfileVertices(const std::string& entityId,
             const auto& curveData = allCurves[curveIdx];
             const auto& strokePoints = curveData.strokePoints;
 
-            logger->logDebug("Adding curve " + std::to_string(curveIdx) + (reversed ? " (reversed)" : "") + " with " + std::to_string(strokePoints.size()) + " points");
+            LOG_DEBUG("Adding curve " << curveIdx << (reversed ? " (reversed)" : "") << " with " << strokePoints.size() << " points");
 
             // Determine how many points to add (always skip last point to avoid duplicates)
             // For closed polygons, we don't want to duplicate the final vertex
@@ -143,7 +142,7 @@ bool FusionWorkspace::extractProfileVertices(const std::string& entityId,
                         // NOTE: With world coordinates, Z can be non-zero (expected)
                         // This is the correct behavior for medial axis computation
                         if (std::abs(z) > 0.001) {
-                            logger->logDebug("Point has Z value: " + std::to_string(z) + " cm (world coordinates)");
+                            LOG_DEBUG("Point has Z value: " << z << " cm (world coordinates)");
                         }
 
                         vertices.push_back({x, y});
@@ -160,7 +159,7 @@ bool FusionWorkspace::extractProfileVertices(const std::string& entityId,
                         // NOTE: With world coordinates, Z can be non-zero (expected)
                         // This is the correct behavior for medial axis computation
                         if (std::abs(z) > 0.001) {
-                            logger->logDebug("Point has Z value: " + std::to_string(z) + " cm (world coordinates)");
+                            LOG_DEBUG("Point has Z value: " << z << " cm (world coordinates)");
                         }
 
                         vertices.push_back({x, y});
@@ -169,10 +168,10 @@ bool FusionWorkspace::extractProfileVertices(const std::string& entityId,
             }
         }
 
-        logger->logDebug("Final chained polygon has " + std::to_string(vertices.size()) + " vertices");
+        LOG_DEBUG("Final chained polygon has " << vertices.size() << " vertices");
 
         if (vertices.empty()) {
-            logger->logError("No vertices in final chained polygon");
+            LOG_ERROR("No vertices in final chained polygon");
                 return false;
         }
 
@@ -182,12 +181,14 @@ bool FusionWorkspace::extractProfileVertices(const std::string& entityId,
         transform.centerY = 0.0;
         transform.scale = 1.0;
 
-        logger->logInfo("Extracted " + std::to_string(vertices.size()) + " vertices from real profile (in world coordinates cm)");
+        LOG_INFO("Extracted " << vertices.size() << " vertices from real profile (in world coordinates cm)");
 
         // Generate SVG debug output for Fusion strokes
-        logger->logDebug("About to generate Fusion strokes SVG with " + std::to_string(vertices.size()) + " vertices");
+        LOG_DEBUG("About to generate Fusion strokes SVG with " << vertices.size() << " vertices");
 
+        // TODO(developer): Remove SVG debug output generation
         // First, try creating a simple test file to verify write permissions
+        /*
         std::string testFilePath = chip_carving::TempFileManager::getLogFilePath("fusion_strokes_test.txt");
         std::ofstream testFile(testFilePath);
         if (testFile.is_open()) {
@@ -209,7 +210,7 @@ bool FusionWorkspace::extractProfileVertices(const std::string& entityId,
 
             std::ofstream svgFile(svgFilePath);
             if (svgFile.is_open()) {
-                logger->logDebug("Writing Fusion strokes SVG to: " + svgFilePath);
+                LOG_DEBUG("Writing Fusion strokes SVG to: " << svgFilePath);
 
                 // Calculate bounding box for viewport
                 if (!vertices.empty()) {
@@ -266,7 +267,7 @@ bool FusionWorkspace::extractProfileVertices(const std::string& entityId,
                     svgFile << "</g>\n";
                     svgFile << "</svg>\n";
 
-                    logger->logDebug("Fusion strokes SVG written successfully with " + std::to_string(vertices.size()) + " vertices");
+                    LOG_DEBUG("Fusion strokes SVG written successfully with " << vertices.size() << " vertices");
                 } else {
                     svgFile << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
                     svgFile << "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"400\" "
@@ -274,27 +275,28 @@ bool FusionWorkspace::extractProfileVertices(const std::string& entityId,
                     svgFile << "<text x=\"50\" y=\"200\" font-size=\"20\" fill=\"red\">NO VERTICES "
                                "EXTRACTED</text>\n";
                     svgFile << "</svg>\n";
-                    logger->logError("No vertices to write to SVG");
+                    LOG_ERROR("No vertices to write to SVG");
                 }
 
                 svgFile.close();
             } else {
-                logger->logError("Could not create SVG file: " + svgFilePath);
+                LOG_ERROR("Could not create SVG file: " << svgFilePath);
             }
         } catch (const std::exception& e) {
-            logger->logError("Exception creating Fusion strokes SVG: " + std::string(e.what()));
+            LOG_ERROR("Exception creating Fusion strokes SVG: " << e.what());
         } catch (...) {
-            logger->logError("Unknown exception creating Fusion strokes SVG");
+            LOG_ERROR("Unknown exception creating Fusion strokes SVG");
         }
+        */
 
 
         return true;
 
     } catch (const std::exception& e) {
-        logger->logError("Exception: " + std::string(e.what()));
+        LOG_ERROR("Exception: " << e.what());
         return false;
     } catch (...) {
-        logger->logError("Unknown exception");
+        LOG_ERROR("Unknown exception");
         return false;
     }
 }

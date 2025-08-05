@@ -8,8 +8,25 @@
 
 using namespace adsk::core;
 
+// Global minimum log level (default to INFO in release, DEBUG in debug)
+static LogLevel g_minLogLevel = 
+#ifdef DEBUG
+    LogLevel::LOG_DEBUG;
+#else
+    LogLevel::INFO;
+#endif
+
 void LogToConsole(const std::string& message) {
+    LogToConsole(LogLevel::INFO, message);
+}
+
+void LogToConsole(LogLevel level, const std::string& message) {
     try {
+        // Check if message should be logged based on level
+        if (static_cast<int>(level) < static_cast<int>(g_minLogLevel)) {
+            return;
+        }
+
         // Get current time
         auto now = std::chrono::system_clock::now();
         auto time_t = std::chrono::system_clock::to_time_t(now);
@@ -18,8 +35,25 @@ void LogToConsole(const std::string& message) {
         std::stringstream ss;
         ss << std::put_time(std::localtime(&time_t), "%Y-%m-%d %H:%M:%S");
 
+        // Get level prefix
+        std::string levelPrefix;
+        switch (level) {
+            case LogLevel::LOG_DEBUG:
+                levelPrefix = "[DEBUG]";
+                break;
+            case LogLevel::INFO:
+                levelPrefix = "[INFO]";
+                break;
+            case LogLevel::WARNING:
+                levelPrefix = "[WARN]";
+                break;
+            case LogLevel::ERROR:
+                levelPrefix = "[ERROR]";
+                break;
+        }
+
         // Create log message
-        std::string logMessage = "[" + ss.str() + "] " + message;
+        std::string logMessage = "[" + ss.str() + "] " + levelPrefix + " " + message;
 
         // Get the application and UI
         Ptr<Application> app = Application::get();
@@ -39,4 +73,12 @@ void LogToConsole(const std::string& message) {
     } catch (...) {
         // Silently fail if logging doesn't work
     }
+}
+
+void SetMinLogLevel(LogLevel level) {
+    g_minLogLevel = level;
+}
+
+LogLevel GetMinLogLevel() {
+    return g_minLogLevel;
 }
