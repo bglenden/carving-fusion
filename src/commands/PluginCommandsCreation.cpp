@@ -142,6 +142,80 @@ void GeneratePathsCommandHandler::notify(
         auto onInputChanged = new InputChangedHandler(this);
         cmd->inputChanged()->add(onInputChanged);
 
+        // Create and register activate handler to clear curve filters after dialog is shown
+        class ActivateHandler : public adsk::core::CommandEventHandler {
+         public:
+            void notify(const adsk::core::Ptr<adsk::core::CommandEventArgs>& eventArgs) override {
+                try {
+                    if (!eventArgs || !eventArgs->command()) return;
+                    
+                    auto cmd = eventArgs->command();
+                    auto inputs = cmd->commandInputs();
+                    if (!inputs) return;
+                    
+                    // Get the selection input
+                    auto selectionInput = inputs->itemById("sketchProfiles");
+                    if (!selectionInput) return;
+                    
+                    auto profileSelection = selectionInput->cast<adsk::core::SelectionCommandInput>();
+                    if (profileSelection) {
+                        // Clear all existing filters
+                        profileSelection->clearSelectionFilter();
+                        
+                        // Add only the Profiles filter
+                        profileSelection->addSelectionFilter("Profiles");
+                        
+                        LOG_INFO("Cleared curve selection filters - only closed profiles can be selected");
+                    }
+                } catch (...) {
+                    LOG_ERROR("Error clearing selection filters");
+                }
+            }
+        };
+
+        auto onActivate = new ActivateHandler();
+        cmd->activate()->add(onActivate);
+
+        // Create and register destroy handler to restore curve filters when dialog closes
+        class DestroyHandler : public adsk::core::CommandEventHandler {
+         public:
+            void notify(const adsk::core::Ptr<adsk::core::CommandEventArgs>& eventArgs) override {
+                try {
+                    if (!eventArgs || !eventArgs->command()) return;
+                    
+                    auto cmd = eventArgs->command();
+                    auto inputs = cmd->commandInputs();
+                    if (!inputs) return;
+                    
+                    // Get the selection input
+                    auto selectionInput = inputs->itemById("sketchProfiles");
+                    if (!selectionInput) return;
+                    
+                    auto profileSelection = selectionInput->cast<adsk::core::SelectionCommandInput>();
+                    if (profileSelection) {
+                        // Clear current filters
+                        profileSelection->clearSelectionFilter();
+                        
+                        // Restore all original filters for sub-component support
+                        profileSelection->addSelectionFilter("Profiles");
+                        profileSelection->addSelectionFilter("SketchCurves");
+                        profileSelection->addSelectionFilter("SketchLines");
+                        profileSelection->addSelectionFilter("SketchArcs");
+                        profileSelection->addSelectionFilter("SketchCircles");
+                        profileSelection->addSelectionFilter("SketchEllipses");
+                        profileSelection->addSelectionFilter("SketchSplines");
+                        
+                        LOG_INFO("Restored original selection filters on dialog close");
+                    }
+                } catch (...) {
+                    // Ignore errors during cleanup
+                }
+            }
+        };
+
+        auto onDestroy = new DestroyHandler();
+        cmd->destroy()->add(onDestroy);
+
     } catch (const std::exception& e) {
         // Handle known exceptions
         if (pluginManager_) {

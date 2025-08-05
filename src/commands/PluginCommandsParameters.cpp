@@ -36,10 +36,9 @@ void GeneratePathsCommandHandler::createParameterInputs(
         adsk::core::Ptr<adsk::core::SelectionCommandInput> sketchSelection =
             selectionInputs->addSelectionInput("sketchProfiles", "Closed Sketch Profiles",
                                            "Select closed sketch profiles");
-        // HYBRID APPROACH: Use "Profiles" filter for root component profiles
-        // For sub-components, users will need to select all curves forming the profile
+        // Start with all filters for sub-component support
+        // The ActivateHandler will clear these and leave only "Profiles" after dialog is shown
         sketchSelection->addSelectionFilter("Profiles");
-        // Also allow sketch curves so users can select curves from sub-components
         sketchSelection->addSelectionFilter("SketchCurves");
         sketchSelection->addSelectionFilter("SketchLines");
         sketchSelection->addSelectionFilter("SketchArcs");
@@ -51,11 +50,9 @@ void GeneratePathsCommandHandler::createParameterInputs(
         // Set detailed tooltip with enhanced selection instructions
         sketchSelection->tooltip(
             "Select closed sketch profiles.\n\n"
-            "• For ROOT COMPONENT: Click INSIDE blue shaded profile regions\n"
-            "• For SUB-COMPONENTS: Select ALL curves forming the closed profile\n"
-            "  (API limitation: direct profile selection only works in root component)\n"
-            "• Selected curves must form a complete closed loop\n"
-            "• Use Ctrl+Click to select multiple profiles or curves");
+            "• Click INSIDE blue shaded profile regions\n"
+            "• Individual edges/curves cannot be selected\n"
+            "• Use Ctrl+Click to select multiple profiles");
 
         // 2. V-CARVE TOOLPATHS (always expanded, no arrow)
         adsk::core::Ptr<adsk::core::GroupCommandInput> vcarveGroup =
