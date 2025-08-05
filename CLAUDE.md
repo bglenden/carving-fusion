@@ -236,3 +236,8 @@ Control via `CHIP_CARVING_PLUGIN_MODE` environment variable:
 3. **Cross-component support**: Must search all components for geometry
 4. **350 line file limit**: Refactor larger files
 5. **No Fusion API in tests**: Use mock adapters exclusively
+
+## Commit and Push Workflow
+
+### Development Preparation
+- Before doing a commit and push, install the plug-in since sometimes it shows compiler problems that don't show up with the test programs.

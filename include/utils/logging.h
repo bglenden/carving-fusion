@@ -37,9 +37,11 @@ LogLevel GetMinLogLevel();
 // Conditional debug logging macros
 #ifdef DEBUG
   #define LOG_DEBUG(msg) do { \
-    std::ostringstream _debug_stream; \
-    _debug_stream << msg; \
-    LogToConsole(LogLevel::LOG_DEBUG, _debug_stream.str()); \
+    if (static_cast<int>(LogLevel::LOG_DEBUG) >= static_cast<int>(GetMinLogLevel())) { \
+      std::ostringstream _debug_stream; \
+      _debug_stream << msg; \
+      LogToConsole(LogLevel::LOG_DEBUG, _debug_stream.str()); \
+    } \
   } while(0)
   
   #define LOG_DEBUG_ENTRY(method) LOG_DEBUG(method << " called")
@@ -54,23 +56,29 @@ LogLevel GetMinLogLevel();
   #define LOG_DEBUG_VALUE(name, value) do {} while(0)
 #endif
 
-// Always-enabled logging macros
+// Always-enabled logging macros with short-circuit optimization
 #define LOG_INFO(msg) do { \
-  std::ostringstream _info_stream; \
-  _info_stream << msg; \
-  LogToConsole(LogLevel::INFO, _info_stream.str()); \
+  if (static_cast<int>(LogLevel::INFO) >= static_cast<int>(GetMinLogLevel())) { \
+    std::ostringstream _info_stream; \
+    _info_stream << msg; \
+    LogToConsole(LogLevel::INFO, _info_stream.str()); \
+  } \
 } while(0)
 
 #define LOG_WARNING(msg) do { \
-  std::ostringstream _warn_stream; \
-  _warn_stream << msg; \
-  LogToConsole(LogLevel::WARNING, _warn_stream.str()); \
+  if (static_cast<int>(LogLevel::WARNING) >= static_cast<int>(GetMinLogLevel())) { \
+    std::ostringstream _warn_stream; \
+    _warn_stream << msg; \
+    LogToConsole(LogLevel::WARNING, _warn_stream.str()); \
+  } \
 } while(0)
 
 #define LOG_ERROR(msg) do { \
-  std::ostringstream _error_stream; \
-  _error_stream << msg; \
-  LogToConsole(LogLevel::ERROR, _error_stream.str()); \
+  if (static_cast<int>(LogLevel::ERROR) >= static_cast<int>(GetMinLogLevel())) { \
+    std::ostringstream _error_stream; \
+    _error_stream << msg; \
+    LogToConsole(LogLevel::ERROR, _error_stream.str()); \
+  } \
 } while(0)
 
 #endif  // CHIP_CARVING_LOGGING_H

@@ -24,6 +24,7 @@ class PluginInitializer {
   static bool CreateToolbarPanel();
   static void CreateImportDesignCommand();
   static void CreateGeneratePathsCommand();
+  static void CreateSettingsCommand();
 };
 
 }  // namespace ChipCarving

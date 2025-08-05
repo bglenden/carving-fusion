@@ -2,6 +2,7 @@
 
 #include "../adapters/FusionAPIAdapter.h"
 #include "../commands/PluginCommands.h"
+#include "../commands/SettingsCommand.h"
 #include "../core/PluginManager.h"
 #include "../version.h"
 #include "../../include/utils/logging.h"
@@ -39,6 +40,7 @@ static std::vector<Ptr<CommandDefinition>> commandDefinitions;
 static std::vector<Ptr<CommandControl>> commandControls;
 static std::shared_ptr<Commands::ImportDesignCommandHandler> importHandler;
 static std::shared_ptr<Commands::GeneratePathsCommandHandler> generateHandler;
+static std::shared_ptr<Commands::SettingsCommandHandler> settingsHandler;
 
 PluginMode PluginInitializer::GetModeFromEnv() {
     const char* mode = std::getenv("CHIP_CARVING_PLUGIN_MODE");
@@ -145,6 +147,7 @@ bool PluginInitializer::CreateToolbarPanel() {
         // Create commands
         CreateImportDesignCommand();
         CreateGeneratePathsCommand();
+        CreateSettingsCommand();
 
         return true;
     } catch (const std::exception& e) {
@@ -167,7 +170,7 @@ bool PluginInitializer::InitializePlugin(const char* /* context */, PluginMode m
             return false;
         }
 
-        LOG_INFO("Starting Chip Carving Paths C++ Add-in v" << ADDIN_VERSION_STRING);
+        LOG_WARNING("Starting Chip Carving Paths C++ Add-in v" << ADDIN_VERSION_STRING);
 
         // Create plugin manager based on mode
         switch (mode) {
@@ -342,5 +345,55 @@ void PluginInitializer::CreateGeneratePathsCommand() {
     }
 }
 
+
+void PluginInitializer::CreateSettingsCommand() {
+    try {
+        std::string cmdId = "ChipCarvingSettingsCpp";
+
+        Ptr<CommandDefinitions> cmdDefs = ui->commandDefinitions();
+        if (!cmdDefs) {
+            return;
+        }
+
+        Ptr<CommandDefinition> cmdDef = cmdDefs->itemById(cmdId);
+
+        if (!cmdDef) {
+            std::string cmdName = "Settings";
+            std::string cmdTooltip = "Configure plugin settings and preferences";
+            cmdDef =
+                cmdDefs->addButtonDefinition(cmdId, cmdName, cmdTooltip, "./resources/settings");
+            if (cmdDef) {
+                commandDefinitions.push_back(cmdDef);
+            } else {
+                return;
+            }
+        }
+
+        // Create and connect event handler
+        if (!settingsHandler && pluginManager) {
+            // Convert unique_ptr to shared_ptr for command handler
+            std::shared_ptr<Core::PluginManager> sharedManager(pluginManager.get(),
+                                                               [](Core::PluginManager*) {});
+            settingsHandler =
+                std::make_shared<Commands::SettingsCommandHandler>(sharedManager);
+            cmdDef->commandCreated()->add(settingsHandler.get());
+        }
+
+        if (panel) {
+            Ptr<ToolbarControls> controls = panel->controls();
+            if (controls) {
+                Ptr<CommandControl> cmdControl = controls->itemById(cmdId);
+                if (!cmdControl) {
+                    cmdControl = controls->addCommand(cmdDef);
+                    if (cmdControl) {
+                        commandControls.push_back(cmdControl);
+                    }
+                }
+            }
+        }
+    } catch (std::exception& e) {
+        // Ignore errors
+    }
+}
 
 }  // namespace ChipCarving

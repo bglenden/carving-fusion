@@ -8,13 +8,8 @@
 
 using namespace adsk::core;
 
-// Global minimum log level (default to INFO in release, DEBUG in debug)
-static LogLevel g_minLogLevel = 
-#ifdef DEBUG
-    LogLevel::LOG_DEBUG;
-#else
-    LogLevel::INFO;
-#endif
+// Global minimum log level (default to WARNING for cleaner output)
+static LogLevel g_minLogLevel = LogLevel::WARNING;
 
 void LogToConsole(const std::string& message) {
     LogToConsole(LogLevel::INFO, message);

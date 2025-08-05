@@ -123,19 +123,9 @@ void GeneratePathsCommandHandler::extractAndCacheProfileGeometry(
                             worldGeometry = ellipticalArc->worldGeometry();
                             LOG_INFO("    Curve " << curveIdx << " is a SketchEllipticalArc");
                         } else {
-                            // Try generic SketchCurve as fallback for unknown types
-                            LOG_WARN("    Curve " << curveIdx << " is unknown type: " << sketchEntity->objectType() << " - attempting generic extraction");
-                            try {
-                                // SketchCurve is the base class - try to get world geometry directly
-                                if (sketchCurve) {
-                                    worldGeometry = sketchCurve->worldGeometry();
-                                    if (worldGeometry) {
-                                        LOG_INFO("    Successfully extracted geometry using generic SketchCurve approach");
-                                    }
-                                }
-                            } catch (...) {
-                                LOG_ERROR("    Failed to extract geometry for unknown curve type: " << sketchEntity->objectType());
-                            }
+                            // Unknown curve type - log error
+                            LOG_ERROR("    Curve " + std::to_string(curveIdx) + " has unsupported type: " + sketchEntity->objectType());
+                            // Continue to next curve - we'll try to chain what we can
                         }
                     }
                     
@@ -165,8 +155,8 @@ void GeneratePathsCommandHandler::extractAndCacheProfileGeometry(
                                     
                                     // Validate tessellation quality for non-linear curves
                                     if (!sketchEntity->cast<adsk::fusion::SketchLine>() && strokePoints.size() < 3) {
-                                        LOG_WARN("    Insufficient tessellation for curve " << curveIdx 
-                                                 << " (" << strokePoints.size() << " points) - attempting finer tolerance");
+                                        LOG_WARNING("    Insufficient tessellation for curve " + std::to_string(curveIdx) 
+                                                 + " (" + std::to_string(strokePoints.size()) + " points) - attempting finer tolerance");
                                         
                                         // Try again with finer tolerance
                                         strokePoints.clear();
@@ -195,7 +185,7 @@ void GeneratePathsCommandHandler::extractAndCacheProfileGeometry(
                                         curveData.startPoint = startPt;
                                         curveData.endPoint = endPt;
                                         allCurves.push_back(curveData);
-                                        LOG_WARN("    Using fallback endpoints-only approach for curve " << curveIdx);
+                                        LOG_WARNING("    Using fallback endpoints-only approach for curve " + std::to_string(curveIdx));
                                     }
                                 }
                             }
@@ -222,7 +212,7 @@ void GeneratePathsCommandHandler::extractAndCacheProfileGeometry(
             
             const double tolerance = hadTessellationIssues ? baseTolerance * 10 : baseTolerance;
             if (hadTessellationIssues) {
-                LOG_WARN("  Using relaxed chaining tolerance " << tolerance << " cm due to tessellation issues");
+                LOG_WARNING("  Using relaxed chaining tolerance " + std::to_string(tolerance) + " cm due to tessellation issues");
             }
             
             // Start with first curve
