@@ -106,8 +106,7 @@ double FusionWorkspace::getSurfaceZAtXY(const std::string& surfaceId, double x, 
                     adsk::fusion::BRepEntityTypes::BRepFaceEntityType,
                     0.001,  // tolerance
                     false,  // visibleEntitiesOnly - include all faces (critical for cross-component)
-                    hitPoints
-                );
+                    hitPoints);
 
                 if (intersectedEntities && intersectedEntities->count() > 0) {
                     debugLog << "[DEBUG] Component " << compIdx << " ray casting found "

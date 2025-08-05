@@ -66,10 +66,12 @@ bool PluginManager::initialize() {
 
     } catch (const std::exception& e) {
         if (logger_) {
+            // TODO(developer): Log exception: e.what()
         }
         return false;
     } catch (...) {
         if (logger_) {
+            // TODO(developer): Log unknown exception
         }
         return false;
     }
@@ -93,9 +95,11 @@ void PluginManager::shutdown() {
 
     } catch (const std::exception& e) {
         if (logger_) {
+            // TODO(developer): Log exception: e.what()
         }
     } catch (...) {
         if (logger_) {
+            // TODO(developer): Log unknown exception
         }
     }
 }

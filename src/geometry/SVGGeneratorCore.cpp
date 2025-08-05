@@ -148,8 +148,7 @@ bool SVGGenerator::saveToFile(const std::string& filename) const {
 
 Point2D SVGGenerator::worldToSVG(const Point2D& world) const {
     return Point2D(offset_.x + world.x * scale_,
-                   offset_.y - world.y * scale_  // Y is flipped in SVG
-    );
+                   offset_.y - world.y * scale_);  // Y is flipped in SVG
 }
 
 double SVGGenerator::worldToSVG(double worldDistance) const {

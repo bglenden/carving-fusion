@@ -46,7 +46,7 @@ include_directories(SYSTEM ${OPENVORONOI_INCLUDE_DIR})
 # Auto-increment version before building
 add_custom_target(increment_version
     COMMAND ${CMAKE_COMMAND} -E echo "Auto-incrementing version..."
-    COMMAND python3 ${CMAKE_CURRENT_SOURCE_DIR}/increment_version.py
+    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/increment_version.sh
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     COMMENT "Incrementing version number"
 )

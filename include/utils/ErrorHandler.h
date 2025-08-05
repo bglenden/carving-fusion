@@ -17,7 +17,7 @@ namespace Utils {
  * Reduces duplication in try-catch blocks throughout the codebase
  */
 class ErrorHandler {
-   public:
+public:
     /**
      * Execute a function with standard exception handling
      * Logs errors but continues execution

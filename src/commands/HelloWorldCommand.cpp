@@ -27,8 +27,7 @@ void CreateHelloWorldCommand(Ptr<Application> app, Ptr<UserInterface> ui, Ptr<To
             std::string cmdTooltip = "Test C++ add-in functionality";
             cmdDef =
                 ui->commandDefinitions()->addButtonDefinition(cmdId, cmdName, cmdTooltip,
-                                                              "./resources/hello"  // Icon folder
-                );
+                                                              "./resources/hello");  // Icon folder
 
             LogToConsole("Hello World command definition created");
 

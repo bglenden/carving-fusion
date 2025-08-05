@@ -65,11 +65,13 @@ void PluginManager::addConstructionGeometryVisualization(
 
                     // Debug logging for first few lines
                     if (totalLinesDrawn < 5) {
+                        // TODO(developer): Add implementation
                     }
 
                     bool success =
                         sketch->addConstructionLine(x1_world_mm, y1_world_mm, x2_world_mm, y2_world_mm);
                     if (!success) {
+                        // TODO(developer): Add implementation
                     }
                     totalLinesDrawn++;
                 }
@@ -126,6 +128,7 @@ void PluginManager::addConstructionGeometryVisualization(
                     }
 
                     if (!circleSuccess || !crossSuccess1 || !crossSuccess2) {
+                        // TODO(developer): Add implementation
                     }
                     totalCirclesDrawn++;
                 }
@@ -150,6 +153,7 @@ void PluginManager::addConstructionGeometryVisualization(
                 // Add construction line directly in world coordinates
                 bool success = sketch->addConstructionLine(x1_world_mm, y1_world_mm, x2_world_mm, y2_world_mm);
                 if (!success) {
+                    // TODO(developer): Add implementation
                 }
             }
         }
