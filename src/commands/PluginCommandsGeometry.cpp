@@ -133,11 +133,6 @@ void GeneratePathsCommandHandler::extractAndCacheProfileGeometry(
                                ->cast<adsk::fusion::SketchEllipticalArc>()) {
               worldGeometry = ellipticalArc->worldGeometry();
               LOG_INFO("    Curve " << curveIdx << " is a SketchEllipticalArc");
-            } else {
-              // Unknown curve type - log error
-              LOG_ERROR("    Curve " + std::to_string(curveIdx) +
-                        " has unsupported type: " + sketchEntity->objectType());
-              // Continue to next curve - we'll try to chain what we can
             }
           }
 

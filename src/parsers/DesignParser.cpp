@@ -183,7 +183,8 @@ std::vector<BackgroundImage> DesignParser::parseBackgroundImages(
 
       images.push_back(image);
     }
-  } catch (const std::exception&) {
+  }
+  catch (const std::exception&) {
     // Background images are optional
   }
 

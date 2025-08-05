@@ -304,8 +304,6 @@ bool PluginManager::executeMedialAxisGeneration(
         " mm\n\n";
     if (params.generateVisualization) {
       resultMsg += "Construction geometry created in sketch: " + sketchName;
-    } else {
-      resultMsg += "Visualization disabled - no construction geometry created";
     }
 
     if (params.generateVCarveToolpaths) {

@@ -5,8 +5,8 @@
  * Provides UI for configuring logging levels and other settings
  */
 
-#ifndef CHIP_CARVING_SETTINGS_COMMAND_H
-#define CHIP_CARVING_SETTINGS_COMMAND_H
+#ifndef SRC_COMMANDS_SETTINGSCOMMAND_H_
+#define SRC_COMMANDS_SETTINGSCOMMAND_H_
 
 #include <Core/CoreAll.h>
 #include <Fusion/FusionAll.h>

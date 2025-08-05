@@ -41,7 +41,7 @@ void CreateHelloWorldCommand(
     // Create the command created event handler
     if (!cmdCreatedHandler) {
       cmdCreatedHandler = new HelloWorldCommandCreatedHandler();
-    n}
+    }
     cmdDef->commandCreated()->add(cmdCreatedHandler);
     LogToConsole("Command created handler connected");
 
