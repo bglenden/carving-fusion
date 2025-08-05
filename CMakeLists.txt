@@ -230,13 +230,6 @@ if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/tests/CMakeLists.txt")
 endif()
 
 # ==============================================================================
-# Clean targets
-# ==============================================================================
-
-# Add custom clean command to also remove temp_output directory
-set_directory_properties(PROPERTIES ADDITIONAL_CLEAN_FILES "${CMAKE_CURRENT_SOURCE_DIR}/temp_output")
-
-# ==============================================================================
 # Code Quality and Linting Targets
 # ==============================================================================
 
