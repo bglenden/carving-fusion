@@ -9,7 +9,6 @@
 
 #include <algorithm>
 #include <cmath>
-#include <fstream>
 #include <iomanip>
 #include <iostream>
 #include <limits>
@@ -17,7 +16,7 @@
 #include <streambuf>
 
 #include "../../include/geometry/Shape.h"
-#include "../../include/utils/TempFileManager.h"
+#include "../../include/utils/logging.h"
 
 // OpenVoronoi includes
 #include <medial_axis_filter.hpp>
@@ -74,8 +73,6 @@ std::vector<SampledMedialPath> MedialAxisProcessor::getSampledPaths(
 
 bool MedialAxisProcessor::computeOpenVoronoi(const std::vector<Point2D>& transformedPolygon,
                                              MedialAxisResults& results) {
-    // Get log path for immediate logging
-    std::string immediateLogPath = chip_carving::TempFileManager::getLogFilePath("medial_immediate.log");
 
     try {
         // Validate polygon before processing
@@ -105,24 +102,16 @@ bool MedialAxisProcessor::computeOpenVoronoi(const std::vector<Point2D>& transfo
             const auto& point = transformedPolygon[i];
             ovd::Point ovdPoint(point.x, point.y);
 
-            // Write immediate log before each point insertion
-            std::ofstream immediatePointLog(immediateLogPath, std::ios::app);
-            if (immediatePointLog.is_open()) {
-                immediatePointLog << "About to insert point " << i << ": (" << point.x << ", "
-                                  << point.y << ")" << std::endl;
-                immediatePointLog.flush();
-                immediatePointLog.close();
+            // Log before each point insertion
+            if (verbose_) {
+                LOG_DEBUG("About to insert point " << i << ": (" << point.x << ", " << point.y << ")");
             }
 
             int id = vd->insert_point_site(ovdPoint);
 
-            // Log immediately after successful insertion
-            std::ofstream immediateAfterLog(immediateLogPath, std::ios::app);
-            if (immediateAfterLog.is_open()) {
-                immediateAfterLog << "Successfully inserted point " << i << " with ID " << id
-                                  << std::endl;
-                immediateAfterLog.flush();
-                immediateAfterLog.close();
+            // Log after successful insertion
+            if (verbose_) {
+                LOG_DEBUG("Successfully inserted point " << i << " with ID " << id);
             }
 
             pointIds.push_back(id);
@@ -152,33 +141,21 @@ bool MedialAxisProcessor::computeOpenVoronoi(const std::vector<Point2D>& transfo
                 endId = pointIds[i + 1];
             }
 
-            // Immediate log before line insertion
-            std::ofstream immediateLineLog(immediateLogPath, std::ios::app);
-            if (immediateLineLog.is_open()) {
-                immediateLineLog << "About to insert line site " << i << ": " << startId << " -> "
-                                 << endId << std::endl;
-                immediateLineLog.flush();
-                immediateLineLog.close();
+            // Log before line insertion
+            if (verbose_) {
+                LOG_DEBUG("About to insert line site " << i << ": " << startId << " -> " << endId);
             }
 
             log("Inserting line site " + std::to_string(i) + ": " + std::to_string(startId) +
                 " -> " + std::to_string(endId));
 
-            // Flush log before potentially crashing operation
-            std::string debugLogPath = chip_carving::TempFileManager::getLogFilePath("medial_axis_debug.log");
-            std::ofstream flushLog(debugLogPath, std::ios::app);
-            flushLog.flush();
-            flushLog.close();
 
             try {
                 vd->insert_line_site(startId, endId);
 
-                // Immediate log after successful line insertion
-                std::ofstream immediateAfterLineLog(immediateLogPath, std::ios::app);
-                if (immediateAfterLineLog.is_open()) {
-                    immediateAfterLineLog << "Successfully inserted line site " << i << std::endl;
-                    immediateAfterLineLog.flush();
-                    immediateAfterLineLog.close();
+                // Log after successful line insertion
+                if (verbose_) {
+                    LOG_DEBUG("Successfully inserted line site " << i);
                 }
 
                 log("Successfully inserted line site " + std::to_string(i));
@@ -303,14 +280,11 @@ bool MedialAxisProcessor::computeOpenVoronoi(const std::vector<Point2D>& transfo
 }
 
 void MedialAxisProcessor::log(const std::string& message) {
-    if (verbose_) {
-        // Always append to avoid static variable issues in plugin environment
-        std::string debugLogPath = chip_carving::TempFileManager::getLogFilePath("medial_axis_debug.log");
-        std::ofstream debugFile(debugLogPath, std::ios::app);
-        if (debugFile.is_open()) {
-            debugFile << "[MedialAxisProcessor] " << message << std::endl;
-            debugFile.close();
-        }
+    // Use ERROR level for error messages, INFO level for other messages
+    if (message.find("ERROR") == 0 || message.find("Error") == 0) {
+        LOG_ERROR("[MedialAxisProcessor] " << message);
+    } else {
+        LOG_INFO("[MedialAxisProcessor] " << message);
     }
 }
 

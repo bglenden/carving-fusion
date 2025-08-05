@@ -8,13 +8,11 @@
 #include <algorithm>
 #include <chrono>
 #include <cmath>
-#include <fstream>
 #include <iostream>
 #include <sstream>
 
 #include "FusionAPIAdapter.h"
 #include "FusionWorkspaceProfileTypes.h"
-#include "../../include/utils/TempFileManager.h"
 #include "../../include/utils/logging.h"
 
 using namespace adsk::core;
@@ -182,113 +180,6 @@ bool FusionWorkspace::extractProfileVertices(const std::string& entityId,
         transform.scale = 1.0;
 
         LOG_INFO("Extracted " << vertices.size() << " vertices from real profile (in world coordinates cm)");
-
-        // Generate SVG debug output for Fusion strokes
-        LOG_DEBUG("About to generate Fusion strokes SVG with " << vertices.size() << " vertices");
-
-        // TODO(developer): Remove SVG debug output generation
-        // First, try creating a simple test file to verify write permissions
-        /*
-        std::string testFilePath = chip_carving::TempFileManager::getLogFilePath("fusion_strokes_test.txt");
-        std::ofstream testFile(testFilePath);
-        if (testFile.is_open()) {
-            testFile << "SVG generation test - " << vertices.size() << " vertices extracted"
-                     << std::endl;
-            testFile.close();
-            logger->logDebug("Test file created successfully");
-        } else {
-            logger->logError("Cannot create test file - permissions issue?");
-        }
-
-        try {
-            // Generate timestamp for unique filename
-            auto now = std::chrono::system_clock::now();
-            auto time_t = std::chrono::system_clock::to_time_t(now);
-
-            std::string svgFileName = "fusion_strokes_debug_" + std::to_string(time_t) + ".svg";
-            std::string svgFilePath = chip_carving::TempFileManager::getSVGFilePath(svgFileName);
-
-            std::ofstream svgFile(svgFilePath);
-            if (svgFile.is_open()) {
-                LOG_DEBUG("Writing Fusion strokes SVG to: " << svgFilePath);
-
-                // Calculate bounding box for viewport
-                if (!vertices.empty()) {
-                    double minX = vertices[0].first, maxX = vertices[0].first;
-                    double minY = vertices[0].second, maxY = vertices[0].second;
-
-                    for (const auto& vertex : vertices) {
-                        minX = std::min(minX, vertex.first);
-                        maxX = std::max(maxX, vertex.first);
-                        minY = std::min(minY, vertex.second);
-                        maxY = std::max(maxY, vertex.second);
-                    }
-
-                    // Add margin
-                    double margin = std::max(maxX - minX, maxY - minY) * 0.1;
-                    minX -= margin;
-                    maxX += margin;
-                    minY -= margin;
-                    maxY += margin;
-
-                    // SVG header with proper viewport
-                    svgFile << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
-                    svgFile << "<svg xmlns=\"http://www.w3.org/2000/svg\" ";
-                    svgFile << "width=\"800\" height=\"600\" ";
-                    svgFile << "viewBox=\"" << minX << " " << minY << " " << (maxX - minX) << " "
-                            << (maxY - minY) << "\">\n";
-                    svgFile << "<title>Fusion Strokes Debug - " << entityId << "</title>\n";
-
-                    // Flip Y coordinate system (SVG Y increases downward, but our coordinates
-                    // increase upward)
-                    svgFile << "<g transform=\"scale(1,-1)\">\n";
-
-                    // Draw the polygon from Fusion strokes
-                    svgFile << "<polygon points=\"";
-                    for (size_t i = 0; i < vertices.size(); ++i) {
-                        if (i > 0)
-                            svgFile << " ";
-                        svgFile << vertices[i].first << "," << vertices[i].second;
-                    }
-                    svgFile << "\" fill=\"none\" stroke=\"blue\" stroke-width=\"0.05\" />\n";
-
-                    // Mark vertices with small circles and numbers
-                    for (size_t i = 0; i < vertices.size(); ++i) {
-                        svgFile << "<circle cx=\"" << vertices[i].first << "\" cy=\""
-                                << vertices[i].second << "\" r=\"0.1\" fill=\"red\" />\n";
-
-                        // Add vertex number (flip text back)
-                        svgFile << "<text x=\"" << vertices[i].first + 0.15 << "\" y=\""
-                                << vertices[i].second + 0.05
-                                << "\" font-size=\"0.3\" fill=\"black\" transform=\"scale(1,-1)\">"
-                                << i << "</text>\n";
-                    }
-
-                    svgFile << "</g>\n";
-                    svgFile << "</svg>\n";
-
-                    LOG_DEBUG("Fusion strokes SVG written successfully with " << vertices.size() << " vertices");
-                } else {
-                    svgFile << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
-                    svgFile << "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"400\" "
-                               "height=\"400\">\n";
-                    svgFile << "<text x=\"50\" y=\"200\" font-size=\"20\" fill=\"red\">NO VERTICES "
-                               "EXTRACTED</text>\n";
-                    svgFile << "</svg>\n";
-                    LOG_ERROR("No vertices to write to SVG");
-                }
-
-                svgFile.close();
-            } else {
-                LOG_ERROR("Could not create SVG file: " << svgFilePath);
-            }
-        } catch (const std::exception& e) {
-            LOG_ERROR("Exception creating Fusion strokes SVG: " << e.what());
-        } catch (...) {
-            LOG_ERROR("Unknown exception creating Fusion strokes SVG");
-        }
-        */
-
 
         return true;
 

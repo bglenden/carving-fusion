@@ -7,18 +7,11 @@
  */
 
 #include "core/PluginInitializer.h"
-#include "../include/utils/TempFileManager.h"
-#include <cstdio>
+#include "../include/utils/logging.h"
 
 extern "C" bool XPluginStart(const char* context) {
-    // Debug: Write to file immediately to verify plugin is being called
-    chip_carving::TempFileManager::ensureTempDirectoryExists();
-    std::string logPath = chip_carving::TempFileManager::getLogFilePath("fusion_plugin_start.log");
-    FILE* debugFile = fopen(logPath.c_str(), "a");
-    if (debugFile) {
-        fprintf(debugFile, "XPluginStart called at %s\n", __TIME__);
-        fclose(debugFile);
-    }
+    // Debug: Log plugin startup
+    LOG_DEBUG("XPluginStart called at " << __TIME__);
 
     // Get mode from environment variable or use default
     ChipCarving::PluginMode mode = ChipCarving::PluginInitializer::GetModeFromEnv();

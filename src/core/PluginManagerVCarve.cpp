@@ -9,14 +9,13 @@
 
 #include <algorithm>
 #include <chrono>
-#include <fstream>
 #include <set>
 #include <sstream>
 
 #include "../../include/geometry/Point2D.h"
 #include "../../include/geometry/Point3D.h"
 #include "../../include/geometry/VCarveCalculator.h"
-#include "../../include/utils/TempFileManager.h"
+#include "../../include/utils/logging.h"
 #include "../utils/UnitConversion.h"
 
 using namespace ChipCarving::Utils;
@@ -73,10 +72,8 @@ bool PluginManager::generateVCarveToolpaths(const std::vector<Geometry::MedialAx
                     // FIXED: Debug logging to trace surface query conversion
                     static int queryCount = 0;
                     if (queryCount < 3) {
-                        std::string debugLogPath = chip_carving::TempFileManager::getLogFilePath("fusion_cpp_debug.log");
-                        std::ofstream debugLog(debugLogPath, std::ios::app);
-                        debugLog << "[SURFACE QUERY TRACE] Query " << queryCount << ": (" << x_cm << ", " << y_cm
-                                 << ") cm -> z_cm=" << z_cm << " cm -> z_mm=" << z_mm << " mm" << std::endl;
+                        LOG_DEBUG("[SURFACE QUERY TRACE] Query " << queryCount << ": (" << x_cm << ", " << y_cm 
+                                  << ") cm -> z_cm=" << z_cm << " cm -> z_mm=" << z_mm << " mm");
                         queryCount++;
                     }
 
@@ -102,11 +99,9 @@ bool PluginManager::generateVCarveToolpaths(const std::vector<Geometry::MedialAx
                         // FIXED: Debug logging for surface Z storage
                         static int storeCount = 0;
                         if (storeCount < 3) {
-                            std::string debugLogPath = chip_carving::TempFileManager::getLogFilePath("fusion_cpp_debug.log");
-                            std::ofstream debugLog(debugLogPath, std::ios::app);
-                            debugLog << "[SURFACE STORE TRACE] Store " << storeCount << ": position("
-                                     << vcarvePoint.position.x << ", " << vcarvePoint.position.y
-                                     << ") mm -> surfaceZ_mm=" << surfaceZ_mm << " mm" << std::endl;
+                            LOG_DEBUG("[SURFACE STORE TRACE] Store " << storeCount << ": position(" 
+                                      << vcarvePoint.position.x << ", " << vcarvePoint.position.y 
+                                      << ") mm -> surfaceZ_mm=" << surfaceZ_mm << " mm");
                             storeCount++;
                         }
 
@@ -175,11 +170,9 @@ bool PluginManager::generateVCarveToolpaths(const std::vector<Geometry::MedialAx
                         // FIXED: Debug logging to understand V-carve positioning
                         static int debugCount = 0;
                         if (debugCount < 5) {
-                            std::string debugLogPath = chip_carving::TempFileManager::getLogFilePath("fusion_cpp_debug.log");
-                            std::ofstream debugLog(debugLogPath, std::ios::app);
-                            debugLog << "[VCARVE DEBUG] Point " << debugCount << ": surfaceZ=" << surfaceZ_mm
-                                     << "mm, carveDepth=" << carveDepth << "mm, targetZ=" << targetZ_mm
-                                     << "mm, sketchPlaneZ=" << sketchPlaneZ_mm << "mm, z_relative=" << z_sketch_relative_mm << "mm" << std::endl;
+                            LOG_DEBUG("[VCARVE DEBUG] Point " << debugCount << ": surfaceZ=" << surfaceZ_mm 
+                                      << "mm, carveDepth=" << carveDepth << "mm, targetZ=" << targetZ_mm 
+                                      << "mm, sketchPlaneZ=" << sketchPlaneZ_mm << "mm, z_relative=" << z_sketch_relative_mm << "mm");
                             debugCount++;
                         }
                     } else {

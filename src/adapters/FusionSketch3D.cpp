@@ -12,7 +12,6 @@
 #include "../../include/geometry/Point3D.h"
 #include "FusionAPIAdapter.h"
 #include "../utils/UnitConversion.h"
-#include "../../include/utils/TempFileManager.h"
 
 using namespace adsk::core;
 

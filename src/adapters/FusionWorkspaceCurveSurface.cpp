@@ -8,12 +8,11 @@
 #include <algorithm>
 #include <chrono>
 #include <cmath>
-#include <fstream>
 #include <iostream>
 #include <sstream>
 
 #include "FusionAPIAdapter.h"
-#include "../../include/utils/TempFileManager.h"
+#include "../../include/utils/logging.h"
 
 using namespace adsk::core;
 
@@ -21,37 +20,34 @@ namespace ChipCarving {
 namespace Adapters {
 
 double FusionWorkspace::getSurfaceZAtXY(const std::string& surfaceId, double x, double y) {
-    // Use the main debug log
-    std::string debugLogPath = chip_carving::TempFileManager::getLogFilePath("fusion_cpp_debug.log");
-    std::ofstream debugLog(debugLogPath, std::ios::app);
-    debugLog << "=== ENHANCED SURFACE QUERY: getSurfaceZAtXY called ===" << std::endl;
-    debugLog << "Surface ID: " << surfaceId << std::endl;
-    debugLog << "Query point: (" << x << ", " << y << ") cm" << std::endl;
+    LOG_DEBUG("=== ENHANCED SURFACE QUERY: getSurfaceZAtXY called ===");
+    LOG_DEBUG("Surface ID: " << surfaceId);
+    LOG_DEBUG("Query point: (" << x << ", " << y << ") cm");
 
     try {
         if (!app_) {
-            debugLog << "[ERROR] No Fusion 360 application instance" << std::endl;
+            LOG_ERROR("No Fusion 360 application instance");
             return std::numeric_limits<double>::quiet_NaN();
         }
 
         // Get the active design
         Ptr<adsk::fusion::Design> design = app_->activeProduct();
         if (!design) {
-            debugLog << "[ERROR] No active design" << std::endl;
+            LOG_ERROR("No active design");
             return std::numeric_limits<double>::quiet_NaN();
         }
 
         // Get the root component
         Ptr<adsk::fusion::Component> rootComp = design->rootComponent();
         if (!rootComp) {
-            debugLog << "[ERROR] No root component" << std::endl;
+            LOG_ERROR("No root component");
             return std::numeric_limits<double>::quiet_NaN();
         }
 
         // ENHANCED APPROACH: Universal ray casting across ALL components and surface types
         // This works with: root sketches + separate component surfaces, B-Rep bodies, mesh bodies
 
-        debugLog << "[DEBUG] Using enhanced universal ray casting for cross-component surface detection" << std::endl;
+        LOG_DEBUG("Using enhanced universal ray casting for cross-component surface detection");
 
         // Create a ray from above the surface pointing downward (in world coordinates)
         double rayStartZ = 1000.0;  // Start ray 10 meters above (should be well above any surface)
@@ -59,7 +55,7 @@ double FusionWorkspace::getSurfaceZAtXY(const std::string& surfaceId, double x, 
         Ptr<adsk::core::Vector3D> rayDirection = adsk::core::Vector3D::create(0.0, 0.0, -1.0);  // Pointing down
 
         if (!rayOrigin || !rayDirection) {
-            debugLog << "[ERROR] Could not create ray geometry" << std::endl;
+            LOG_ERROR("Could not create ray geometry");
             return std::numeric_limits<double>::quiet_NaN();
         }
 
@@ -71,7 +67,7 @@ double FusionWorkspace::getSurfaceZAtXY(const std::string& surfaceId, double x, 
         // Add all occurrences (sub-components) recursively
         auto occurrences = rootComp->allOccurrences();
         if (occurrences) {
-            debugLog << "[DEBUG] Found " << occurrences->count() << " component occurrences to search" << std::endl;
+            LOG_DEBUG("Found " << occurrences->count() << " component occurrences to search");
             for (size_t i = 0; i < occurrences->count(); ++i) {
                 auto occurrence = occurrences->item(i);
                 if (occurrence && occurrence->component()) {
@@ -80,7 +76,7 @@ double FusionWorkspace::getSurfaceZAtXY(const std::string& surfaceId, double x, 
             }
         }
 
-        debugLog << "[DEBUG] Searching " << allComponents.size() << " total components for surfaces" << std::endl;
+        LOG_DEBUG("Searching " << allComponents.size() << " total components for surfaces");
 
         double bestZ = std::numeric_limits<double>::lowest();
         bool foundValidPoint = false;
@@ -91,7 +87,7 @@ double FusionWorkspace::getSurfaceZAtXY(const std::string& surfaceId, double x, 
             auto component = allComponents[compIdx];
             if (!component) continue;
 
-            debugLog << "[DEBUG] Searching component " << compIdx << std::endl;
+            LOG_DEBUG("Searching component " << compIdx);
 
             // Create object collection for hit points
             Ptr<adsk::core::ObjectCollection> hitPoints = adsk::core::ObjectCollection::create();
@@ -109,9 +105,9 @@ double FusionWorkspace::getSurfaceZAtXY(const std::string& surfaceId, double x, 
                     hitPoints);
 
                 if (intersectedEntities && intersectedEntities->count() > 0) {
-                    debugLog << "[DEBUG] Component " << compIdx << " ray casting found "
+                    LOG_DEBUG("Component " << compIdx << " ray casting found "
                              << intersectedEntities->count() << " intersected entities with "
-                             << hitPoints->count() << " hit points" << std::endl;
+                             << hitPoints->count() << " hit points");
                     totalRayHits += hitPoints->count();
 
                     // Process all hit points from this component
@@ -119,15 +115,15 @@ double FusionWorkspace::getSurfaceZAtXY(const std::string& surfaceId, double x, 
                         Ptr<adsk::core::Point3D> hitPoint = hitPoints->item(i);
                         if (hitPoint) {
                             double hitZ = hitPoint->z();
-                            debugLog << "[DEBUG] Component " << compIdx << " hit point " << i
-                                     << ": (" << hitPoint->x() << ", " << hitPoint->y() << ", " << hitZ << ")" << std::endl;
+                            LOG_DEBUG("Component " << compIdx << " hit point " << i
+                                     << ": (" << hitPoint->x() << ", " << hitPoint->y() << ", " << hitZ << ")");
 
                             // Track the topmost (highest Z) intersection point across ALL components
                             if (hitZ > bestZ) {
                                 bestZ = hitZ;
                                 foundValidPoint = true;
-                                debugLog << "[DEBUG] New topmost surface found at Z = " << bestZ
-                                         << " cm in component " << compIdx << std::endl;
+                                LOG_DEBUG("New topmost surface found at Z = " << bestZ
+                                         << " cm in component " << compIdx);
                             }
                         }
                     }
@@ -136,8 +132,8 @@ double FusionWorkspace::getSurfaceZAtXY(const std::string& surfaceId, double x, 
                 // ADDITIONAL: Also check mesh bodies in this component (for mesh surface support)
                 auto meshBodies = component->meshBodies();
                 if (meshBodies && meshBodies->count() > 0) {
-                    debugLog << "[DEBUG] Component " << compIdx << " has " << meshBodies->count()
-                             << " mesh bodies - implementing mesh ray intersection" << std::endl;
+                    LOG_DEBUG("Component " << compIdx << " has " << meshBodies->count()
+                             << " mesh bodies - implementing mesh ray intersection");
 
                     for (size_t meshIdx = 0; meshIdx < meshBodies->count(); ++meshIdx) {
                         auto meshBody = meshBodies->item(meshIdx);
@@ -151,9 +147,9 @@ double FusionWorkspace::getSurfaceZAtXY(const std::string& surfaceId, double x, 
 
                         if (nodeCoords.empty() || nodeIndices.empty()) continue;
 
-                        debugLog << "[DEBUG] Checking mesh " << meshIdx << " with "
+                        LOG_DEBUG("Checking mesh " << meshIdx << " with "
                                  << nodeCoords.size() << " vertices and "
-                                 << nodeIndices.size()/3 << " triangles" << std::endl;
+                                 << nodeIndices.size()/3 << " triangles");
 
                         // Simple mesh ray intersection - check triangles
                         for (size_t triIdx = 0; triIdx < nodeIndices.size(); triIdx += 3) {
@@ -206,43 +202,39 @@ double FusionWorkspace::getSurfaceZAtXY(const std::string& surfaceId, double x, 
                             if (hitZ > bestZ && hitZ < rayStartZ) {
                                 bestZ = hitZ;
                                 foundValidPoint = true;
-                                debugLog << "[DEBUG] Mesh intersection found at Z = " << bestZ
-                                         << " cm in component " << compIdx << ", mesh " << meshIdx << std::endl;
+                                LOG_DEBUG("Mesh intersection found at Z = " << bestZ
+                                         << " cm in component " << compIdx << ", mesh " << meshIdx);
                             }
                         }
                     }
                 }
 
             } catch (const std::exception& e) {
-                debugLog << "[DEBUG] Component " << compIdx << " ray casting failed: " << e.what() << std::endl;
+                LOG_DEBUG("Component " << compIdx << " ray casting failed: " << e.what());
                 // Continue with other components
             } catch (...) {
-                debugLog << "[DEBUG] Component " << compIdx << " ray casting failed with unknown exception" << std::endl;
+                LOG_DEBUG("Component " << compIdx << " ray casting failed with unknown exception");
                 // Continue with other components
             }
         }
 
-        debugLog << "[DEBUG] Total ray hits across all components: " << totalRayHits << std::endl;
+        LOG_DEBUG("Total ray hits across all components: " << totalRayHits);
 
         if (foundValidPoint) {
-            debugLog << "[SUCCESS] Enhanced ray casting found topmost surface at Z = " << bestZ
-                     << " cm across " << allComponents.size() << " components" << std::endl;
+            LOG_INFO("Enhanced ray casting found topmost surface at Z = " << bestZ
+                     << " cm across " << allComponents.size() << " components");
             return bestZ;
         } else {
-            debugLog << "[WARNING] Enhanced ray casting found no valid surface at XY location ("
-                     << x << ", " << y << ") across " << allComponents.size() << " components" << std::endl;
+            LOG_WARNING("Enhanced ray casting found no valid surface at XY location ("
+                     << x << ", " << y << ") across " << allComponents.size() << " components");
             return std::numeric_limits<double>::quiet_NaN();
         }
 
     } catch (const std::exception& e) {
-        std::string debugLogPath = chip_carving::TempFileManager::getLogFilePath("fusion_cpp_debug.log");
-        std::ofstream debugLog(debugLogPath, std::ios::app);
-        debugLog << "[ERROR] Exception in enhanced getSurfaceZAtXY: " << e.what() << std::endl;
+        LOG_ERROR("Exception in enhanced getSurfaceZAtXY: " << e.what());
         return std::numeric_limits<double>::quiet_NaN();
     } catch (...) {
-        std::string debugLogPath = chip_carving::TempFileManager::getLogFilePath("fusion_cpp_debug.log");
-        std::ofstream debugLog(debugLogPath, std::ios::app);
-        debugLog << "[ERROR] Unknown exception in enhanced getSurfaceZAtXY" << std::endl;
+        LOG_ERROR("Unknown exception in enhanced getSurfaceZAtXY");
         return std::numeric_limits<double>::quiet_NaN();
     }
 }

@@ -8,12 +8,11 @@
 #include <algorithm>
 #include <chrono>
 #include <cmath>
-#include <fstream>
 #include <iostream>
 #include <sstream>
 
 #include "FusionAPIAdapter.h"
-#include "../../include/utils/TempFileManager.h"
+#include "../../include/utils/logging.h"
 
 using namespace adsk::core;
 
@@ -21,38 +20,35 @@ namespace ChipCarving {
 namespace Adapters {
 
 std::string FusionWorkspace::extractPlaneEntityIdFromProfile(const std::string& profileEntityId) {
-    // Use the main debug log
-    std::string debugLogPath = chip_carving::TempFileManager::getLogFilePath("fusion_cpp_debug.log");
-    std::ofstream debugLog(debugLogPath, std::ios::app);
-    debugLog << "[INFO] extractPlaneEntityIdFromProfile called with profileEntityId: " << profileEntityId << std::endl;
+    LOG_INFO("extractPlaneEntityIdFromProfile called with profileEntityId: {}", profileEntityId);
 
     try {
         if (!app_) {
-            debugLog << "[ERROR] No Fusion 360 application instance" << std::endl;
+            LOG_ERROR("No Fusion 360 application instance");
             return "";
         }
 
         // Get the active design
         Ptr<adsk::fusion::Design> design = app_->activeProduct();
         if (!design) {
-            debugLog << "[ERROR] No active design" << std::endl;
+            LOG_ERROR("No active design");
             return "";
         }
 
         // Get the root component
         Ptr<adsk::fusion::Component> rootComp = design->rootComponent();
         if (!rootComp) {
-            debugLog << "[ERROR] No root component" << std::endl;
+            LOG_ERROR("No root component");
             return "";
         }
 
         // Find the profile using the entity ID
-        debugLog << "[DEBUG] Searching for profile with token: " << profileEntityId << std::endl;
+        LOG_DEBUG("Searching for profile with token: {}", profileEntityId);
 
         // Search through all sketches to find the profile
         Ptr<adsk::fusion::Sketches> sketches = rootComp->sketches();
         if (!sketches) {
-            debugLog << "[ERROR] No sketches collection" << std::endl;
+            LOG_ERROR("No sketches collection");
             return "";
         }
 
@@ -60,7 +56,7 @@ std::string FusionWorkspace::extractPlaneEntityIdFromProfile(const std::string& 
             Ptr<adsk::fusion::Sketch> sketch = sketches->item(sketchIndex);
             if (!sketch) continue;
 
-            debugLog << "[DEBUG] Checking sketch " << sketchIndex << ": " << sketch->name() << std::endl;
+            LOG_DEBUG("Checking sketch {}: {}", sketchIndex, sketch->name());
 
             // Check profiles in this sketch
             Ptr<adsk::fusion::Profiles> profiles = sketch->profiles();
@@ -71,11 +67,11 @@ std::string FusionWorkspace::extractPlaneEntityIdFromProfile(const std::string& 
                 if (!profile) continue;
 
                 std::string currentProfileId = profile->entityToken();
-                debugLog << "[DEBUG] Profile " << profileIndex << " token: " << currentProfileId << std::endl;
+                LOG_DEBUG("Profile {} token: {}", profileIndex, currentProfileId);
 
                 if (currentProfileId == profileEntityId) {
                     // Found the profile! Get its sketch's plane
-                    debugLog << "[SUCCESS] Found matching profile in sketch: " << sketch->name() << std::endl;
+                    LOG_INFO("Found matching profile in sketch: {}", sketch->name());
 
                     // Get the sketch's reference plane
                     Ptr<adsk::core::Base> referenceEntity = sketch->referencePlane();
@@ -84,7 +80,7 @@ std::string FusionWorkspace::extractPlaneEntityIdFromProfile(const std::string& 
                         Ptr<adsk::fusion::ConstructionPlane> constructionPlane = referenceEntity;
                         if (constructionPlane) {
                             std::string planeToken = constructionPlane->entityToken();
-                            debugLog << "[SUCCESS] Extracted construction plane token: " << planeToken << std::endl;
+                            LOG_INFO("Extracted construction plane token: {}", planeToken);
                             return planeToken;
                         }
 
@@ -92,34 +88,30 @@ std::string FusionWorkspace::extractPlaneEntityIdFromProfile(const std::string& 
                         Ptr<adsk::fusion::BRepFace> face = referenceEntity;
                         if (face) {
                             std::string faceToken = face->entityToken();
-                            debugLog << "[SUCCESS] Extracted face plane token: " << faceToken << std::endl;
+                            LOG_INFO("Extracted face plane token: {}", faceToken);
                             return faceToken;
                         }
 
-                        debugLog << "[WARNING] Reference plane found but couldn't extract entity token" << std::endl;
+                        LOG_WARNING("Reference plane found but couldn't extract entity token");
                     } else {
-                        debugLog << "[WARNING] Profile's sketch has no reference plane" << std::endl;
+                        LOG_WARNING("Profile's sketch has no reference plane");
                     }
 
                     // If we can't get the plane token, return empty string but log the attempt
-                    debugLog << "[WARNING] Could not extract plane entity ID from profile's sketch" << std::endl;
+                    LOG_WARNING("Could not extract plane entity ID from profile's sketch");
                     return "";
                 }
             }
         }
 
-        debugLog << "[ERROR] Profile with token '" << profileEntityId << "' not found in any sketch" << std::endl;
+        LOG_ERROR("Profile with token '{}' not found in any sketch", profileEntityId);
         return "";
 
     } catch (const std::exception& e) {
-        std::string debugLogPath = chip_carving::TempFileManager::getLogFilePath("fusion_cpp_debug.log");
-        std::ofstream debugLog(debugLogPath, std::ios::app);
-        debugLog << "[ERROR] Exception in extractPlaneEntityIdFromProfile: " << e.what() << std::endl;
+        LOG_ERROR("Exception in extractPlaneEntityIdFromProfile: {}", e.what());
         return "";
     } catch (...) {
-        std::string debugLogPath = chip_carving::TempFileManager::getLogFilePath("fusion_cpp_debug.log");
-        std::ofstream debugLog(debugLogPath, std::ios::app);
-        debugLog << "[ERROR] Unknown exception in extractPlaneEntityIdFromProfile" << std::endl;
+        LOG_ERROR("Unknown exception in extractPlaneEntityIdFromProfile");
         return "";
     }
 }

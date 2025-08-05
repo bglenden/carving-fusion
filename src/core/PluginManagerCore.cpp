@@ -8,7 +8,6 @@
 #include "PluginManager.h"
 
 #include <algorithm>
-#include <fstream>
 #include <set>
 #include <sstream>
 
@@ -16,7 +15,7 @@
 #include "../../include/geometry/Point3D.h"
 #include "../../include/geometry/VCarveCalculator.h"
 #include "../../include/parsers/DesignParser.h"
-#include "../../include/utils/TempFileManager.h"
+#include "../../include/utils/logging.h"
 #include "../utils/UnitConversion.h"
 #include "../version.h"
 
@@ -51,13 +50,7 @@ bool PluginManager::initialize() {
         medialProcessor_ = std::make_unique<Geometry::MedialAxisProcessor>(0.25, 0.8);
         medialProcessor_->setVerbose(true);  // Enable verbose logging to debug crash
 
-        // Clear debug logs on startup for fresh debugging
-        std::string debugLogPath = chip_carving::TempFileManager::getLogFilePath("medial_axis_debug.log");
-        std::string immediateLogPath = chip_carving::TempFileManager::getLogFilePath("medial_immediate.log");
-        std::ofstream clearLog1(debugLogPath, std::ios::out);
-        clearLog1.close();
-        std::ofstream clearLog2(immediateLogPath, std::ios::out);
-        clearLog2.close();
+        // Log startup (file logs have been removed)
 
         logStartup();
         initialized_ = true;
@@ -65,14 +58,10 @@ bool PluginManager::initialize() {
         return true;
 
     } catch (const std::exception& e) {
-        if (logger_) {
-            // TODO(developer): Log exception: e.what()
-        }
+        LOG_ERROR("Exception during initialization: " << e.what());
         return false;
     } catch (...) {
-        if (logger_) {
-            // TODO(developer): Log unknown exception
-        }
+        LOG_ERROR("Unknown exception during initialization");
         return false;
     }
 }
@@ -94,13 +83,9 @@ void PluginManager::shutdown() {
         initialized_ = false;
 
     } catch (const std::exception& e) {
-        if (logger_) {
-            // TODO(developer): Log exception: e.what()
-        }
+        LOG_ERROR("Exception during initialization: " << e.what());
     } catch (...) {
-        if (logger_) {
-            // TODO(developer): Log unknown exception
-        }
+        LOG_ERROR("Unknown exception during initialization");
     }
 }
 

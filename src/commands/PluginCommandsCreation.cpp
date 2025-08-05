@@ -6,6 +6,7 @@
  */
 
 #include "PluginCommands.h"
+#include "../../include/utils/logging.h"
 
 namespace ChipCarving {
 namespace Commands {
@@ -84,19 +85,55 @@ void GeneratePathsCommandHandler::notify(
         auto onPreview = new PreviewHandler(this);
         cmd->executePreview()->add(onPreview);
 
-        // Create and register input changed handler (minimal implementation)
+        // Create and register input changed handler for immediate geometry extraction
         class InputChangedHandler : public adsk::core::InputChangedEventHandler {
          public:
-            explicit InputChangedHandler(GeneratePathsCommandHandler* parent) : parent_(parent) {
-                (void)parent_;  // Suppress unused field warning - placeholder for input validation
-            }
+            explicit InputChangedHandler(GeneratePathsCommandHandler* parent) : parent_(parent) {}
             void notify(const adsk::core::Ptr<adsk::core::InputChangedEventArgs>& eventArgs) override {
-                (void)eventArgs;  // Suppress unused parameter warning - required by Fusion API
-                // Minimal input changed handler for UI updates
+                try {
+                    if (!eventArgs || !eventArgs->input()) return;
+                    
+                    auto input = eventArgs->input();
+                    std::string inputId = input->id();
+                    
+                    // IMMEDIATE EXTRACTION: Extract geometry as soon as profiles are selected
+                    if (inputId == "sketchProfiles") {
+                        auto selectionInput = input->cast<adsk::core::SelectionCommandInput>();
+                        if (selectionInput) {
+                            LOG_INFO("Selection changed: " << selectionInput->selectionCount() << " entities selected");
+                            
+                            // Clear any existing cached geometry
+                            parent_->clearCachedGeometry();
+                            
+                            // Extract geometry immediately from each selected profile
+                            for (int i = 0; i < static_cast<int>(selectionInput->selectionCount()); i++) {
+                                auto selection = selectionInput->selection(i);
+                                if (selection && selection->entity()) {
+                                    auto entity = selection->entity();
+                                    auto profile = entity->cast<adsk::fusion::Profile>();
+                                    
+                                    if (profile && profile->parentSketch()) {
+                                        LOG_INFO("  Extracting geometry from Selection " << i << ": Profile from sketch '" 
+                                                 << profile->parentSketch()->name() << "'");
+                                        
+                                        // Extract geometry IMMEDIATELY while profile is still valid
+                                        parent_->extractAndCacheProfileGeometry(profile, i);
+                                    } else {
+                                        LOG_INFO("  Selection " << i << ": Not a profile (" << entity->objectType() << ")");
+                                    }
+                                }
+                            }
+                            
+                            LOG_INFO("Immediate extraction completed for " << selectionInput->selectionCount() << " selections");
+                        }
+                    }
+                } catch (...) {
+                    LOG_ERROR("Error during immediate geometry extraction");
+                }
             }
 
          private:
-            GeneratePathsCommandHandler* parent_;  // TODO(developer): Use parent for input validation
+            GeneratePathsCommandHandler* parent_;
         };
 
         auto onInputChanged = new InputChangedHandler(this);

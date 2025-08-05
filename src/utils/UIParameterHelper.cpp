@@ -5,7 +5,7 @@
  */
 
 #include "UIParameterHelper.h"
-#include "DebugLogger.h"
+#include "../../include/utils/logging.h"
 #include "UnitConversion.h"
 
 namespace ChipCarving {
@@ -14,21 +14,18 @@ namespace Utils {
 UIParameterHelper::UIParameterHelper(adsk::core::Ptr<adsk::core::CommandInputs> inputs)
     : inputs_(inputs) {
 
-    auto logger = DebugLogger::getInstance();
     if (!inputs_) {
-        logger->logError("UIParameterHelper initialized with null inputs");
+        LOG_ERROR("UIParameterHelper initialized with null inputs");
     } else {
-        logger->logInfo("UIParameterHelper initialized with " + 
-                       std::to_string(inputs_->count()) + " inputs");
+        LOG_INFO("UIParameterHelper initialized with " << inputs_->count() << " inputs");
     }
 }
 
 void UIParameterHelper::logParameterAccess(const std::string& inputId, bool success) const {
-    auto logger = DebugLogger::getInstance();
     if (success) {
-        logger->logDebug("Successfully accessed parameter: " + inputId);
+        LOG_DEBUG("Successfully accessed parameter: " << inputId);
     } else {
-        logger->logWarning("Failed to access parameter: " + inputId);
+        LOG_WARNING("Failed to access parameter: " << inputId);
     }
 }
 

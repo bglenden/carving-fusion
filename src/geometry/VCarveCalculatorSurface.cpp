@@ -6,11 +6,10 @@
  */
 
 #include "../../include/geometry/VCarveCalculator.h"
-#include "../../include/utils/TempFileManager.h"
+#include "../../include/utils/logging.h"
 
 #include <algorithm>
 #include <cmath>
-#include <fstream>
 #include <set>
 
 namespace ChipCarving {
@@ -73,20 +72,17 @@ VCarveResults VCarveCalculator::generateVCarvePathsWithSurface(
                     // The surface projection will be handled by the sketch creation later
                     finalDepth = baseDepth;
 
-                    // Debug logging to file instead of printf (which doesn't work in Fusion)
+                    // Debug logging
                     static bool loggedOnce = false;
                     if (!loggedOnce) {
-                        // Use the main debug log
-                        std::string debugLogPath = chip_carving::TempFileManager::getLogFilePath("fusion_cpp_debug.log");
-                        std::ofstream debugLog(debugLogPath, std::ios::app);
-                        debugLog << "=== V-CARVE DEPTH CALCULATION DEBUG ===" << std::endl;
-                        debugLog << "  XY position (mm): (" << positionMm.x << ", " << positionMm.y << ")" << std::endl;
-                        debugLog << "  XY position (cm): (" << positionMm.x/10.0 << ", " << positionMm.y/10.0 << ")" << std::endl;
-                        debugLog << "  surfaceZ (cm): " << surfaceZ << std::endl;
-                        debugLog << "  baseDepth (cm): " << baseDepth << std::endl;
-                        debugLog << "  sketchPlaneZ (cm): " << sketchPlaneZ << std::endl;
-                        debugLog << "  finalDepth (cm): " << finalDepth << std::endl;
-                        debugLog << "  clearanceRadius (mm): " << sampledPoint.clearanceRadius << std::endl;
+                        LOG_DEBUG("=== V-CARVE DEPTH CALCULATION DEBUG ===");
+                        LOG_DEBUG("  XY position (mm): (" << positionMm.x << ", " << positionMm.y << ")");
+                        LOG_DEBUG("  XY position (cm): (" << positionMm.x/10.0 << ", " << positionMm.y/10.0 << ")");
+                        LOG_DEBUG("  surfaceZ (cm): " << surfaceZ);
+                        LOG_DEBUG("  baseDepth (cm): " << baseDepth);
+                        LOG_DEBUG("  sketchPlaneZ (cm): " << sketchPlaneZ);
+                        LOG_DEBUG("  finalDepth (cm): " << finalDepth);
+                        LOG_DEBUG("  clearanceRadius (mm): " << sampledPoint.clearanceRadius);
                         loggedOnce = true;
                     }
                 } else {

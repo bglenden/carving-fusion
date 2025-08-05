@@ -5,7 +5,6 @@
 #include <polygon_interior_filter.hpp>
 #include <vector>
 #include <voronoidiagram.hpp>
-#include "include/utils/TempFileManager.h"
 
 struct Point2D {
     double x, y;
@@ -120,7 +119,7 @@ int main() {
     std::vector<Point2D> transformed = transformToUnitCircle(polygon);
 
     // Write SVG for visualization
-    std::string svgPath = chip_carving::TempFileManager::getSVGFilePath("standalone_polygon_test.svg");
+    std::string svgPath = "standalone_polygon_test.svg";
     writeSVG(transformed, svgPath);
     std::cout << "Wrote polygon SVG to " << svgPath
               << std::endl;

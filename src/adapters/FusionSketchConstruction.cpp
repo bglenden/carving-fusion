@@ -12,7 +12,7 @@
 #include "../../include/geometry/Point3D.h"
 #include "FusionAPIAdapter.h"
 #include "../utils/UnitConversion.h"
-#include "../../include/utils/TempFileManager.h"
+#include "../../include/utils/logging.h"
 
 using namespace adsk::core;
 
@@ -33,10 +33,8 @@ bool FusionSketch::addConstructionLine(double x1, double y1, double x2, double y
 
         // Debug: Log if sketch is on non-XY plane
         if (sketch_->referencePlane()) {
-            std::string debugLogPath = chip_carving::TempFileManager::getLogFilePath("fusion_cpp_debug.log");
-            std::ofstream debugLog(debugLogPath, std::ios::app);
-            debugLog << "[DEBUG] Adding construction line to sketch on reference plane" << std::endl;
-            debugLog << "  Line coords (mm): (" << x1 << ", " << y1 << ") to (" << x2 << ", " << y2 << ")" << std::endl;
+            LOG_DEBUG("Adding construction line to sketch on reference plane");
+            LOG_DEBUG("  Line coords (mm): (" << x1 << ", " << y1 << ") to (" << x2 << ", " << y2 << ")");
         }
 
         // Create start and end points (convert from mm to Fusion's database units - cm)

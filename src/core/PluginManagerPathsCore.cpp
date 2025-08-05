@@ -9,14 +9,13 @@
 
 #include <algorithm>
 #include <chrono>
-#include <fstream>
 #include <set>
 #include <sstream>
 
 #include "../../include/geometry/Point2D.h"
 #include "../../include/geometry/Point3D.h"
 #include "../../include/geometry/VCarveCalculator.h"
-#include "../../include/utils/TempFileManager.h"
+#include "../../include/utils/logging.h"
 #include "../utils/UnitConversion.h"
 
 namespace ChipCarving {
@@ -24,14 +23,6 @@ namespace Core {
 
 bool PluginManager::executeMedialAxisGeneration(const Adapters::SketchSelection& selection,
                                                 const Adapters::MedialAxisParameters& params) {
-
-    // Clear debug logs for fresh debugging session
-    std::string debugLogPath = chip_carving::TempFileManager::getLogFilePath("medial_axis_debug.log");
-    std::string immediateLogPath = chip_carving::TempFileManager::getLogFilePath("medial_immediate.log");
-    std::ofstream clearLog1(debugLogPath, std::ios::out);
-    clearLog1.close();
-    std::ofstream clearLog2(immediateLogPath, std::ios::out);
-    clearLog2.close();
 
     if (!initialized_) {
         return false;
@@ -75,23 +66,17 @@ bool PluginManager::executeMedialAxisGeneration(const Adapters::SketchSelection&
             // Create sketch in the component containing the target surface, or use plane-based creation
             if (!params.targetSurfaceId.empty()) {
                 // Target surface specified - create sketch in the component containing the surface
-                std::string debugLogPath = chip_carving::TempFileManager::getLogFilePath("fusion_cpp_debug.log");
-                std::ofstream debugLog(debugLogPath, std::ios::app);
-                debugLog << "[INFO] Creating construction sketch in target surface component: '" << params.targetSurfaceId << "'" << std::endl;
+                LOG_INFO("Creating construction sketch in target surface component: '" << params.targetSurfaceId << "'");
 
                 constructionSketch = workspace_->createSketchInTargetComponent(sketchName, params.targetSurfaceId);
             } else if (!sourcePlaneId.empty()) {
                 // Debug logging
-                std::string debugLogPath = chip_carving::TempFileManager::getLogFilePath("fusion_cpp_debug.log");
-                std::ofstream debugLog(debugLogPath, std::ios::app);
-                debugLog << "[INFO] Using source plane entity ID for construction sketch: '" << sourcePlaneId << "' (length: " << sourcePlaneId.length() << ")" << std::endl;
+                LOG_INFO("Using source plane entity ID for construction sketch: '" << sourcePlaneId << "' (length: " << sourcePlaneId.length() << ")");
 
                 constructionSketch = workspace_->createSketchOnPlane(sketchName, sourcePlaneId);
             } else if (!lastImportedPlaneEntityId_.empty()) {
                 // Additional debug logging
-                std::string debugLogPath = chip_carving::TempFileManager::getLogFilePath("fusion_cpp_debug.log");
-                std::ofstream debugLog(debugLogPath, std::ios::app);
-                debugLog << "[INFO] Using stored plane entity ID for construction sketch: '" << lastImportedPlaneEntityId_ << "' (length: " << lastImportedPlaneEntityId_.length() << ")" << std::endl;
+                LOG_INFO("Using stored plane entity ID for construction sketch: '" << lastImportedPlaneEntityId_ << "' (length: " << lastImportedPlaneEntityId_.length() << ")");
 
                 constructionSketch = workspace_->createSketchOnPlane(sketchName, lastImportedPlaneEntityId_);
             } else {
@@ -231,9 +216,7 @@ bool PluginManager::executeMedialAxisGeneration(const Adapters::SketchSelection&
             // Create V-carve sketch in the component containing the target surface, or use plane-based creation
             if (!params.targetSurfaceId.empty()) {
                 // Target surface specified - create sketch in the component containing the surface
-                std::string debugLogPath = chip_carving::TempFileManager::getLogFilePath("fusion_cpp_debug.log");
-                std::ofstream debugLog(debugLogPath, std::ios::app);
-                debugLog << "[INFO] Creating V-carve sketch in target surface component: '" << params.targetSurfaceId << "'" << std::endl;
+                LOG_INFO("Creating V-carve sketch in target surface component: '" << params.targetSurfaceId << "'");
 
                 vcarveSketch = workspace_->createSketchInTargetComponent(vcarveSketchName, params.targetSurfaceId);
             } else if (!sourcePlaneId.empty()) {

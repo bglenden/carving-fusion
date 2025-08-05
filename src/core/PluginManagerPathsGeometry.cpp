@@ -9,14 +9,12 @@
 
 #include <algorithm>
 #include <chrono>
-#include <fstream>
 #include <set>
 #include <sstream>
 
 #include "../../include/geometry/Point2D.h"
 #include "../../include/geometry/Point3D.h"
 #include "../../include/geometry/VCarveCalculator.h"
-#include "../../include/utils/TempFileManager.h"
 #include "../utils/UnitConversion.h"
 
 namespace ChipCarving {

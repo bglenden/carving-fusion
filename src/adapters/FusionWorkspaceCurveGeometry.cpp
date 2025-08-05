@@ -8,12 +8,10 @@
 #include <algorithm>
 #include <chrono>
 #include <cmath>
-#include <fstream>
 #include <iostream>
 #include <sstream>
 
 #include "FusionAPIAdapter.h"
-#include "../../include/utils/TempFileManager.h"
 
 using namespace adsk::core;
 

@@ -112,7 +112,7 @@ target_sources(chip_carving_tests PRIVATE
     ../src/parsers/DesignParser.cpp
     ../src/geometry/VCarvePath.cpp
     ../src/geometry/VCarveCalculator.cpp
-    ../src/utils/TempFileManager.cpp
+    mocks/MockLogging.cpp
 )
 
 # Discover tests
@@ -144,7 +144,6 @@ target_sources(standalone_medial_axis_test PRIVATE
     ../src/geometry/TriArc.cpp
     ../src/geometry/SVGGenerator.cpp
     ../src/geometry/MedialAxisUtilities.cpp
-    ../src/utils/TempFileManager.cpp
 )
 
 # Add custom target to run standalone test

@@ -5,7 +5,7 @@
  */
 
 #include "FusionComponentTraverser.h"
-#include "DebugLogger.h"
+#include "../../include/utils/logging.h"
 
 namespace ChipCarving {
 namespace Utils {
@@ -13,11 +13,10 @@ namespace Utils {
 FusionComponentTraverser::FusionComponentTraverser(adsk::core::Ptr<adsk::fusion::Component> rootComponent)
     : rootComponent_(rootComponent) {
 
-    auto logger = DebugLogger::getInstance();
     if (!rootComponent_) {
-        logger->logError("FusionComponentTraverser initialized with null root component");
+        LOG_ERROR("FusionComponentTraverser initialized with null root component");
     } else {
-        logger->logDebug("FusionComponentTraverser initialized successfully");
+        LOG_DEBUG("FusionComponentTraverser initialized successfully");
     }
 }
 
@@ -25,8 +24,7 @@ std::vector<adsk::core::Ptr<adsk::fusion::Component>> FusionComponentTraverser::
     std::vector<adsk::core::Ptr<adsk::fusion::Component>> components;
     collectComponents(components);
 
-    auto logger = DebugLogger::getInstance();
-    logger->logDebug("Found " + std::to_string(components.size()) + " total components");
+    LOG_DEBUG("Found " << components.size() << " total components");
 
     return components;
 }
@@ -80,10 +78,8 @@ adsk::core::Ptr<adsk::fusion::Component> FusionComponentTraverser::findComponent
 }
 
 void FusionComponentTraverser::collectComponents(std::vector<adsk::core::Ptr<adsk::fusion::Component>>& components) {
-    auto logger = DebugLogger::getInstance();
-
     if (!rootComponent_) {
-        logger->logError("Cannot collect components - root component is null");
+        LOG_ERROR("Cannot collect components - root component is null");
         return;
     }
 
@@ -93,18 +89,18 @@ void FusionComponentTraverser::collectComponents(std::vector<adsk::core::Ptr<ads
     // Add all occurrences (sub-components)
     auto occurrences = rootComponent_->allOccurrences();
     if (occurrences) {
-        logger->logDebug("Found " + std::to_string(occurrences->count()) + " component occurrences");
+        LOG_DEBUG("Found " << occurrences->count() << " component occurrences");
 
         for (size_t i = 0; i < occurrences->count(); ++i) {
             auto occurrence = occurrences->item(i);
             if (occurrence && occurrence->component()) {
                 components.push_back(occurrence->component());
             } else {
-                logger->logWarning("Skipping invalid occurrence at index " + std::to_string(i));
+                LOG_WARNING("Skipping invalid occurrence at index " << i);
             }
         }
     } else {
-        logger->logDebug("No component occurrences found");
+        LOG_DEBUG("No component occurrences found");
     }
 }
 

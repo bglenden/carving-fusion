@@ -8,12 +8,11 @@
 #include <algorithm>
 #include <chrono>
 #include <cmath>
-#include <fstream>
 #include <iostream>
 #include <sstream>
 
 #include "FusionAPIAdapter.h"
-#include "../../include/utils/TempFileManager.h"
+#include "../../include/utils/logging.h"
 
 using namespace adsk::core;
 
@@ -53,9 +52,7 @@ std::unique_ptr<ISketch> FusionWorkspace::createSketchOnPlane(const std::string&
             planeEntity = rootComp->xYConstructionPlane();
         } else {
             // Log the search for entity token
-            std::string debugLogPath = chip_carving::TempFileManager::getLogFilePath("fusion_cpp_debug.log");
-            std::ofstream debugLog(debugLogPath, std::ios::app);
-            debugLog << "[INFO] Searching for plane entity with token: " << planeEntityId << std::endl;
+            LOG_INFO("Searching for plane entity with token: " << planeEntityId);
 
             // Try to find construction plane first
             Ptr<adsk::fusion::ConstructionPlanes> constructionPlanes = rootComp->constructionPlanes();
@@ -94,15 +91,11 @@ std::unique_ptr<ISketch> FusionWorkspace::createSketchOnPlane(const std::string&
 
         if (!planeEntity) {
             // Fall back to XY plane if entity not found
-            std::string debugLogPath = chip_carving::TempFileManager::getLogFilePath("fusion_cpp_debug.log");
-            std::ofstream debugLog(debugLogPath, std::ios::app);
-            debugLog << "[ERROR] Failed to resolve plane entity token: " << planeEntityId << ". Falling back to XY plane." << std::endl;
+            LOG_ERROR("Failed to resolve plane entity token: " << planeEntityId << ". Falling back to XY plane.");
             planeEntity = rootComp->xYConstructionPlane();
         } else {
             // Log successful entity token resolution
-            std::string debugLogPath = chip_carving::TempFileManager::getLogFilePath("fusion_cpp_debug.log");
-            std::ofstream debugLog(debugLogPath, std::ios::app);
-            debugLog << "[INFO] Successfully resolved plane entity token: " << planeEntityId << std::endl;
+            LOG_INFO("Successfully resolved plane entity token: " << planeEntityId);
         }
 
         // Validate that the plane is parallel to XY
@@ -160,9 +153,7 @@ std::unique_ptr<ISketch> FusionWorkspace::createSketchOnPlane(const std::string&
 
         if (!isValidPlane && !planeEntityId.empty()) {
             // Log error and fall back to XY plane
-            std::string debugLogPath = chip_carving::TempFileManager::getLogFilePath("fusion_cpp_debug.log");
-            std::ofstream debugLog(debugLogPath, std::ios::app);
-            debugLog << "[ERROR] Selected plane/surface is not parallel to XY plane. Using XY plane instead." << std::endl;
+            LOG_ERROR("Selected plane/surface is not parallel to XY plane. Using XY plane instead.");
             planeEntity = rootComp->xYConstructionPlane();
         }
 

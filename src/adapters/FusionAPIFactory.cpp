@@ -4,10 +4,8 @@
  * Factory class for creating Fusion 360 API adapter instances
  */
 
-#include <fstream>
-
 #include "FusionAPIAdapter.h"
-#include "../../include/utils/TempFileManager.h"
+#include "../../include/utils/logging.h"
 
 using namespace adsk::core;
 
@@ -29,17 +27,9 @@ std::unique_ptr<IUserInterface> FusionAPIFactory::createUserInterface() {
 
 std::unique_ptr<IWorkspace> FusionAPIFactory::createWorkspace() {
     // Debug: Log workspace creation
-    std::string debugLogPath = chip_carving::TempFileManager::getLogFilePath("fusion_cpp_debug.log");
-    std::ofstream debugLog(debugLogPath, std::ios::app);
-    if (debugLog.is_open()) {
-        debugLog << "[FACTORY] Creating FusionWorkspace instance" << std::endl;
-        debugLog.flush();
-    }
+    LOG_DEBUG("[FACTORY] Creating FusionWorkspace instance");
     auto workspace = std::make_unique<FusionWorkspace>(app_);
-    if (debugLog.is_open()) {
-        debugLog << "[FACTORY] FusionWorkspace created successfully" << std::endl;
-        debugLog.flush();
-    }
+    LOG_DEBUG("[FACTORY] FusionWorkspace created successfully");
     return workspace;
 }
 

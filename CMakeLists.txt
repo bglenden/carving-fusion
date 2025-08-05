@@ -110,8 +110,6 @@ add_library(chip_carving_paths_cpp SHARED
     src/geometry/VCarvePath.cpp
     src/geometry/VCarveCalculator.cpp
     src/utils/logging.cpp
-    src/utils/TempFileManager.cpp
-    src/utils/DebugLogger.cpp
     src/utils/FusionComponentTraverser.cpp
     src/utils/UIParameterHelper.cpp
     src/utils/ErrorHandler.cpp

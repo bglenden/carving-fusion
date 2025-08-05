@@ -9,13 +9,12 @@
 
 #include <algorithm>
 #include <chrono>
-#include <fstream>
 #include <set>
 #include <sstream>
 
 #include "../../include/geometry/Point2D.h"
 #include "../../include/parsers/DesignParser.h"
-#include "../../include/utils/TempFileManager.h"
+#include "../../include/utils/logging.h"
 
 namespace ChipCarving {
 namespace Core {
@@ -139,9 +138,7 @@ bool PluginManager::executeImportDesign(const std::string& filePath, const std::
         lastImportedPlaneEntityId_ = planeEntityId;
 
         // Debug logging
-        std::string debugLogPath = chip_carving::TempFileManager::getLogFilePath("fusion_cpp_debug.log");
-        std::ofstream debugLog(debugLogPath, std::ios::app);
-        debugLog << "[INFO] Stored plane entity ID during import: '" << planeEntityId << "' (length: " << planeEntityId.length() << ")" << std::endl;
+        LOG_INFO("Stored plane entity ID during import: '" << planeEntityId << "' (length: " << planeEntityId.length() << ")");
 
         // Create sketch on specified plane or XY plane
         std::unique_ptr<Adapters::ISketch> sketch;

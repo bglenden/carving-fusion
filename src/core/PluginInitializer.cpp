@@ -4,7 +4,6 @@
 #include "../commands/PluginCommands.h"
 #include "../core/PluginManager.h"
 #include "../version.h"
-#include "../../include/utils/TempFileManager.h"
 #include <cstdio>
 // TODO(dev): Fix HelloWorldCommand API issues
 // #include "../../include/commands/HelloWorldCommand.h"

@@ -9,7 +9,6 @@
 
 #include <algorithm>
 #include <cmath>
-#include <fstream>
 #include <iomanip>
 #include <iostream>
 #include <limits>
@@ -17,7 +16,7 @@
 #include <streambuf>
 
 #include "../../include/geometry/Shape.h"
-#include "../../include/utils/TempFileManager.h"
+#include "../../include/utils/logging.h"
 
 namespace ChipCarving {
 namespace Geometry {
@@ -89,14 +88,8 @@ MedialAxisResults MedialAxisProcessor::computeMedialAxis(const Shape& shape) {
 }
 
 MedialAxisResults MedialAxisProcessor::computeMedialAxis(const std::vector<Point2D>& polygon) {
-    // Write immediate debug output to verify function is called
-    std::string immediateLogPath = chip_carving::TempFileManager::getLogFilePath("medial_immediate.log");
-    std::ofstream immediateLog(immediateLogPath, std::ios::app);
-    if (immediateLog.is_open()) {
-        immediateLog << "computeMedialAxis called with " << polygon.size() << " vertices"
-                     << std::endl;
-        immediateLog.close();
-    }
+    // Debug output to verify function is called
+    LOG_DEBUG("computeMedialAxis called with " << polygon.size() << " vertices");
 
     log("[MedialAxisProcessor] computeMedialAxis called with " + std::to_string(polygon.size()) +
         " vertices");
@@ -230,10 +223,11 @@ Point2D MedialAxisProcessor::transformFromUnitCircle(const Point2D& unitPoint,
 }
 
 bool MedialAxisProcessor::validatePolygonForOpenVoronoi(const std::vector<Point2D>& polygon) {
-    log("Validating polygon for OpenVoronoi (checking for self-intersections)");
+    log("=== POLYGON VALIDATION START ===");
+    log("Validating polygon with " + std::to_string(polygon.size()) + " vertices for OpenVoronoi");
 
     if (polygon.size() < 3) {
-        log("Error: Polygon must have at least 3 vertices");
+        log("ERROR: Polygon must have at least 3 vertices, got " + std::to_string(polygon.size()));
         return false;
     }
 
@@ -254,6 +248,7 @@ bool MedialAxisProcessor::validatePolygonForOpenVoronoi(const std::vector<Point2
 
     // Check for self-intersections
     // We need to test each edge against every non-adjacent edge
+    log("Checking for self-intersections...");
     size_t numEdges = polygon.size();
     int intersectionCount = 0;
     const int MAX_INTERSECTIONS_TO_LOG = 5;
@@ -291,36 +286,67 @@ bool MedialAxisProcessor::validatePolygonForOpenVoronoi(const std::vector<Point2
     }
 
     if (intersectionCount > 0) {
-        log("Error: Polygon has " + std::to_string(intersectionCount) +
+        log("ERROR: Polygon has " + std::to_string(intersectionCount) +
             " self-intersections - OpenVoronoi requires simple polygons");
         return false;
     }
+    
+    log("Self-intersection check passed - no self-intersections detected");
 
     // Check for degenerate edges (zero length)
+    log("Checking for degenerate edges...");
+    int degenerateCount = 0;
     for (size_t i = 0; i < numEdges; ++i) {
         Point2D p1 = polygon[i];
         Point2D p2 = polygon[(i + 1) % numEdges];
         double edgeLength = std::sqrt(std::pow(p2.x - p1.x, 2) + std::pow(p2.y - p1.y, 2));
 
         if (edgeLength < 1e-10) {
-            log("Error: Degenerate edge detected between vertices " + std::to_string(i) + " and " +
-                std::to_string((i + 1) % numEdges) + " (length: " + std::to_string(edgeLength) + ")");
-            return false;
+            log("ERROR: Degenerate edge " + std::to_string(i) + " between (" + 
+                std::to_string(p1.x) + ", " + std::to_string(p1.y) + ") and (" +
+                std::to_string(p2.x) + ", " + std::to_string(p2.y) + ") length: " + 
+                std::to_string(edgeLength));
+            degenerateCount++;
+            if (degenerateCount >= 3) {
+                log("... (additional degenerate edges not logged)");
+                return false;
+            }
         }
     }
+    
+    if (degenerateCount > 0) {
+        log("ERROR: " + std::to_string(degenerateCount) + " degenerate edges detected");
+        return false;
+    }
+    
+    log("Degenerate edge check passed - all edges have sufficient length");
 
     // Check if all points are within unit circle
+    log("Checking if all points are within unit circle...");
+    int outsideCount = 0;
     for (size_t i = 0; i < polygon.size(); ++i) {
         double distance =
             std::sqrt(polygon[i].x * polygon[i].x + polygon[i].y * polygon[i].y);
         if (distance > 1.0) {
-            log("Error: Point " + std::to_string(i) + " is outside unit circle (distance: " +
+            log("ERROR: Point " + std::to_string(i) + " at (" + std::to_string(polygon[i].x) + 
+                ", " + std::to_string(polygon[i].y) + ") is outside unit circle (distance: " +
                 std::to_string(distance) + ")");
-            return false;
+            outsideCount++;
+            if (outsideCount >= 3) {
+                log("... (additional points outside unit circle not logged)");
+                return false;
+            }
         }
     }
+    
+    if (outsideCount > 0) {
+        log("ERROR: " + std::to_string(outsideCount) + " points are outside unit circle");
+        return false;
+    }
+    
+    log("Unit circle check passed - all points within circle");
 
-    log("Polygon validation passed - no self-intersections detected");
+    log("=== POLYGON VALIDATION PASSED ===");
     return true;
 }
 
