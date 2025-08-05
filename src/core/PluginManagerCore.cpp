@@ -18,7 +18,7 @@
 #include "../../include/parsers/DesignParser.h"
 #include "../../include/utils/TempFileManager.h"
 #include "../utils/UnitConversion.h"
-#include "../version.h"
+#include "version.h"
 
 namespace ChipCarving {
 namespace Core {

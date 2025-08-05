@@ -10,18 +10,28 @@ The Fusion 360 CNC Chip Carving Plugin is a mature C++ add-in (v0.9.87) that con
 
 ### Build and Install
 ```bash
-# Standard build and install to Fusion 360
+# Standard build workflow (from project root)
 mkdir build && cd build
-cmake .. && make && make install
+cmake ..
+make                    # Build everything
+make test              # Run tests via CTest
+make install-fusion    # Install to Fusion 360
 
 # Debug build with full symbols
-cmake -DCMAKE_BUILD_TYPE=Debug .. && make && make install
+cmake -DCMAKE_BUILD_TYPE=Debug .. && make
 
 # Release build with optimizations
-cmake -DCMAKE_BUILD_TYPE=Release .. && make && make install
+cmake -DCMAKE_BUILD_TYPE=Release .. && make
 
 # Clean rebuild
-rm -rf build && mkdir build && cd build && cmake .. && make
+make clean             # Clean build artifacts
+# or for complete clean:
+rm -rf build && mkdir build && cd build && cmake ..
+
+# Common workflows
+make test_and_build    # Run tests, only build if they pass
+make run_tests         # Build and run tests with verbose output
+make chip_carving_tests && ./tests/chip_carving_tests  # Direct test execution
 ```
 
 ### Testing Commands
