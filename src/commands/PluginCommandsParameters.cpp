@@ -7,6 +7,7 @@
 
 #include "PluginCommands.h"
 #include "../utils/UnitConversion.h"
+#include "../../include/utils/logging.h"
 
 using namespace ChipCarving::Utils;
 
@@ -35,18 +36,26 @@ void GeneratePathsCommandHandler::createParameterInputs(
         adsk::core::Ptr<adsk::core::SelectionCommandInput> sketchSelection =
             selectionInputs->addSelectionInput("sketchProfiles", "Closed Sketch Profiles",
                                            "Select closed sketch profiles");
-        // CRITICAL FIX: Use "Profiles" filter - this automatically ensures only closed profiles
+        // HYBRID APPROACH: Use "Profiles" filter for root component profiles
+        // For sub-components, users will need to select all curves forming the profile
         sketchSelection->addSelectionFilter("Profiles");
+        // Also allow sketch curves so users can select curves from sub-components
+        sketchSelection->addSelectionFilter("SketchCurves");
+        sketchSelection->addSelectionFilter("SketchLines");
+        sketchSelection->addSelectionFilter("SketchArcs");
+        sketchSelection->addSelectionFilter("SketchCircles");
+        sketchSelection->addSelectionFilter("SketchEllipses");
+        sketchSelection->addSelectionFilter("SketchSplines");
         sketchSelection->setSelectionLimits(1, 0);  // At least 1, no upper limit
 
         // Set detailed tooltip with enhanced selection instructions
         sketchSelection->tooltip(
-            "Select closed sketch profiles ONLY (\"Profiles\" filter active).\n\n"
-            "• ONLY closed sketch profiles (blue shaded regions) are selectable\n"
-            "• Individual curves, lines, or arcs CANNOT be selected with this filter\n"
-            "• Click INSIDE the blue shaded areas to select complete profiles\n"
-            "• The \"Profiles\" filter automatically prevents invalid selections\n"
-            "• Use Ctrl+Click to select multiple closed profiles");
+            "Select closed sketch profiles.\n\n"
+            "• For ROOT COMPONENT: Click INSIDE blue shaded profile regions\n"
+            "• For SUB-COMPONENTS: Select ALL curves forming the closed profile\n"
+            "  (API limitation: direct profile selection only works in root component)\n"
+            "• Selected curves must form a complete closed loop\n"
+            "• Use Ctrl+Click to select multiple profiles or curves");
 
         // 2. V-CARVE TOOLPATHS (always expanded, no arrow)
         adsk::core::Ptr<adsk::core::GroupCommandInput> vcarveGroup =
@@ -274,22 +283,65 @@ ChipCarving::Adapters::SketchSelection GeneratePathsCommandHandler::getSelection
     ChipCarving::Adapters::SketchSelection selection;
 
     try {
+        // IMMEDIATE EXTRACTION APPROACH: Use cached geometry instead of processing selections
+        LOG_INFO("Using cached geometry from immediate extraction. Available cached profiles: " << cachedProfiles_.size());
+        
+        if (!cachedProfiles_.empty()) {
+            // Use the cached geometry that was extracted immediately when selections were made
+            selection.isValid = true;
+            selection.closedPathCount = cachedProfiles_.size();
+            selection.selectedProfiles = cachedProfiles_;
+            
+            // Generate dummy entity IDs for backward compatibility (these won't be used)
+            for (size_t i = 0; i < cachedProfiles_.size(); ++i) {
+                selection.selectedEntityIds.push_back("cached_profile_" + std::to_string(i));
+            }
+            
+            LOG_INFO("Successfully using " << cachedProfiles_.size() << " cached profiles");
+            return selection;
+        }
+        
+        // FALLBACK: If no cached geometry, try the original approach
+        LOG_INFO("No cached geometry available, falling back to original selection processing");
+        
         adsk::core::Ptr<adsk::core::SelectionCommandInput> profileSelection =
             inputs->itemById("sketchProfiles");
         if (profileSelection) {
             selection.closedPathCount = 0;  // Reset and count valid profiles only
 
-            // Debug and validate each selected entity
+            // First, separate selections into profiles and curves
+            std::vector<adsk::core::Ptr<adsk::fusion::Profile>> directProfiles;
+            std::map<std::string, std::vector<adsk::core::Ptr<adsk::fusion::SketchCurve>>> curvesBySketch;
+            
+            // Categorize each selected entity
+            LOG_INFO("Processing " << profileSelection->selectionCount() << " selected entities");
             for (int i = 0; i < static_cast<int>(profileSelection->selectionCount()); i++) {
                 adsk::core::Ptr<adsk::core::Base> entity = profileSelection->selection(i)->entity();
                 if (entity) {
-                    // Get entity type for debugging
                     std::string entityType = entity->objectType();
-
-                    // With "Profiles" filter, we should only get valid Profile objects
-                    // But add validation using area properties (only closed profiles have area)
+                    // Try to cast as Profile first (for root component selections)
                     auto profile = entity->cast<adsk::fusion::Profile>();
                     if (profile) {
+                        LOG_INFO("Selection " << i << ": Profile from sketch '" 
+                                 << (profile->parentSketch() ? profile->parentSketch()->name() : "unknown") << "'");
+                        directProfiles.push_back(profile);
+                    } else {
+                        // Try to cast as SketchCurve (for sub-component selections)
+                        auto sketchCurve = entity->cast<adsk::fusion::SketchCurve>();
+                        if (sketchCurve && sketchCurve->parentSketch()) {
+                            std::string sketchName = sketchCurve->parentSketch()->name();
+                            std::string sketchId = sketchCurve->parentSketch()->entityToken();
+                            LOG_INFO("Selection " << i << ": " << entityType << " from sketch '" << sketchName << "'");
+                            curvesBySketch[sketchId].push_back(sketchCurve);
+                        } else {
+                            LOG_INFO("Selection " << i << ": Unhandled entity type '" << entityType << "'");
+                        }
+                    }
+                }
+            }
+            
+            // Process direct profile selections (root component)
+            for (const auto& profile : directProfiles) {
                         try {
                             // Use areaProperties() as validation - only works for closed profiles
                             adsk::core::Ptr<adsk::fusion::AreaProperties> areaProps =
@@ -297,9 +349,46 @@ ChipCarving::Adapters::SketchSelection GeneratePathsCommandHandler::getSelection
                             if (areaProps && areaProps->area() > 0) {
                                 // Valid closed profile with measurable area
                                 selection.closedPathCount++;
-                                // Store the actual profile's entity token for proper identification
+                                
+                                // Store the entity token for backward compatibility
                                 std::string profileToken = profile->entityToken();
                                 selection.selectedEntityIds.push_back(profileToken);
+                                
+                                // NEW: Store profile metadata immediately INCLUDING the actual profile object
+                                // This allows us to extract geometry directly without relying on tokens
+                                ChipCarving::Adapters::ProfileGeometry profileGeom;
+                                
+                                // Store basic profile data
+                                profileGeom.area = areaProps->area();
+                                auto centroid = areaProps->centroid();
+                                if (centroid) {
+                                    profileGeom.centroid = {centroid->x(), centroid->y()};
+                                }
+                                
+                                // Get sketch name if available
+                                if (profile->parentSketch()) {
+                                    profileGeom.sketchName = profile->parentSketch()->name();
+                                    
+                                    // Get plane entity ID
+                                    auto referenceEntity = profile->parentSketch()->referencePlane();
+                                    if (referenceEntity) {
+                                        auto constructionPlane = referenceEntity->cast<adsk::fusion::ConstructionPlane>();
+                                        if (constructionPlane) {
+                                            profileGeom.planeEntityId = constructionPlane->entityToken();
+                                        } else {
+                                            auto face = referenceEntity->cast<adsk::fusion::BRepFace>();
+                                            if (face) {
+                                                profileGeom.planeEntityId = face->entityToken();
+                                            }
+                                        }
+                                    }
+                                }
+                                
+                                // NOTE: Vertices will be extracted later via existing extractProfileVertices
+                                // This two-phase approach maintains compatibility while fixing the stale token issue
+                                
+                                // Add to selected profiles
+                                selection.selectedProfiles.push_back(profileGeom);
                             } else {
                                 selection.errorMessage =
                                     "Selected profile has no area (not closed)";
@@ -314,18 +403,128 @@ ChipCarving::Adapters::SketchSelection GeneratePathsCommandHandler::getSelection
                             selection.isValid = false;
                             return selection;
                         }
-                    } else {
-                        // With "Profiles" filter, this shouldn't happen, but handle it
-                        selection.errorMessage =
-                            "FILTER ERROR: Selected entity type " + entityType +
-                            " is not a Profile. The \"Profiles\" filter should prevent this.";
-                        selection.isValid = false;
-                        return selection;
+            }
+            
+            // Process curve selections (sub-components)
+            // Check if curves from each sketch form a closed loop
+            LOG_INFO("Processing curves from " << curvesBySketch.size() << " sketches");
+            for (const auto& [sketchId, curves] : curvesBySketch) {
+                if (curves.empty()) continue;
+                
+                // Get the parent sketch from the first curve
+                auto sketch = curves[0]->parentSketch();
+                if (!sketch) continue;
+                
+                LOG_INFO("Checking " << curves.size() << " curves from sketch '" << sketch->name() 
+                         << "' for complete profiles");
+                
+                // Check if these curves form a closed loop
+                // For now, we'll check if we have all the curves from any profile in this sketch
+                bool foundCompleteProfile = false;
+                
+                // Get all profiles in this sketch
+                auto sketchProfiles = sketch->profiles();
+                if (sketchProfiles) {
+                    LOG_INFO("Sketch has " << sketchProfiles->count() << " profiles");
+                    for (int p = 0; p < sketchProfiles->count(); ++p) {
+                        auto candidateProfile = sketchProfiles->item(p);
+                        if (!candidateProfile) continue;
+                        
+                        // Count how many curves from this profile are selected
+                        int matchingCurves = 0;
+                        int totalCurvesInProfile = 0;
+                        
+                        // Check each loop in the profile
+                        auto profileLoops = candidateProfile->profileLoops();
+                        if (profileLoops) {
+                            for (int l = 0; l < profileLoops->count(); ++l) {
+                                auto loop = profileLoops->item(l);
+                                if (!loop) continue;
+                                
+                                auto loopCurves = loop->profileCurves();
+                                if (loopCurves) {
+                                    totalCurvesInProfile += loopCurves->count();
+                                    
+                                    // Check if selected curves match this loop's curves
+                                    for (int c = 0; c < loopCurves->count(); ++c) {
+                                        auto profileCurve = loopCurves->item(c);
+                                        if (profileCurve && profileCurve->sketchEntity()) {
+                                            auto curveEntity = profileCurve->sketchEntity();
+                                            
+                                            // Check if this curve is in our selected curves
+                                            for (const auto& selectedCurve : curves) {
+                                                if (curveEntity->entityToken() == selectedCurve->entityToken()) {
+                                                    matchingCurves++;
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        
+                        LOG_INFO("Profile " << p << ": " << matchingCurves << "/" << totalCurvesInProfile 
+                                 << " curves match selection");
+                        
+                        // If all curves from this profile are selected, we have a complete profile
+                        if (matchingCurves == totalCurvesInProfile && totalCurvesInProfile > 0) {
+                            LOG_INFO("Found complete profile match!");
+                            // We found a complete profile! Process it like a direct profile selection
+                            try {
+                                adsk::core::Ptr<adsk::fusion::AreaProperties> areaProps =
+                                    candidateProfile->areaProperties();
+                                if (areaProps && areaProps->area() > 0) {
+                                    selection.closedPathCount++;
+                                    
+                                    std::string profileToken = candidateProfile->entityToken();
+                                    selection.selectedEntityIds.push_back(profileToken);
+                                    
+                                    ChipCarving::Adapters::ProfileGeometry profileGeom;
+                                    profileGeom.area = areaProps->area();
+                                    auto centroid = areaProps->centroid();
+                                    if (centroid) {
+                                        profileGeom.centroid = {centroid->x(), centroid->y()};
+                                    }
+                                    
+                                    profileGeom.sketchName = sketch->name();
+                                    
+                                    auto referenceEntity = sketch->referencePlane();
+                                    if (referenceEntity) {
+                                        auto constructionPlane = referenceEntity->cast<adsk::fusion::ConstructionPlane>();
+                                        if (constructionPlane) {
+                                            profileGeom.planeEntityId = constructionPlane->entityToken();
+                                        } else {
+                                            auto face = referenceEntity->cast<adsk::fusion::BRepFace>();
+                                            if (face) {
+                                                profileGeom.planeEntityId = face->entityToken();
+                                            }
+                                        }
+                                    }
+                                    
+                                    selection.selectedProfiles.push_back(profileGeom);
+                                    foundCompleteProfile = true;
+                                    break;
+                                }
+                            } catch (...) {
+                                // Profile validation failed
+                            }
+                        }
                     }
+                }
+                
+                if (!foundCompleteProfile) {
+                    // The selected curves don't form a complete profile
+                    selection.errorMessage = 
+                        "Selected curves do not form a complete closed profile. "
+                        "For sub-components, you must select ALL curves that form the profile.";
+                    selection.isValid = false;
+                    return selection;
                 }
             }
 
             // Final validation
+            LOG_INFO("Total valid profiles found: " << selection.closedPathCount);
             selection.isValid = (selection.closedPathCount > 0);
             if (!selection.isValid) {
                 if (profileSelection->selectionCount() > 0) {

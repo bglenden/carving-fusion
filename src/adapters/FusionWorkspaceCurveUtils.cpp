@@ -20,7 +20,7 @@ namespace ChipCarving {
 namespace Adapters {
 
 std::string FusionWorkspace::extractPlaneEntityIdFromProfile(const std::string& profileEntityId) {
-    LOG_INFO("extractPlaneEntityIdFromProfile called with profileEntityId: {}", profileEntityId);
+    LOG_DEBUG("extractPlaneEntityIdFromProfile called with profileEntityId: " << profileEntityId);
 
     try {
         if (!app_) {
@@ -43,7 +43,7 @@ std::string FusionWorkspace::extractPlaneEntityIdFromProfile(const std::string& 
         }
 
         // Find the profile using the entity ID
-        LOG_DEBUG("Searching for profile with token: {}", profileEntityId);
+        LOG_DEBUG("Searching for profile with token: " << profileEntityId);
 
         // Search through all sketches to find the profile
         Ptr<adsk::fusion::Sketches> sketches = rootComp->sketches();
@@ -56,7 +56,7 @@ std::string FusionWorkspace::extractPlaneEntityIdFromProfile(const std::string& 
             Ptr<adsk::fusion::Sketch> sketch = sketches->item(sketchIndex);
             if (!sketch) continue;
 
-            LOG_DEBUG("Checking sketch {}: {}", sketchIndex, sketch->name());
+            LOG_DEBUG("Checking sketch " << sketchIndex << ": " << sketch->name());
 
             // Check profiles in this sketch
             Ptr<adsk::fusion::Profiles> profiles = sketch->profiles();
@@ -67,11 +67,11 @@ std::string FusionWorkspace::extractPlaneEntityIdFromProfile(const std::string& 
                 if (!profile) continue;
 
                 std::string currentProfileId = profile->entityToken();
-                LOG_DEBUG("Profile {} token: {}", profileIndex, currentProfileId);
+                LOG_DEBUG("Profile " << profileIndex << " token: " << currentProfileId);
 
                 if (currentProfileId == profileEntityId) {
                     // Found the profile! Get its sketch's plane
-                    LOG_INFO("Found matching profile in sketch: {}", sketch->name());
+                    LOG_DEBUG("Found matching profile in sketch: " << sketch->name());
 
                     // Get the sketch's reference plane
                     Ptr<adsk::core::Base> referenceEntity = sketch->referencePlane();
@@ -80,7 +80,7 @@ std::string FusionWorkspace::extractPlaneEntityIdFromProfile(const std::string& 
                         Ptr<adsk::fusion::ConstructionPlane> constructionPlane = referenceEntity;
                         if (constructionPlane) {
                             std::string planeToken = constructionPlane->entityToken();
-                            LOG_INFO("Extracted construction plane token: {}", planeToken);
+                            LOG_DEBUG("Extracted construction plane token: " << planeToken);
                             return planeToken;
                         }
 
@@ -88,7 +88,7 @@ std::string FusionWorkspace::extractPlaneEntityIdFromProfile(const std::string& 
                         Ptr<adsk::fusion::BRepFace> face = referenceEntity;
                         if (face) {
                             std::string faceToken = face->entityToken();
-                            LOG_INFO("Extracted face plane token: {}", faceToken);
+                            LOG_DEBUG("Extracted face plane token: " << faceToken);
                             return faceToken;
                         }
 
@@ -104,11 +104,11 @@ std::string FusionWorkspace::extractPlaneEntityIdFromProfile(const std::string& 
             }
         }
 
-        LOG_ERROR("Profile with token '{}' not found in any sketch", profileEntityId);
+        LOG_DEBUG("Profile with token '" << profileEntityId << "' not found in any sketch");
         return "";
 
     } catch (const std::exception& e) {
-        LOG_ERROR("Exception in extractPlaneEntityIdFromProfile: {}", e.what());
+        LOG_ERROR("Exception in extractPlaneEntityIdFromProfile: " << e.what());
         return "";
     } catch (...) {
         LOG_ERROR("Unknown exception in extractPlaneEntityIdFromProfile");

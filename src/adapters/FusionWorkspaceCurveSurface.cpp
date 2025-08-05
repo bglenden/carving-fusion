@@ -19,9 +19,8 @@ using namespace adsk::core;
 namespace ChipCarving {
 namespace Adapters {
 
-double FusionWorkspace::getSurfaceZAtXY(const std::string& surfaceId, double x, double y) {
+double FusionWorkspace::getSurfaceZAtXY(const std::string& /*surfaceId*/, double x, double y) {
     LOG_DEBUG("=== ENHANCED SURFACE QUERY: getSurfaceZAtXY called ===");
-    LOG_DEBUG("Surface ID: " << surfaceId);
     LOG_DEBUG("Query point: (" << x << ", " << y << ") cm");
 
     try {
@@ -80,7 +79,6 @@ double FusionWorkspace::getSurfaceZAtXY(const std::string& surfaceId, double x, 
 
         double bestZ = std::numeric_limits<double>::lowest();
         bool foundValidPoint = false;
-        int totalRayHits = 0;
 
         // Search each component for intersections
         for (size_t compIdx = 0; compIdx < allComponents.size(); ++compIdx) {
@@ -108,7 +106,6 @@ double FusionWorkspace::getSurfaceZAtXY(const std::string& surfaceId, double x, 
                     LOG_DEBUG("Component " << compIdx << " ray casting found "
                              << intersectedEntities->count() << " intersected entities with "
                              << hitPoints->count() << " hit points");
-                    totalRayHits += hitPoints->count();
 
                     // Process all hit points from this component
                     for (size_t i = 0; i < hitPoints->count(); ++i) {
@@ -218,10 +215,9 @@ double FusionWorkspace::getSurfaceZAtXY(const std::string& surfaceId, double x, 
             }
         }
 
-        LOG_DEBUG("Total ray hits across all components: " << totalRayHits);
 
         if (foundValidPoint) {
-            LOG_INFO("Enhanced ray casting found topmost surface at Z = " << bestZ
+            LOG_DEBUG("Enhanced ray casting found topmost surface at Z = " << bestZ
                      << " cm across " << allComponents.size() << " components");
             return bestZ;
         } else {

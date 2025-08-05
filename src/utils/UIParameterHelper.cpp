@@ -17,7 +17,7 @@ UIParameterHelper::UIParameterHelper(adsk::core::Ptr<adsk::core::CommandInputs> 
     if (!inputs_) {
         LOG_ERROR("UIParameterHelper initialized with null inputs");
     } else {
-        LOG_INFO("UIParameterHelper initialized with " << inputs_->count() << " inputs");
+        LOG_DEBUG("UIParameterHelper initialized with " << inputs_->count() << " inputs");
     }
 }
 

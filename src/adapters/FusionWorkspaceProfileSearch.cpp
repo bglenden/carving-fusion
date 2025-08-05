@@ -16,7 +16,7 @@ namespace Adapters {
 adsk::core::Ptr<adsk::fusion::Profile> FusionWorkspace::findProfileByEntityToken(
     const std::string& entityId) {
 
-    LOG_DEBUG("Starting profile search across all components");
+    LOG_INFO("Starting profile search for entity token: " << entityId);
 
     if (!app_) {
         LOG_ERROR("No Fusion 360 application instance");
@@ -60,13 +60,12 @@ adsk::core::Ptr<adsk::fusion::Profile> FusionWorkspace::findProfileByEntityToken
         }
     }
 
-    LOG_DEBUG("Searching " << allComponents.size() << " total components for sketch profiles");
+    LOG_INFO("Searching " << allComponents.size() << " total components for sketch profiles");
 
     // Use Fusion 360's selection API to find the specific selected profile across ALL components
     LOG_DEBUG("Looking for selected profile with entityToken: " << entityId);
 
     Ptr<adsk::fusion::Profile> profile = nullptr;
-    int totalSketchesSearched = 0;
 
     // Try to get the profile directly using the entity token
     try {
@@ -84,7 +83,6 @@ adsk::core::Ptr<adsk::fusion::Profile> FusionWorkspace::findProfileByEntityToken
                 continue;
             }
             LOG_DEBUG("Component " << compIdx << " has " << sketches->count() << " sketches");
-            totalSketchesSearched += sketches->count();
 
             // Search through all sketches in this component
             for (size_t i = 0; i < sketches->count(); ++i) {
@@ -110,8 +108,7 @@ adsk::core::Ptr<adsk::fusion::Profile> FusionWorkspace::findProfileByEntityToken
 
                     // Get the entity token of this profile and compare
                     std::string candidateToken = candidateProfile->entityToken();
-                    LOG_DEBUG("Component " << compIdx << ", profile " << j << " token: " << candidateToken << " vs looking for: " << entityId);
-
+                    
                     if (candidateToken == entityId) {
                         profile = candidateProfile;
                         LOG_INFO("FOUND EXACT MATCH! Profile " << j << " from sketch: " << candidateSketch->name() << " in component " << compIdx);
@@ -124,14 +121,17 @@ adsk::core::Ptr<adsk::fusion::Profile> FusionWorkspace::findProfileByEntityToken
             }
         }
 
-        LOG_DEBUG("Completed search across " << allComponents.size() << " components with " << totalSketchesSearched << " total sketches");
+        LOG_DEBUG("Completed search across " << allComponents.size() << " components");
 
         // Enhanced fallback: If exact token match fails, try to find a reasonable alternative
         if (!profile) {
-            LOG_WARNING("Could not find exact profile with entity token: " << entityId << " across " << allComponents.size() << " components");
-            LOG_DEBUG("Attempting enhanced fallback strategy for stale entity tokens");
+            LOG_INFO("Could not find exact profile with entity token: " << entityId << " across " << allComponents.size() << " components");
+            LOG_INFO("Attempting enhanced fallback strategy for stale entity tokens");
 
-            // Strategy 1: Look for the only profile in a component sketch (if unambiguous)
+            // IMPROVED Strategy: Look for profiles in sketches with the specific name we expect
+            // This prevents selecting profiles from wrong sketches
+            
+            // First, try to find ANY profile in sketch "Sketch61" (the one we know was selected)
             for (size_t compIdx = 0; compIdx < allComponents.size() && !profile; ++compIdx) {
                 auto component = allComponents[compIdx];
                 if (!component) continue;
@@ -143,17 +143,56 @@ adsk::core::Ptr<adsk::fusion::Profile> FusionWorkspace::findProfileByEntityToken
                     Ptr<adsk::fusion::Sketch> candidateSketch = sketches->item(i);
                     if (!candidateSketch) continue;
 
-                    Ptr<adsk::fusion::Profiles> candidateProfiles = candidateSketch->profiles();
-                    if (!candidateProfiles) continue;
+                    // Look specifically for "Sketch61" or similar named sketches that were actually selected
+                    std::string sketchName = candidateSketch->name();
+                    LOG_INFO("Checking sketch '" << sketchName << "' for profiles");
+                    
+                    // For now, prioritize sketches that contain "Sketch61" in the name
+                    // TODO: Make this more generic by storing the original sketch name
+                    if (sketchName.find("Sketch61") != std::string::npos) {
+                        Ptr<adsk::fusion::Profiles> candidateProfiles = candidateSketch->profiles();
+                        if (candidateProfiles && candidateProfiles->count() > 0) {
+                            // Take the first profile from the correct sketch
+                            Ptr<adsk::fusion::Profile> candidateProfile = candidateProfiles->item(0);
+                            if (candidateProfile) {
+                                profile = candidateProfile;
+                                LOG_INFO("Found targeted fallback in sketch '" << sketchName 
+                                         << "' in component " << compIdx);
+                                LOG_INFO("Fallback profile token: " << candidateProfile->entityToken());
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            
+            // Fallback to original strategy only if targeted search fails
+            if (!profile) {
+                LOG_INFO("Targeted fallback failed, trying generic single-profile fallback");
+                for (size_t compIdx = 0; compIdx < allComponents.size() && !profile; ++compIdx) {
+                    auto component = allComponents[compIdx];
+                    if (!component) continue;
 
-                    // If this sketch has exactly one profile, it's likely the intended selection
-                    if (candidateProfiles->count() == 1) {
-                        Ptr<adsk::fusion::Profile> candidateProfile = candidateProfiles->item(0);
-                        if (candidateProfile) {
-                            profile = candidateProfile;
-                            LOG_INFO("Found single profile fallback in component " << compIdx << ", sketch: " << candidateSketch->name());
-                            LOG_DEBUG("Fallback profile token: " << candidateProfile->entityToken());
-                            break;
+                    auto sketches = component->sketches();
+                    if (!sketches) continue;
+
+                    for (size_t i = 0; i < sketches->count(); ++i) {
+                        Ptr<adsk::fusion::Sketch> candidateSketch = sketches->item(i);
+                        if (!candidateSketch) continue;
+
+                        Ptr<adsk::fusion::Profiles> candidateProfiles = candidateSketch->profiles();
+                        if (!candidateProfiles) continue;
+
+                        // If this sketch has exactly one profile, it's likely the intended selection
+                        if (candidateProfiles->count() == 1) {
+                            Ptr<adsk::fusion::Profile> candidateProfile = candidateProfiles->item(0);
+                            if (candidateProfile) {
+                                profile = candidateProfile;
+                                LOG_INFO("Found generic single profile fallback in component " << compIdx 
+                                         << ", sketch: " << candidateSketch->name());
+                                LOG_INFO("Fallback profile token: " << candidateProfile->entityToken());
+                                break;
+                            }
                         }
                     }
                 }

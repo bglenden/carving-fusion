@@ -66,17 +66,17 @@ bool PluginManager::executeMedialAxisGeneration(const Adapters::SketchSelection&
             // Create sketch in the component containing the target surface, or use plane-based creation
             if (!params.targetSurfaceId.empty()) {
                 // Target surface specified - create sketch in the component containing the surface
-                LOG_INFO("Creating construction sketch in target surface component: '" << params.targetSurfaceId << "'");
+                LOG_DEBUG("Creating construction sketch in target surface component: '" << params.targetSurfaceId << "'");
 
                 constructionSketch = workspace_->createSketchInTargetComponent(sketchName, params.targetSurfaceId);
             } else if (!sourcePlaneId.empty()) {
                 // Debug logging
-                LOG_INFO("Using source plane entity ID for construction sketch: '" << sourcePlaneId << "' (length: " << sourcePlaneId.length() << ")");
+                LOG_DEBUG("Using source plane entity ID for construction sketch: '" << sourcePlaneId << "' (length: " << sourcePlaneId.length() << ")");
 
                 constructionSketch = workspace_->createSketchOnPlane(sketchName, sourcePlaneId);
             } else if (!lastImportedPlaneEntityId_.empty()) {
                 // Additional debug logging
-                LOG_INFO("Using stored plane entity ID for construction sketch: '" << lastImportedPlaneEntityId_ << "' (length: " << lastImportedPlaneEntityId_.length() << ")");
+                LOG_DEBUG("Using stored plane entity ID for construction sketch: '" << lastImportedPlaneEntityId_ << "' (length: " << lastImportedPlaneEntityId_.length() << ")");
 
                 constructionSketch = workspace_->createSketchOnPlane(sketchName, lastImportedPlaneEntityId_);
             } else {
@@ -101,12 +101,15 @@ bool PluginManager::executeMedialAxisGeneration(const Adapters::SketchSelection&
         logger_->logInfo("⏱️ Profile geometry extraction took: " + std::to_string(extractionDuration.count()) + "ms");
 
         if (!extractionSuccess || profilePolygons.empty()) {
+            LOG_INFO("Profile extraction failed or no polygons found");
             std::string errorMsg = "Failed to extract geometry from selected profiles.\nPlease "
                                    "ensure valid closed sketch profiles are selected.";
             ui_->showMessageBox("Medial Axis Generation - Extraction Error", errorMsg);
             return false;
         }
 
+        LOG_INFO("Starting medial axis computation for " << profilePolygons.size() << " profiles");
+        
         std::vector<Geometry::MedialAxisResults> allResults;
         int successCount = 0;
         int totalPoints = 0;
@@ -116,15 +119,10 @@ bool PluginManager::executeMedialAxisGeneration(const Adapters::SketchSelection&
         auto allMedialStart = std::chrono::high_resolution_clock::now();
         for (size_t i = 0; i < profilePolygons.size(); ++i) {
             const auto& polygon = profilePolygons[i];
+            
+            LOG_INFO("Processing profile " << i << " with " << polygon.size() << " vertices");
 
             try {
-                // Log polygon details before processing
-                try {
-                    for (size_t j = 0; j < polygon.size(); ++j) {
-                    }
-                } catch (const std::exception& e) {
-                }
-
                 // Log polygon bounds before medial axis computation
                 if (!polygon.empty()) {
                     double minX = polygon[0].x, maxX = polygon[0].x;
@@ -135,16 +133,21 @@ bool PluginManager::executeMedialAxisGeneration(const Adapters::SketchSelection&
                         minY = std::min(minY, pt.y);
                         maxY = std::max(maxY, pt.y);
                     }
+                    LOG_INFO("  Polygon bounds: (" << minX << ", " << minY << ") to (" << maxX << ", " << maxY << ")");
                 }
 
                 // Compute medial axis from polygon vertices using direct Point2D vector method
+                LOG_INFO("  Starting medial axis computation...");
                 auto medialStart = std::chrono::high_resolution_clock::now();
                 auto results = medialProcessor_->computeMedialAxis(polygon);
                 auto medialEnd = std::chrono::high_resolution_clock::now();
+                LOG_INFO("  Medial axis computation completed. Success: " << results.success);
                 auto medialDuration = std::chrono::duration_cast<std::chrono::milliseconds>(medialEnd - medialStart);
                 logger_->logInfo("⏱️ MedialAxis computation " + std::to_string(i) + " took: " + std::to_string(medialDuration.count()) + "ms");
 
                 if (results.success) {
+                    LOG_INFO("  Medial axis SUCCESS: " << results.chains.size() << " chains, " 
+                             << results.totalPoints << " points, length=" << results.totalLength);
                     // Log medial axis results bounds
                     if (!results.chains.empty() && !results.chains[0].empty()) {
                         // Find bounds of medial axis result
@@ -181,9 +184,12 @@ bool PluginManager::executeMedialAxisGeneration(const Adapters::SketchSelection&
                         auto vizDuration = std::chrono::duration_cast<std::chrono::milliseconds>(vizEnd - vizStart);
                         logger_->logInfo("⏱️ Shape " + std::to_string(i) + " visualization took: " + std::to_string(vizDuration.count()) + "ms");
                     }
+                } else {
+                    LOG_ERROR("  Medial axis FAILED: " << results.errorMessage);
                 }
 
             } catch (const std::exception& e) {
+                LOG_ERROR("  Exception during medial axis processing: " << e.what());
             }
         }
         auto allMedialEnd = std::chrono::high_resolution_clock::now();
@@ -216,7 +222,7 @@ bool PluginManager::executeMedialAxisGeneration(const Adapters::SketchSelection&
             // Create V-carve sketch in the component containing the target surface, or use plane-based creation
             if (!params.targetSurfaceId.empty()) {
                 // Target surface specified - create sketch in the component containing the surface
-                LOG_INFO("Creating V-carve sketch in target surface component: '" << params.targetSurfaceId << "'");
+                LOG_DEBUG("Creating V-carve sketch in target surface component: '" << params.targetSurfaceId << "'");
 
                 vcarveSketch = workspace_->createSketchInTargetComponent(vcarveSketchName, params.targetSurfaceId);
             } else if (!sourcePlaneId.empty()) {

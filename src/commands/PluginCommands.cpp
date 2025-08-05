@@ -1,20 +1,21 @@
 /**
  * PluginCommands.cpp
  *
- * Main command handler file that includes all split command components
- * Split for maintainability - see individual files for implementations
+ * Main command handler file - implementations are in separate files
+ * This is now just a placeholder since CMakeLists.txt compiles each file separately
  */
 
-// Include all split implementation files
-#include "PluginCommandsImport.cpp"
-#include "PluginCommandsCreation.cpp"
-#include "PluginCommandsParameters.cpp"
-#include "PluginCommandsExecution.cpp"
+#include "PluginCommands.h"
 
 namespace ChipCarving {
 namespace Commands {
 
-// No additional implementation needed - all functionality is in the included files
+// All implementations are in separate files:
+// - PluginCommandsCreation.cpp
+// - PluginCommandsExecution.cpp  
+// - PluginCommandsParameters.cpp
+// - PluginCommandsGeometry.cpp
+// - PluginCommandsImport.cpp
 
 }  // namespace Commands
 }  // namespace ChipCarving

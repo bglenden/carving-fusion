@@ -71,12 +71,16 @@ struct MedialAxisParameters {
   bool projectToSurface = true;  // Always project toolpaths onto surface
 };
 
+// Forward declaration for ProfileGeometry
+struct ProfileGeometry;
+
 /**
  * Structure for sketch selection results
  */
 struct SketchSelection {
   std::vector<std::string>
-      selectedEntityIds;     // Fusion entity IDs of selected paths
+      selectedEntityIds;     // Fusion entity IDs of selected paths (DEPRECATED - use selectedProfiles)
+  std::vector<ProfileGeometry> selectedProfiles;  // NEW: Extracted profile geometry
   int closedPathCount = 0;   // Number of valid closed paths
   bool isValid = false;      // Whether selection is valid for processing
   std::string errorMessage;  // Error message if invalid
@@ -199,6 +203,18 @@ class IWorkspace {
   // surface Returns NaN if no intersection found
   virtual double getSurfaceZAtXY(const std::string& surfaceId, double x,
                                  double y) = 0;
+};
+
+/**
+ * Structure to store extracted profile geometry
+ */
+struct ProfileGeometry {
+  std::vector<std::pair<double, double>> vertices;  // Profile vertices in world coordinates (cm)
+  IWorkspace::TransformParams transform;            // Transform parameters for the profile
+  std::string sketchName;                          // Parent sketch name for debugging
+  double area = 0.0;                               // Area from areaProperties (sq cm)
+  std::pair<double, double> centroid;              // Centroid from areaProperties (cm)
+  std::string planeEntityId;                       // Entity ID of the sketch plane
 };
 
 /**

@@ -80,9 +80,16 @@ class GeneratePathsCommandHandler : public BaseCommandHandler {
   void executeMedialAxisProcessing(
       adsk::core::Ptr<adsk::core::CommandInputs> inputs);
 
+  // Immediate geometry extraction (prevents stale tokens)
+  void clearCachedGeometry();
+  void extractAndCacheProfileGeometry(adsk::core::Ptr<adsk::fusion::Profile> profile, int index);
+
   // Sketch tracking for incremental generation
   std::map<std::string, std::string>
       toolToSketchMap_;  // Maps tool name to sketch name
+  
+  // Cached geometry to avoid stale token issues
+  std::vector<Adapters::ProfileGeometry> cachedProfiles_;
 };
 
 }  // namespace Commands

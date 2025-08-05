@@ -6,6 +6,7 @@
  */
 
 #include "PluginCommands.h"
+#include "../core/PluginManager.h"
 
 namespace ChipCarving {
 namespace Commands {

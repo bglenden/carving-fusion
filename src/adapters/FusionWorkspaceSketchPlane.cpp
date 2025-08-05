@@ -52,7 +52,7 @@ std::unique_ptr<ISketch> FusionWorkspace::createSketchOnPlane(const std::string&
             planeEntity = rootComp->xYConstructionPlane();
         } else {
             // Log the search for entity token
-            LOG_INFO("Searching for plane entity with token: " << planeEntityId);
+            LOG_DEBUG("Searching for plane entity with token: " << planeEntityId);
 
             // Try to find construction plane first
             Ptr<adsk::fusion::ConstructionPlanes> constructionPlanes = rootComp->constructionPlanes();
@@ -91,11 +91,11 @@ std::unique_ptr<ISketch> FusionWorkspace::createSketchOnPlane(const std::string&
 
         if (!planeEntity) {
             // Fall back to XY plane if entity not found
-            LOG_ERROR("Failed to resolve plane entity token: " << planeEntityId << ". Falling back to XY plane.");
+            LOG_DEBUG("Failed to resolve plane entity token: " << planeEntityId << ". Falling back to XY plane.");
             planeEntity = rootComp->xYConstructionPlane();
         } else {
             // Log successful entity token resolution
-            LOG_INFO("Successfully resolved plane entity token: " << planeEntityId);
+            LOG_DEBUG("Successfully resolved plane entity token: " << planeEntityId);
         }
 
         // Validate that the plane is parallel to XY

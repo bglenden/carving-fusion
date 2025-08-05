@@ -43,20 +43,20 @@ std::unique_ptr<ISketch> FusionWorkspace::createSketchInTargetComponent(const st
         allComponents.push_back(rootComp);
 
         // Debug logging for component search
-        LOG_DEBUG("Starting search for surface with entityId: '%s'", surfaceEntityId.c_str());
+        LOG_DEBUG("Starting search for surface with entityId: '" << surfaceEntityId << "'");
         std::string rootName = rootComp->name();
-        LOG_DEBUG("Added root component: %s", (rootName.empty() ? "unnamed" : rootName.c_str()));
+        LOG_DEBUG("Added root component: " << (rootName.empty() ? "unnamed" : rootName));
 
         // Add all occurrences (sub-components) recursively
         auto occurrences = rootComp->allOccurrences();
         if (occurrences) {
-            LOG_DEBUG("Found %zu component occurrences", occurrences->count());
+            LOG_DEBUG("Found " << occurrences->count() << " component occurrences");
             for (size_t i = 0; i < occurrences->count(); ++i) {
                 auto occurrence = occurrences->item(i);
                 if (occurrence && occurrence->component()) {
                     allComponents.push_back(occurrence->component());
                     std::string occName = occurrence->component()->name();
-                    LOG_DEBUG("Added occurrence %zu: %s", i, (occName.empty() ? "unnamed" : occName.c_str()));
+                    LOG_DEBUG("Added occurrence " << i << ": " << (occName.empty() ? "unnamed" : occName));
                 }
             }
         } else {
@@ -71,12 +71,12 @@ std::unique_ptr<ISketch> FusionWorkspace::createSketchInTargetComponent(const st
             if (!component) continue;
 
             std::string compName = component->name();
-            LOG_DEBUG("Searching component %zu: %s", compIdx, (compName.empty() ? "unnamed" : compName.c_str()));
+            LOG_DEBUG("Searching component " << compIdx << ": " << (compName.empty() ? "unnamed" : compName));
 
             // Check B-Rep bodies in this component for the surface
             auto bodies = component->bRepBodies();
             if (bodies && bodies->count() > 0) {
-                LOG_DEBUG("Component %zu has %zu B-Rep bodies", compIdx, bodies->count());
+                LOG_DEBUG("Component " << compIdx << " has " << bodies->count() << " B-Rep bodies");
 
                 for (size_t i = 0; i < bodies->count(); ++i) {
                     auto body = bodies->item(i);
@@ -85,7 +85,7 @@ std::unique_ptr<ISketch> FusionWorkspace::createSketchInTargetComponent(const st
                     auto faces = body->faces();
                     if (!faces) continue;
 
-                    LOG_DEBUG("B-Rep Body %zu has %zu faces", i, faces->count());
+                    LOG_DEBUG("B-Rep Body " << i << " has " << faces->count() << " faces");
 
                     for (size_t j = 0; j < faces->count(); ++j) {
                         auto face = faces->item(j);
@@ -93,43 +93,43 @@ std::unique_ptr<ISketch> FusionWorkspace::createSketchInTargetComponent(const st
 
                         std::string faceToken = face->entityToken();
                         if (j < 3) {  // Log first few face tokens for debugging
-                            LOG_DEBUG("B-Rep Face %zu token: '%s'", j, faceToken.c_str());
+                            LOG_DEBUG("B-Rep Face " << j << " token: '" << faceToken << "'");
                         }
 
                         if (faceToken == surfaceEntityId) {
                             targetComponent = component;
                             std::string foundCompName = component->name();
-                            LOG_INFO("FOUND! B-Rep surface found in component: %s", (foundCompName.empty() ? "unnamed" : foundCompName.c_str()));
+                            LOG_DEBUG("FOUND! B-Rep surface found in component: " << (foundCompName.empty() ? "unnamed" : foundCompName));
                             break;
                         }
                     }
                     if (targetComponent) break;
                 }
             } else {
-                LOG_DEBUG("Component %zu has no B-Rep bodies", compIdx);
+                LOG_DEBUG("Component " << compIdx << " has no B-Rep bodies");
             }
 
             // Also check mesh bodies in this component (for STL/OBJ imports)
             auto meshBodies = component->meshBodies();
             if (!targetComponent && meshBodies && meshBodies->count() > 0) {
-                LOG_DEBUG("Component %zu has %zu mesh bodies", compIdx, meshBodies->count());
+                LOG_DEBUG("Component " << compIdx << " has " << meshBodies->count() << " mesh bodies");
 
                 for (size_t i = 0; i < meshBodies->count(); ++i) {
                     auto meshBody = meshBodies->item(i);
                     if (!meshBody) continue;
 
                     std::string meshToken = meshBody->entityToken();
-                    LOG_DEBUG("Mesh Body %zu token: '%s'", i, meshToken.c_str());
+                    LOG_DEBUG("Mesh Body " << i << " token: '" << meshToken << "'");
 
                     if (meshToken == surfaceEntityId) {
                         targetComponent = component;
                         std::string foundCompName = component->name();
-                        LOG_INFO("FOUND! Mesh surface found in component: %s", (foundCompName.empty() ? "unnamed" : foundCompName.c_str()));
+                        LOG_DEBUG("FOUND! Mesh surface found in component: " << (foundCompName.empty() ? "unnamed" : foundCompName));
                         break;
                     }
                 }
             } else if (!targetComponent) {
-                LOG_DEBUG("Component %zu has no mesh bodies", compIdx);
+                LOG_DEBUG("Component " << compIdx << " has no mesh bodies");
             }
 
             if (targetComponent) break;
@@ -175,9 +175,9 @@ std::unique_ptr<ISketch> FusionWorkspace::createSketchInTargetComponent(const st
             if (componentsWithSurfaces == 1 && singleSurfaceComponent) {
                 targetComponent = singleSurfaceComponent;
                 std::string fallbackCompName = targetComponent->name();
-                LOG_INFO("FALLBACK SUCCESS! Using only component with surfaces: %s", (fallbackCompName.empty() ? "unnamed" : fallbackCompName.c_str()));
+                LOG_DEBUG("FALLBACK SUCCESS! Using only component with surfaces: " << (fallbackCompName.empty() ? "unnamed" : fallbackCompName));
             } else {
-                LOG_DEBUG("Found %d components with surfaces. Cannot use fallback.", componentsWithSurfaces);
+                LOG_DEBUG("Found " << componentsWithSurfaces << " components with surfaces. Cannot use fallback.");
             }
         }
 
@@ -187,7 +187,7 @@ std::unique_ptr<ISketch> FusionWorkspace::createSketchInTargetComponent(const st
             targetComponent = rootComp;
         } else {
             std::string targetCompName = targetComponent->name();
-            LOG_DEBUG("Using target component: %s", (targetCompName.empty() ? "unnamed" : targetCompName.c_str()));
+            LOG_DEBUG("Using target component: " << (targetCompName.empty() ? "unnamed" : targetCompName));
         }
 
         // Get the XY plane for the sketch in the target component

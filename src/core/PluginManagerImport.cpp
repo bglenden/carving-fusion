@@ -138,7 +138,7 @@ bool PluginManager::executeImportDesign(const std::string& filePath, const std::
         lastImportedPlaneEntityId_ = planeEntityId;
 
         // Debug logging
-        LOG_INFO("Stored plane entity ID during import: '" << planeEntityId << "' (length: " << planeEntityId.length() << ")");
+        LOG_DEBUG("Stored plane entity ID during import: '" << planeEntityId << "' (length: " << planeEntityId.length() << ")");
 
         // Create sketch on specified plane or XY plane
         std::unique_ptr<Adapters::ISketch> sketch;

@@ -84,22 +84,22 @@ void ErrorHandler::setGlobalErrorCallback(ErrorCallback callback) {
     globalErrorCallback_ = callback;
 
     if (callback) {
-        LOG_INFO("Global error callback registered");
+        LOG_DEBUG("Global error callback registered");
     } else {
-        LOG_INFO("Global error callback cleared");
+        LOG_DEBUG("Global error callback cleared");
     }
 }
 
 void ErrorHandler::enableConsoleLogging(bool enabled) {
     consoleLoggingEnabled_ = enabled;
 
-    LOG_INFO("Console logging " << (enabled ? "enabled" : "disabled"));
+    LOG_DEBUG("Console logging " << (enabled ? "enabled" : "disabled"));
 }
 
 void ErrorHandler::enableUserMessages(bool enabled) {
     userMessagesEnabled_ = enabled;
 
-    LOG_INFO("User messages " << (enabled ? "enabled" : "disabled"));
+    LOG_DEBUG("User messages " << (enabled ? "enabled" : "disabled"));
 }
 
 void ErrorHandler::handleStandardException(const std::string& operation, const std::exception& e) {

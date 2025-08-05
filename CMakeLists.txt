@@ -14,8 +14,8 @@ endif()
 set(CMAKE_CXX_FLAGS_DEBUG "-g3 -O0 -DDEBUG -D_DEBUG -fno-omit-frame-pointer")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic")
 
-# Enable all assertions and debug checks
-add_definitions(-DDEBUG -D_DEBUG -UNDEBUG)
+# Release flags - optimized, no debug
+set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG")
 
 # Find Fusion 360 SDK
 set(FUSION_SDK_PATH "$ENV{HOME}/Library/Application Support/Autodesk/Autodesk Fusion 360/API/CPP")
@@ -101,6 +101,11 @@ add_library(chip_carving_paths_cpp SHARED
     src/adapters/FusionSketch.cpp
     src/adapters/FusionAPIFactory.cpp
     src/commands/PluginCommands.cpp
+    src/commands/PluginCommandsCreation.cpp
+    src/commands/PluginCommandsExecution.cpp
+    src/commands/PluginCommandsGeometry.cpp
+    src/commands/PluginCommandsImport.cpp
+    src/commands/PluginCommandsParameters.cpp
     src/parsers/DesignParser.cpp
     src/geometry/ShapeFactory.cpp
     src/geometry/Leaf.cpp

@@ -4,6 +4,7 @@
 #include "../commands/PluginCommands.h"
 #include "../core/PluginManager.h"
 #include "../version.h"
+#include "../../include/utils/logging.h"
 #include <cstdio>
 // TODO(dev): Fix HelloWorldCommand API issues
 // #include "../../include/commands/HelloWorldCommand.h"
@@ -166,7 +167,7 @@ bool PluginInitializer::InitializePlugin(const char* /* context */, PluginMode m
             return false;
         }
 
-        LogMessage("Starting Chip Carving Paths C++ Add-in v" + std::string(ADDIN_VERSION_STRING));
+        LOG_INFO("Starting Chip Carving Paths C++ Add-in v" << ADDIN_VERSION_STRING);
 
         // Create plugin manager based on mode
         switch (mode) {
