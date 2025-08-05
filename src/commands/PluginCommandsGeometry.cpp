@@ -123,7 +123,19 @@ void GeneratePathsCommandHandler::extractAndCacheProfileGeometry(
                             worldGeometry = ellipticalArc->worldGeometry();
                             LOG_INFO("    Curve " << curveIdx << " is a SketchEllipticalArc");
                         } else {
-                            LOG_INFO("    Curve " << curveIdx << " is unknown type: " << sketchEntity->objectType());
+                            // Try generic SketchCurve as fallback for unknown types
+                            LOG_WARN("    Curve " << curveIdx << " is unknown type: " << sketchEntity->objectType() << " - attempting generic extraction");
+                            try {
+                                // SketchCurve is the base class - try to get world geometry directly
+                                if (sketchCurve) {
+                                    worldGeometry = sketchCurve->worldGeometry();
+                                    if (worldGeometry) {
+                                        LOG_INFO("    Successfully extracted geometry using generic SketchCurve approach");
+                                    }
+                                }
+                            } catch (...) {
+                                LOG_ERROR("    Failed to extract geometry for unknown curve type: " << sketchEntity->objectType());
+                            }
                         }
                     }
                     
@@ -150,6 +162,19 @@ void GeneratePathsCommandHandler::extractAndCacheProfileGeometry(
                                 LOG_INFO("    Using tolerance " << chordTolerance << " cm for tessellation");
                                 if (evaluator->getStrokes(startParam, endParam, chordTolerance, strokePoints)) {
                                     LOG_INFO("    Generated " << strokePoints.size() << " stroke points");
+                                    
+                                    // Validate tessellation quality for non-linear curves
+                                    if (!sketchEntity->cast<adsk::fusion::SketchLine>() && strokePoints.size() < 3) {
+                                        LOG_WARN("    Insufficient tessellation for curve " << curveIdx 
+                                                 << " (" << strokePoints.size() << " points) - attempting finer tolerance");
+                                        
+                                        // Try again with finer tolerance
+                                        strokePoints.clear();
+                                        chordTolerance = 0.001;  // 0.01mm for very fine tessellation
+                                        if (evaluator->getStrokes(startParam, endParam, chordTolerance, strokePoints)) {
+                                            LOG_INFO("    Retessellated with finer tolerance: " << strokePoints.size() << " points");
+                                        }
+                                    }
                                     // Store stroke points and endpoints for chaining
                                     curveData.strokePoints = strokePoints;
                                     if (!strokePoints.empty()) {
@@ -158,7 +183,20 @@ void GeneratePathsCommandHandler::extractAndCacheProfileGeometry(
                                     }
                                     allCurves.push_back(curveData);
                                 } else {
-                                    LOG_INFO("    getStrokes failed for curve " << curveIdx);
+                                    LOG_ERROR("    getStrokes failed for curve " << curveIdx << " - geometry will be missing from profile");
+                                    // Try fallback with endpoints only for critical path continuity
+                                    std::vector<adsk::core::Ptr<adsk::core::Point3D>> fallbackPoints;
+                                    adsk::core::Ptr<adsk::core::Point3D> startPt, endPt;
+                                    if (evaluator->getPointAtParameter(startParam, startPt) && 
+                                        evaluator->getPointAtParameter(endParam, endPt)) {
+                                        fallbackPoints.push_back(startPt);
+                                        fallbackPoints.push_back(endPt);
+                                        curveData.strokePoints = fallbackPoints;
+                                        curveData.startPoint = startPt;
+                                        curveData.endPoint = endPt;
+                                        allCurves.push_back(curveData);
+                                        LOG_WARN("    Using fallback endpoints-only approach for curve " << curveIdx);
+                                    }
                                 }
                             }
                         }
@@ -170,7 +208,22 @@ void GeneratePathsCommandHandler::extractAndCacheProfileGeometry(
         // Now chain the curves properly to create a connected polygon
         LOG_INFO("  Chaining " << allCurves.size() << " curves...");
         if (!allCurves.empty()) {
-            const double tolerance = 0.001;  // 0.01mm tolerance for endpoint matching
+            // Adaptive tolerance based on tessellation - use coarser tolerance if we had issues
+            double baseTolerance = 0.001;  // 0.01mm default tolerance
+            
+            // Check if we had any tessellation issues that might require looser tolerance
+            bool hadTessellationIssues = false;
+            for (const auto& curve : allCurves) {
+                if (curve.strokePoints.size() <= 2) {
+                    hadTessellationIssues = true;
+                    break;
+                }
+            }
+            
+            const double tolerance = hadTessellationIssues ? baseTolerance * 10 : baseTolerance;
+            if (hadTessellationIssues) {
+                LOG_WARN("  Using relaxed chaining tolerance " << tolerance << " cm due to tessellation issues");
+            }
             
             // Start with first curve
             std::vector<size_t> chainOrder;
@@ -217,7 +270,20 @@ void GeneratePathsCommandHandler::extractAndCacheProfileGeometry(
                 }
                 
                 if (!foundNext) {
-                    LOG_INFO("    Warning: Could not find connecting curve at position " << chainPos);
+                    LOG_ERROR("    Could not find connecting curve at position " << chainPos << " of " << allCurves.size());
+                    LOG_ERROR("    Current endpoint: (" << currentEndPoint->x() << ", " << currentEndPoint->y() << ", " << currentEndPoint->z() << ")");
+                    
+                    // Log remaining unconnected curves for debugging
+                    int unconnectedCount = 0;
+                    for (size_t i = 0; i < allCurves.size(); ++i) {
+                        if (!allCurves[i].used) {
+                            LOG_ERROR("    Unconnected curve " << i << ": start(" 
+                                     << allCurves[i].startPoint->x() << ", " << allCurves[i].startPoint->y() << ") end("
+                                     << allCurves[i].endPoint->x() << ", " << allCurves[i].endPoint->y() << ")");
+                            unconnectedCount++;
+                        }
+                    }
+                    LOG_ERROR("    Total unconnected curves: " << unconnectedCount << " - profile will be incomplete");
                     break;
                 }
             }
@@ -254,6 +320,12 @@ void GeneratePathsCommandHandler::extractAndCacheProfileGeometry(
         }
         
         profileGeom.vertices = vertices;
+        
+        // Validate extraction results
+        if (vertices.size() < 3) {
+            LOG_ERROR("Extracted polygon has insufficient vertices (" << vertices.size() 
+                     << ") - minimum 3 required for valid polygon");
+        }
         
         // Set transform parameters (identity for now since vertices are in world coordinates)
         profileGeom.transform.centerX = 0.0;
