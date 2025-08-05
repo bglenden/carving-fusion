@@ -102,6 +102,9 @@ void GeneratePathsCommandHandler::notify(
                         if (selectionInput) {
                             LOG_INFO("Selection changed: " << selectionInput->selectionCount() << " entities selected");
                             
+                            // VALIDATION: Remove invalid selections (non-closed curves)
+                            parent_->validateAndCleanSelection(selectionInput);
+                            
                             // Clear any existing cached geometry
                             parent_->clearCachedGeometry();
                             

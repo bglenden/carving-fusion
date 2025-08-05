@@ -106,6 +106,7 @@ add_library(chip_carving_paths_cpp SHARED
     src/commands/PluginCommandsGeometry.cpp
     src/commands/PluginCommandsImport.cpp
     src/commands/PluginCommandsParameters.cpp
+    src/commands/PluginCommandsValidation.cpp
     src/commands/SettingsCommand.cpp
     src/parsers/DesignParser.cpp
     src/geometry/ShapeFactory.cpp
