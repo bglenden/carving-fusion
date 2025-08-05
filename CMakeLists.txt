@@ -211,7 +211,30 @@ if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/tests/CMakeLists.txt")
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
         COMMENT "Running tests and building on success"
     )
+    
+    # Add coverage analysis target (if coverage is enabled)
+    option(ENABLE_COVERAGE "Enable coverage reporting" OFF)
+    if(ENABLE_COVERAGE)
+        add_custom_target(coverage
+            COMMAND ${CMAKE_COMMAND} -E echo "Running tests with coverage..."
+            COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure
+            COMMAND ${CMAKE_COMMAND} -E echo "Generating coverage report..."
+            COMMAND lcov --capture --directory . --output-file coverage.info
+            COMMAND lcov --remove coverage.info '/usr/*' --output-file coverage.info
+            COMMAND lcov --list coverage.info
+            DEPENDS chip_carving_tests
+            WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+            COMMENT "Running coverage analysis"
+        )
+    endif()
 endif()
+
+# ==============================================================================
+# Clean targets
+# ==============================================================================
+
+# Add custom clean command to also remove temp_output directory
+set_directory_properties(PROPERTIES ADDITIONAL_CLEAN_FILES "${CMAKE_CURRENT_SOURCE_DIR}/temp_output")
 
 # ==============================================================================
 # Code Quality and Linting Targets

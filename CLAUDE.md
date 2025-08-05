@@ -36,23 +36,24 @@ make chip_carving_tests && ./tests/chip_carving_tests  # Direct test execution
 
 ### Testing Commands
 ```bash
-# Run all tests (158+ unit tests)
-./run_tests.sh
-
-# Run tests directly after building
-cd build && make chip_carving_tests && ./tests/chip_carving_tests
+# Run all tests (287+ unit tests)
+make test                    # Run tests via CTest
+make run_tests              # Run tests with verbose output
+make chip_carving_tests && ./tests/chip_carving_tests  # Direct execution
 
 # Run specific test suites
 ./tests/chip_carving_tests --gtest_filter="MedialAxisProcessor*"
 ./tests/chip_carving_tests --gtest_filter="TriArc*"
 ./tests/chip_carving_tests --gtest_filter="FusionWorkspace*"
 
-# Critical regression tests
-./run_coordinate_regression_tests.sh    # Medial axis alignment
-./run_surface_z_regression_tests.sh     # V-carve surface detection
-
 # Generate code coverage report
-./run_coverage.sh
+cmake .. -DENABLE_COVERAGE=ON    # Configure with coverage
+make coverage                    # Run tests and generate report
+
+# Run specific regression tests (if needed)
+# Note: These are already included in 'make test'
+./tests/chip_carving_tests --gtest_filter="CoordinateSystemRegressionTest.*"
+./tests/chip_carving_tests --gtest_filter="SurfaceZDetectionRegressionTest.*"
 ```
 
 ### Code Quality Commands

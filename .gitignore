@@ -37,6 +37,9 @@ Makefile
 tests/build/
 tests/coverage/
 
+# Temporary output directory (logs and debug SVGs)
+temp_output/
+
 # IDE files
 *.swp
 *.swo
