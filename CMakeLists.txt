@@ -213,6 +213,7 @@ if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/tests/CMakeLists.txt")
     # Add coverage analysis target (if coverage is enabled)
     option(ENABLE_COVERAGE "Enable coverage reporting" OFF)
     if(ENABLE_COVERAGE)
+        # Full coverage analysis
         add_custom_target(coverage
             COMMAND ${CMAKE_COMMAND} -E echo "Running tests with coverage..."
             COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure
@@ -223,6 +224,26 @@ if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/tests/CMakeLists.txt")
             DEPENDS chip_carving_tests
             WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
             COMMENT "Running coverage analysis"
+        )
+        
+        # Coverage for non-Fusion code only (more reliable)
+        add_custom_target(coverage-core
+            COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/scripts/analyze_coverage.sh
+            DEPENDS chip_carving_tests
+            WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+            COMMENT "Analyzing coverage for non-Fusion dependent code"
+        )
+        
+        # Quick coverage check
+        add_custom_target(coverage-summary
+            COMMAND ${CMAKE_COMMAND} -E echo "Running quick coverage check..."
+            COMMAND ./tests/chip_carving_tests --gtest_output=xml:test_results.xml
+            COMMAND lcov --capture --directory . --output-file coverage.info --quiet --ignore-errors inconsistent,unsupported
+            COMMAND lcov --remove coverage.info '/usr/*' '/opt/*' '*/tests/*' '*/build/*' '*/Library/*' '*/src/adapters/Fusion*' '*/src/main.cpp' --output-file coverage_filtered.info --quiet --ignore-errors inconsistent,unsupported
+            COMMAND lcov --summary coverage_filtered.info --ignore-errors inconsistent,unsupported
+            DEPENDS chip_carving_tests
+            WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+            COMMENT "Quick coverage summary for core components"
         )
     endif()
 endif()

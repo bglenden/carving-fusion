@@ -44,6 +44,13 @@ make chip_carving_tests && ./tests/chip_carving_tests  # Direct execution
 # Note: These are already included in 'make test'
 ./tests/chip_carving_tests --gtest_filter="CoordinateSystemRegressionTest.*"
 ./tests/chip_carving_tests --gtest_filter="SurfaceZDetectionRegressionTest.*"
+
+# Test Coverage Analysis (requires: brew install lcov)
+cmake .. -DENABLE_COVERAGE=ON         # Enable coverage build
+make coverage-core                     # Analyze non-Fusion code coverage
+make coverage-summary                  # Quick coverage summary
+make coverage                         # Full coverage report
+# HTML report: open coverage_report/index.html
 ```
 
 ### Code Quality Commands
@@ -53,7 +60,7 @@ make format lint       # Auto-format and check for issues
 
 # Individual commands
 make format            # Auto-format all code with clang-format
-make lint              # Check C++ style with cpplint (currently 14 issues)
+make lint              # Full lint check including file length limits
 make lint-quick        # Quick check for critical issues only
 make lint-verbose      # Detailed cpplint output with explanations
 make format-check      # Check if formatting is needed (dry run)
