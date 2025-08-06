@@ -156,7 +156,7 @@ adsk::core::Ptr<adsk::fusion::Profile> FusionWorkspace::findProfileByEntityToken
           LOG_INFO("Checking sketch '" << sketchName << "' for profiles");
 
           // For now, prioritize sketches that contain "Sketch61" in the name
-          // TODO: Make this more generic by storing the original sketch name
+          // TODO(developer): Make this more generic by storing the original sketch name
           if (sketchName.find("Sketch61") != std::string::npos) {
             Ptr<adsk::fusion::Profiles> candidateProfiles = candidateSketch->profiles();
             if (candidateProfiles && candidateProfiles->count() > 0) {

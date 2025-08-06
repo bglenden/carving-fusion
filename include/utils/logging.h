@@ -1,5 +1,5 @@
-#ifndef CHIP_CARVING_LOGGING_H
-#define CHIP_CARVING_LOGGING_H
+#ifndef INCLUDE_UTILS_LOGGING_H_
+#define INCLUDE_UTILS_LOGGING_H_
 
 #include <sstream>
 #include <string>
@@ -88,4 +88,4 @@ LogLevel GetMinLogLevel();
     }                                                                              \
   } while (0)
 
-#endif  // CHIP_CARVING_LOGGING_H
+#endif  // INCLUDE_UTILS_LOGGING_H_

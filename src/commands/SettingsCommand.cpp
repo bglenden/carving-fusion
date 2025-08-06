@@ -61,7 +61,6 @@ void SettingsCommandHandler::notify(const adsk::core::Ptr<adsk::core::CommandCre
 
     auto onExecute = new ExecuteHandler(this);
     cmd->execute()->add(onExecute);
-
   } catch (const std::exception& e) {
     LOG_ERROR("Exception in SettingsCommandHandler::notify: " << e.what());
   } catch (...) {
@@ -103,7 +102,6 @@ void SettingsCommandHandler::createSettingsInputs(adsk::core::Ptr<adsk::core::Co
                                               "Note: This setting applies immediately and persists for the "
                                               "current session only.",
                                               1, true);
-
   } catch (const std::exception& e) {
     LOG_ERROR("Exception creating settings inputs: " << e.what());
   } catch (...) {
@@ -133,7 +131,6 @@ void SettingsCommandHandler::applySettings(adsk::core::Ptr<adsk::core::CommandIn
         LOG_WARNING("Log level set to WARNING (INFO and DEBUG messages hidden)");
       }
     }
-
   } catch (const std::exception& e) {
     LOG_ERROR("Exception applying settings: " << e.what());
   } catch (...) {

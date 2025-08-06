@@ -19,11 +19,11 @@ class Optional {
  public:
   Optional() : has_value_(false) {}
 
-  Optional(const T& value) : has_value_(true) {
+  explicit Optional(const T& value) : has_value_(true) {
     new (storage_) T(value);
   }
 
-  Optional(T&& value) : has_value_(true) {
+  explicit Optional(T&& value) : has_value_(true) {
     new (storage_) T(std::move(value));
   }
 

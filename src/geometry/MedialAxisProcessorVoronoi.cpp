@@ -261,7 +261,6 @@ bool MedialAxisProcessor::computeOpenVoronoi(const std::vector<Point2D>& transfo
     }
 
     return true;
-
   } catch (const std::exception& e) {
     results.errorMessage = "OpenVoronoi computation failed: " + std::string(e.what());
     Geometry::MedialAxisProcessor::log("Error: " + results.errorMessage);

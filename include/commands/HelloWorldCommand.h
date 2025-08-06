@@ -1,5 +1,5 @@
-#ifndef HELLO_WORLD_COMMAND_H
-#define HELLO_WORLD_COMMAND_H
+#ifndef INCLUDE_COMMANDS_HELLOWORLDCOMMAND_H_
+#define INCLUDE_COMMANDS_HELLOWORLDCOMMAND_H_
 
 #include <Core/CoreAll.h>
 
@@ -30,4 +30,4 @@ class HelloWorldCommandExecuteHandler : public adsk::core::CommandEventHandler {
   void notify(const adsk::core::Ptr<adsk::core::CommandEventArgs>& eventArgs) override;
 };
 
-#endif  // HELLO_WORLD_COMMAND_H
+#endif  // INCLUDE_COMMANDS_HELLOWORLDCOMMAND_H_

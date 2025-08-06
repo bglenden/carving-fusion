@@ -190,7 +190,6 @@ std::string FusionUserInterface::showFileDialog(const std::string& title, const 
         return fileDialog->filename();
       }
     }
-
   } catch (const std::exception& e) {
     // Log error but don't crash
     std::cout << "File dialog error: " << e.what() << std::endl;
