@@ -240,7 +240,7 @@ find_program(CLANG_TIDY_EXECUTABLE clang-tidy)
 if(CPPLINT_EXECUTABLE)
     message(STATUS "Found cpplint: ${CPPLINT_EXECUTABLE}")
     
-    # Main lint target using cpplint for C++ issues
+    # Main lint target using cpplint for C++ issues and file length check
     add_custom_target(lint
         COMMAND ${CPPLINT_EXECUTABLE}
             --recursive
@@ -248,8 +248,9 @@ if(CPPLINT_EXECUTABLE)
             --headers=h
             --quiet
             src/ include/
+        COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/scripts/check_file_length.sh
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-        COMMENT "Checking C++ style and compatibility with cpplint"
+        COMMENT "Checking C++ style, compatibility, and file lengths"
     )
     
     # Quick lint - check only critical issues
