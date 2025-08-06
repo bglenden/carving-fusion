@@ -51,7 +51,7 @@ bool GeneratePathsCommandHandler::isPartOfClosedProfile(adsk::core::Ptr<adsk::fu
       if (!profileLoops)
         continue;
 
-      for (int l = 0; l < profileLoops->count(); ++l) {
+      for (size_t l = 0; l < profileLoops->count(); ++l) {
         auto loop = profileLoops->item(l);
         if (!loop)
           continue;
@@ -60,7 +60,7 @@ bool GeneratePathsCommandHandler::isPartOfClosedProfile(adsk::core::Ptr<adsk::fu
         if (!loopCurves)
           continue;
 
-        for (int c = 0; c < loopCurves->count(); ++c) {
+        for (size_t c = 0; c < loopCurves->count(); ++c) {
           auto profileCurve = loopCurves->item(c);
           if (profileCurve && profileCurve->sketchEntity()) {
             // Check if this is our curve

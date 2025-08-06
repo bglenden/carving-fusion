@@ -131,8 +131,7 @@ bool FusionWorkspace::extractCurvesFromProfile(adsk::core::Ptr<adsk::fusion::Pro
   LOG_DEBUG("Found " << profileCurves->count() << " curves in loop");
 
   // Check if the profile loop is closed
-  bool isClosedLoop = loop->isOuter();  // Outer loops are typically closed
-  LOG_DEBUG("Profile loop is " << (isClosedLoop ? "closed" : "open"));
+  LOG_DEBUG("Profile loop is " << (loop->isOuter() ? "closed (outer)" : "open (inner)"));
 
   // Tessellate each curve in the loop using getStrokes
   double chordTolerance = 0.01;  // 0.1mm tolerance (Fusion uses cm units)

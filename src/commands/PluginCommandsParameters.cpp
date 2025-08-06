@@ -387,7 +387,6 @@ ChipCarving::Adapters::SketchSelection GeneratePathsCommandHandler::getSelection
       // Check if curves from each sketch form a closed loop
       LOG_INFO("Processing curves from " << curvesBySketch.size() << " sketches");
       for (const auto& sketchCurvePair : curvesBySketch) {
-        const auto& sketchId = sketchCurvePair.first;
         const auto& curves = sketchCurvePair.second;
         if (curves.empty())
           continue;
@@ -409,7 +408,7 @@ ChipCarving::Adapters::SketchSelection GeneratePathsCommandHandler::getSelection
         auto sketchProfiles = sketch->profiles();
         if (sketchProfiles) {
           LOG_INFO("Sketch has " << sketchProfiles->count() << " profiles");
-          for (int p = 0; p < sketchProfiles->count(); ++p) {
+          for (size_t p = 0; p < sketchProfiles->count(); ++p) {
             auto candidateProfile = sketchProfiles->item(p);
             if (!candidateProfile)
               continue;
@@ -421,7 +420,7 @@ ChipCarving::Adapters::SketchSelection GeneratePathsCommandHandler::getSelection
             // Check each loop in the profile
             auto profileLoops = candidateProfile->profileLoops();
             if (profileLoops) {
-              for (int l = 0; l < profileLoops->count(); ++l) {
+              for (size_t l = 0; l < profileLoops->count(); ++l) {
                 auto loop = profileLoops->item(l);
                 if (!loop)
                   continue;
@@ -431,7 +430,7 @@ ChipCarving::Adapters::SketchSelection GeneratePathsCommandHandler::getSelection
                   totalCurvesInProfile += loopCurves->count();
 
                   // Check if selected curves match this loop's curves
-                  for (int c = 0; c < loopCurves->count(); ++c) {
+                  for (size_t c = 0; c < loopCurves->count(); ++c) {
                     auto profileCurve = loopCurves->item(c);
                     if (profileCurve && profileCurve->sketchEntity()) {
                       auto curveEntity = profileCurve->sketchEntity();

@@ -67,6 +67,21 @@ class Optional {
     return *this;
   }
 
+  // Assignment from T
+  Optional& operator=(const T& value) {
+    reset();
+    has_value_ = true;
+    new (storage_) T(value);
+    return *this;
+  }
+
+  Optional& operator=(T&& value) {
+    reset();
+    has_value_ = true;
+    new (storage_) T(std::move(value));
+    return *this;
+  }
+
   bool has_value() const {
     return has_value_;
   }
