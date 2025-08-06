@@ -20,8 +20,9 @@
 
 using namespace ChipCarving::Geometry;
 
-// Definition for static constexpr member (required for C++14)
+// Definition for static constexpr members (required for C++14)
 constexpr double TriArc::MAX_BULGE;
+constexpr double TriArc::MIN_BULGE;
 
 TriArc::TriArc(const Point2D& v1, const Point2D& v2, const Point2D& v3, const std::array<double, 3>& bulges)
     : vertices_{v1, v2, v3}, bulgeFactors_(bulges) {
