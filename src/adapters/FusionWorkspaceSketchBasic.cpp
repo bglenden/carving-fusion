@@ -20,8 +20,7 @@ namespace Adapters {
 
 // Constructor is moved to main file to avoid duplication
 
-std::unique_ptr<ISketch> FusionWorkspace::createSketch(
-    const std::string& name) {
+std::unique_ptr<ISketch> FusionWorkspace::createSketch(const std::string& name) {
   if (!app_) {
     return nullptr;
   }
@@ -40,8 +39,7 @@ std::unique_ptr<ISketch> FusionWorkspace::createSketch(
     }
 
     // Get the XY plane for the sketch
-    Ptr<adsk::fusion::ConstructionPlane> xyPlane =
-        rootComp->xYConstructionPlane();
+    Ptr<adsk::fusion::ConstructionPlane> xyPlane = rootComp->xYConstructionPlane();
     if (!xyPlane) {
       return nullptr;
     }

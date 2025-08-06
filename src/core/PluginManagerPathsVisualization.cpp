@@ -19,11 +19,11 @@
 namespace ChipCarving {
 namespace Core {
 
-void PluginManager::addConstructionGeometryVisualization(
-    Adapters::ISketch* sketch, const Geometry::MedialAxisResults& results,
-    const Adapters::MedialAxisParameters& params,
-    const Adapters::IWorkspace::TransformParams& /* transform */,
-    const std::vector<Geometry::Point2D>& polygon) {
+void PluginManager::addConstructionGeometryVisualization(Adapters::ISketch* sketch,
+                                                         const Geometry::MedialAxisResults& results,
+                                                         const Adapters::MedialAxisParameters& params,
+                                                         const Adapters::IWorkspace::TransformParams& /* transform */,
+                                                         const std::vector<Geometry::Point2D>& polygon) {
   if (!sketch || !results.success) {
     return;
   }
@@ -35,8 +35,7 @@ void PluginManager::addConstructionGeometryVisualization(
 
     // Get properly sampled medial axis paths at user-specified sampling
     // distance
-    auto sampledPaths =
-        medialProcessor_->getSampledPaths(results, params.samplingDistance);
+    auto sampledPaths = medialProcessor_->getSampledPaths(results, params.samplingDistance);
 
     // Enhanced UI Phase 5.3: Add medial axis lines using sampled paths
     if (params.showMedialLines && !sampledPaths.empty()) {
@@ -69,21 +68,20 @@ void PluginManager::addConstructionGeometryVisualization(
             // TODO(developer): Add implementation
           }
 
-          bool success = sketch->addConstructionLine(x1_world_mm, y1_world_mm,
-                                                     x2_world_mm, y2_world_mm);
+          bool success = sketch->addConstructionLine(x1_world_mm, y1_world_mm, x2_world_mm, y2_world_mm);
           if (!success) {
             // TODO(developer): Add implementation
           }
           totalLinesDrawn++;
         }
-        if (totalLinesDrawn >= MAX_CONSTRUCTION_LINES) break;
+        if (totalLinesDrawn >= MAX_CONSTRUCTION_LINES)
+          break;
       }
     }
 
     // Enhanced UI Phase 5.3: Add clearance circles at actual medial axis
     // vertices only
-    if (params.showClearanceCircles && results.success &&
-        !results.chains.empty()) {
+    if (params.showClearanceCircles && results.success && !results.chains.empty()) {
       size_t totalCirclesDrawn = 0;
       const size_t MAX_CONSTRUCTION_CIRCLES = 500;  // Safety limit
 
@@ -116,10 +114,8 @@ void PluginManager::addConstructionGeometryVisualization(
           // Draw clearance circle (even for very small radii to show boundary
           // points)
           bool circleSuccess = true;
-          if (radius_world_mm >=
-              0.01) {  // Only draw circle if radius is visible
-            circleSuccess = sketch->addConstructionCircle(
-                x_world_mm, y_world_mm, radius_world_mm);
+          if (radius_world_mm >= 0.01) {  // Only draw circle if radius is visible
+            circleSuccess = sketch->addConstructionCircle(x_world_mm, y_world_mm, radius_world_mm);
           }
 
           // Optionally add a cross at the center to mark the medial axis point
@@ -127,12 +123,10 @@ void PluginManager::addConstructionGeometryVisualization(
           bool crossSuccess2 = true;
 
           if (params.crossSize > 0.0) {
-            crossSuccess1 = sketch->addConstructionLine(
-                x_world_mm - params.crossSize, y_world_mm,
-                x_world_mm + params.crossSize, y_world_mm);
-            crossSuccess2 = sketch->addConstructionLine(
-                x_world_mm, y_world_mm - params.crossSize, x_world_mm,
-                y_world_mm + params.crossSize);
+            crossSuccess1 = sketch->addConstructionLine(x_world_mm - params.crossSize, y_world_mm,
+                                                        x_world_mm + params.crossSize, y_world_mm);
+            crossSuccess2 = sketch->addConstructionLine(x_world_mm, y_world_mm - params.crossSize, x_world_mm,
+                                                        y_world_mm + params.crossSize);
           }
 
           if (!circleSuccess || !crossSuccess1 || !crossSuccess2) {
@@ -140,7 +134,8 @@ void PluginManager::addConstructionGeometryVisualization(
           }
           totalCirclesDrawn++;
         }
-        if (totalCirclesDrawn >= MAX_CONSTRUCTION_CIRCLES) break;
+        if (totalCirclesDrawn >= MAX_CONSTRUCTION_CIRCLES)
+          break;
       }
     }
 
@@ -149,8 +144,7 @@ void PluginManager::addConstructionGeometryVisualization(
       // Draw construction lines connecting the polygon vertices
       for (size_t i = 0; i < polygon.size(); ++i) {
         const auto& p1 = polygon[i];
-        const auto& p2 =
-            polygon[(i + 1) % polygon.size()];  // Wrap around to close polygon
+        const auto& p2 = polygon[(i + 1) % polygon.size()];  // Wrap around to close polygon
 
         // Polygon vertices are in world coordinates (cm) from
         // extractProfileGeometry Convert from cm to mm (FusionSketch methods
@@ -161,8 +155,7 @@ void PluginManager::addConstructionGeometryVisualization(
         double y2_world_mm = Utils::fusionLengthToMm(p2.y);
 
         // Add construction line directly in world coordinates
-        bool success = sketch->addConstructionLine(x1_world_mm, y1_world_mm,
-                                                   x2_world_mm, y2_world_mm);
+        bool success = sketch->addConstructionLine(x1_world_mm, y1_world_mm, x2_world_mm, y2_world_mm);
         if (!success) {
           // TODO(developer): Add implementation
         }

@@ -15,8 +15,7 @@
 namespace ChipCarving {
 namespace Commands {
 
-bool GeneratePathsCommandHandler::isPartOfClosedProfile(
-    adsk::core::Ptr<adsk::fusion::SketchCurve> curve) {
+bool GeneratePathsCommandHandler::isPartOfClosedProfile(adsk::core::Ptr<adsk::fusion::SketchCurve> curve) {
   if (!curve || !curve->parentSketch()) {
     return false;
   }
@@ -26,8 +25,7 @@ bool GeneratePathsCommandHandler::isPartOfClosedProfile(
     auto sketch = curve->parentSketch();
     auto profiles = sketch->profiles();
 
-    LOG_INFO("    Checking curve in sketch with "
-             << (profiles ? profiles->count() : 0) << " profiles");
+    LOG_INFO("    Checking curve in sketch with " << (profiles ? profiles->count() : 0) << " profiles");
 
     if (!profiles || profiles->count() == 0) {
       return false;
@@ -36,7 +34,8 @@ bool GeneratePathsCommandHandler::isPartOfClosedProfile(
     // Check each profile in the sketch
     for (int p = 0; p < static_cast<int>(profiles->count()); ++p) {
       auto profile = profiles->item(p);
-      if (!profile) continue;
+      if (!profile)
+        continue;
 
       // Check if this profile is closed (has area)
       auto areaProps = profile->areaProperties();
@@ -49,28 +48,30 @@ bool GeneratePathsCommandHandler::isPartOfClosedProfile(
 
       // Check if the curve is part of this profile
       auto profileLoops = profile->profileLoops();
-      if (!profileLoops) continue;
+      if (!profileLoops)
+        continue;
 
       for (int l = 0; l < profileLoops->count(); ++l) {
         auto loop = profileLoops->item(l);
-        if (!loop) continue;
+        if (!loop)
+          continue;
 
         auto loopCurves = loop->profileCurves();
-        if (!loopCurves) continue;
+        if (!loopCurves)
+          continue;
 
         for (int c = 0; c < loopCurves->count(); ++c) {
           auto profileCurve = loopCurves->item(c);
           if (profileCurve && profileCurve->sketchEntity()) {
             // Check if this is our curve
-            if (profileCurve->sketchEntity()->entityToken() ==
-                curve->entityToken()) {
+            if (profileCurve->sketchEntity()->entityToken() == curve->entityToken()) {
               return true;  // Found it in a closed profile
             }
           }
         }
       }
     }
-    
+
     return false;  // Curve not found in any closed profile
   } catch (const std::exception& e) {
     LOG_ERROR("Error checking if curve is part of closed profile: " << e.what());
@@ -83,19 +84,17 @@ bool GeneratePathsCommandHandler::isPartOfClosedProfile(
 
 void GeneratePathsCommandHandler::validateAndCleanSelection(
     adsk::core::Ptr<adsk::core::SelectionCommandInput> selectionInput) {
-  if (!selectionInput) return;
+  if (!selectionInput)
+    return;
 
-  LOG_INFO("Validating " << selectionInput->selectionCount()
-                         << " selections...");
+  LOG_INFO("Validating " << selectionInput->selectionCount() << " selections...");
 
   // Track which curves belong to which profiles
-  std::map<std::string, std::vector<adsk::core::Ptr<adsk::fusion::SketchCurve>>>
-      curvesBySketch;
+  std::map<std::string, std::vector<adsk::core::Ptr<adsk::fusion::SketchCurve>>> curvesBySketch;
   std::vector<int> indicesToRemove;
 
   // Process selections from back to front to safely remove invalid ones
-  for (int i = static_cast<int>(selectionInput->selectionCount()) - 1; i >= 0;
-       --i) {
+  for (int i = static_cast<int>(selectionInput->selectionCount()) - 1; i >= 0; --i) {
     auto selection = selectionInput->selection(i);
     if (!selection || !selection->entity()) {
       indicesToRemove.push_back(i);
@@ -125,14 +124,11 @@ void GeneratePathsCommandHandler::validateAndCleanSelection(
 
       // Mark individual curves for removal - we'll check later if they form
       // complete profiles
-      LOG_INFO("  Selection "
-               << i
-               << " is an individual curve - marking for potential removal");
+      LOG_INFO("  Selection " << i << " is an individual curve - marking for potential removal");
       indicesToRemove.push_back(i);
     } else {
       // Unknown entity type - remove it
-      LOG_INFO("  Removing selection " << i << ": Unknown entity type "
-                                       << entity->objectType());
+      LOG_INFO("  Removing selection " << i << ": Unknown entity type " << entity->objectType());
       indicesToRemove.push_back(i);
     }
   }
@@ -149,11 +145,13 @@ void GeneratePathsCommandHandler::validateAndCleanSelection(
         // Check each profile to see if we have all its curves selected
         for (int p = 0; p < static_cast<int>(profiles->count()); ++p) {
           auto profile = profiles->item(p);
-          if (!profile) continue;
+          if (!profile)
+            continue;
 
           // Only check closed profiles
           auto areaProps = profile->areaProperties();
-          if (!areaProps || areaProps->area() <= 0) continue;
+          if (!areaProps || areaProps->area() <= 0)
+            continue;
 
           // Count curves in this profile
           int profileCurveCount = 0;
@@ -163,7 +161,8 @@ void GeneratePathsCommandHandler::validateAndCleanSelection(
           if (profileLoops) {
             for (int l = 0; l < static_cast<int>(profileLoops->count()); ++l) {
               auto loop = profileLoops->item(l);
-              if (!loop) continue;
+              if (!loop)
+                continue;
 
               auto loopCurves = loop->profileCurves();
               if (loopCurves) {
@@ -173,8 +172,7 @@ void GeneratePathsCommandHandler::validateAndCleanSelection(
                 for (int c = 0; c < static_cast<int>(loopCurves->count()); ++c) {
                   auto profileCurve = loopCurves->item(c);
                   if (profileCurve && profileCurve->sketchEntity()) {
-                    std::string curveToken =
-                        profileCurve->sketchEntity()->entityToken();
+                    std::string curveToken = profileCurve->sketchEntity()->entityToken();
 
                     // Check if this curve is in our selection
                     for (const auto& selectedCurve : curves) {
@@ -191,24 +189,19 @@ void GeneratePathsCommandHandler::validateAndCleanSelection(
 
           // If we have ALL curves from this profile, remove them from
           // indicesToRemove
-          if (matchingCurveCount == profileCurveCount &&
-              profileCurveCount > 0) {
-            LOG_INFO("  Found complete profile from " << matchingCurveCount
-                                                      << " selected curves");
+          if (matchingCurveCount == profileCurveCount && profileCurveCount > 0) {
+            LOG_INFO("  Found complete profile from " << matchingCurveCount << " selected curves");
 
             // Remove these curves from indicesToRemove
-            for (int i = static_cast<int>(selectionInput->selectionCount()) - 1;
-                 i >= 0; --i) {
+            for (int i = static_cast<int>(selectionInput->selectionCount()) - 1; i >= 0; --i) {
               auto selection = selectionInput->selection(i);
               if (selection && selection->entity()) {
                 auto entity = selection->entity();
                 auto curve = entity->cast<adsk::fusion::SketchCurve>();
-                if (curve && curve->parentSketch() &&
-                    curve->parentSketch()->entityToken() == sketchId) {
+                if (curve && curve->parentSketch() && curve->parentSketch()->entityToken() == sketchId) {
                   // This curve is part of the complete profile - remove from
                   // removal list
-                  indicesToRemove.erase(std::remove(indicesToRemove.begin(),
-                                                    indicesToRemove.end(), i),
+                  indicesToRemove.erase(std::remove(indicesToRemove.begin(), indicesToRemove.end(), i),
                                         indicesToRemove.end());
                 }
               }
@@ -224,8 +217,7 @@ void GeneratePathsCommandHandler::validateAndCleanSelection(
     // Collect all valid selections first
     std::vector<adsk::core::Ptr<adsk::core::Base>> validSelections;
 
-    for (int i = 0; i < static_cast<int>(selectionInput->selectionCount());
-         ++i) {
+    for (int i = 0; i < static_cast<int>(selectionInput->selectionCount()); ++i) {
       // Skip if this index is marked for removal
       bool shouldRemove = false;
       for (int removeIdx : indicesToRemove) {
@@ -251,8 +243,7 @@ void GeneratePathsCommandHandler::validateAndCleanSelection(
         selectionInput->addSelection(validEntity);
       }
 
-      LOG_INFO("Removed " << indicesToRemove.size() << " invalid selections. "
-                          << validSelections.size()
+      LOG_INFO("Removed " << indicesToRemove.size() << " invalid selections. " << validSelections.size()
                           << " valid selections remain.");
     } catch (...) {
       LOG_ERROR("Failed to update selection after validation");
@@ -265,8 +256,7 @@ void GeneratePathsCommandHandler::validateAndCleanSelection(
     const auto& curves = sketchCurvePair.second;
     if (!curves.empty() && curves[0]->parentSketch()) {
       auto sketch = curves[0]->parentSketch();
-      LOG_INFO("Sketch '" << sketch->name() << "' has " << curves.size()
-                          << " selected curves from closed profiles");
+      LOG_INFO("Sketch '" << sketch->name() << "' has " << curves.size() << " selected curves from closed profiles");
     }
   }
 }

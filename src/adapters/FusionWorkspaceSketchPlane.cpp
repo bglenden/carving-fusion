@@ -19,8 +19,8 @@ using namespace adsk::core;
 namespace ChipCarving {
 namespace Adapters {
 
-std::unique_ptr<ISketch> FusionWorkspace::createSketchOnPlane(
-    const std::string& name, const std::string& planeEntityId) {
+std::unique_ptr<ISketch> FusionWorkspace::createSketchOnPlane(const std::string& name,
+                                                              const std::string& planeEntityId) {
   if (!app_) {
     return nullptr;
   }
@@ -55,12 +55,10 @@ std::unique_ptr<ISketch> FusionWorkspace::createSketchOnPlane(
       LOG_DEBUG("Searching for plane entity with token: " << planeEntityId);
 
       // Try to find construction plane first
-      Ptr<adsk::fusion::ConstructionPlanes> constructionPlanes =
-          rootComp->constructionPlanes();
+      Ptr<adsk::fusion::ConstructionPlanes> constructionPlanes = rootComp->constructionPlanes();
       if (constructionPlanes) {
         for (size_t i = 0; i < constructionPlanes->count(); ++i) {
-          Ptr<adsk::fusion::ConstructionPlane> plane =
-              constructionPlanes->item(i);
+          Ptr<adsk::fusion::ConstructionPlane> plane = constructionPlanes->item(i);
           if (plane && plane->entityToken() == planeEntityId) {
             planeEntity = plane;
             break;
@@ -74,10 +72,12 @@ std::unique_ptr<ISketch> FusionWorkspace::createSketchOnPlane(
         if (bodies) {
           for (size_t i = 0; i < bodies->count() && !planeEntity; ++i) {
             Ptr<adsk::fusion::BRepBody> body = bodies->item(i);
-            if (!body) continue;
+            if (!body)
+              continue;
 
             Ptr<adsk::fusion::BRepFaces> faces = body->faces();
-            if (!faces) continue;
+            if (!faces)
+              continue;
 
             for (size_t j = 0; j < faces->count(); ++j) {
               Ptr<adsk::fusion::BRepFace> face = faces->item(j);
@@ -93,8 +93,7 @@ std::unique_ptr<ISketch> FusionWorkspace::createSketchOnPlane(
 
     if (!planeEntity) {
       // Fall back to XY plane if entity not found
-      LOG_DEBUG("Failed to resolve plane entity token: "
-                << planeEntityId << ". Falling back to XY plane.");
+      LOG_DEBUG("Failed to resolve plane entity token: " << planeEntityId << ". Falling back to XY plane.");
       planeEntity = rootComp->xYConstructionPlane();
     } else {
       // Log successful entity token resolution
@@ -116,8 +115,7 @@ std::unique_ptr<ISketch> FusionWorkspace::createSketchOnPlane(
         if (normal) {
           // Check if normal is parallel to Z axis (0, 0, ±1)
           double tolerance = 0.001;
-          if (std::abs(normal->x()) < tolerance &&
-              std::abs(normal->y()) < tolerance &&
+          if (std::abs(normal->x()) < tolerance && std::abs(normal->y()) < tolerance &&
               std::abs(std::abs(normal->z()) - 1.0) < tolerance) {
             isValidPlane = true;
             Ptr<adsk::core::Point3D> origin = geometry->origin();
@@ -140,8 +138,7 @@ std::unique_ptr<ISketch> FusionWorkspace::createSketchOnPlane(
             if (normal) {
               // Check if normal is parallel to Z axis
               double tolerance = 0.001;
-              if (std::abs(normal->x()) < tolerance &&
-                  std::abs(normal->y()) < tolerance &&
+              if (std::abs(normal->x()) < tolerance && std::abs(normal->y()) < tolerance &&
                   std::abs(std::abs(normal->z()) - 1.0) < tolerance) {
                 isValidPlane = true;
                 Ptr<adsk::core::Point3D> origin = plane->origin();
@@ -157,9 +154,8 @@ std::unique_ptr<ISketch> FusionWorkspace::createSketchOnPlane(
 
     if (!isValidPlane && !planeEntityId.empty()) {
       // Log error and fall back to XY plane
-      LOG_ERROR(
-          "Selected plane/surface is not parallel to XY plane. Using XY plane "
-          "instead.");
+      LOG_ERROR("Selected plane/surface is not parallel to XY plane. Using XY plane "
+                "instead.");
       planeEntity = rootComp->xYConstructionPlane();
     }
 
@@ -174,8 +170,7 @@ std::unique_ptr<ISketch> FusionWorkspace::createSketchOnPlane(
 
     return std::make_unique<FusionSketch>(name, app_, sketch);
   } catch (const std::exception& e) {
-    std::cout << "Sketch creation on plane error: " << e.what()
-              << std::endl;
+    std::cout << "Sketch creation on plane error: " << e.what() << std::endl;
     return nullptr;
   } catch (...) {
     std::cout << "Unknown sketch creation on plane error" << std::endl;

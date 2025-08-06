@@ -15,8 +15,7 @@ extern "C" bool XPluginStart(const char* context) {
   LOG_DEBUG("XPluginStart called at " << __TIME__);
 
   // Get mode from environment variable or use default
-  ChipCarving::PluginMode mode =
-      ChipCarving::PluginInitializer::GetModeFromEnv();
+  ChipCarving::PluginMode mode = ChipCarving::PluginInitializer::GetModeFromEnv();
 
   // Initialize plugin with selected mode
   return ChipCarving::PluginInitializer::InitializePlugin(context, mode);
@@ -29,9 +28,13 @@ extern "C" bool XPluginStop(const char* context) {
 }
 
 // Also provide legacy names for compatibility
-extern "C" bool run(const char* context) { return XPluginStart(context); }
+extern "C" bool run(const char* context) {
+  return XPluginStart(context);
+}
 
-extern "C" bool stop(const char* context) { return XPluginStop(context); }
+extern "C" bool stop(const char* context) {
+  return XPluginStop(context);
+}
 
 #ifdef XI_WIN
 

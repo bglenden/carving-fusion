@@ -1,6 +1,6 @@
 ---
 # Comprehensive clang-tidy configuration for CNC Chip Carving Plugin
-# Focus on C++ best practices, modern C++17, and Fusion 360 API compatibility
+# Focus on C++ best practices, C++14, and Fusion 360 API compatibility
 
 Checks: >
   clang-diagnostic-*,
@@ -39,6 +39,9 @@ Checks: >
   -modernize-use-using,
   -modernize-use-auto,
   -modernize-return-braced-init-list,
+  -modernize-use-transparent-functors,
+  -modernize-make-unique,
+  -modernize-make-shared,
   performance-*,
   -performance-enum-size,
   readability-*,

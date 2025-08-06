@@ -16,9 +16,8 @@ namespace Geometry {
 
 VCarveCalculator::VCarveCalculator() {}
 
-VCarveResults VCarveCalculator::generateVCarvePaths(
-    const MedialAxisResults& medialResults,
-    const Adapters::MedialAxisParameters& params) {
+VCarveResults VCarveCalculator::generateVCarvePaths(const MedialAxisResults& medialResults,
+                                                    const Adapters::MedialAxisParameters& params) {
   VCarveResults results;
 
   // Validate inputs
@@ -54,8 +53,7 @@ VCarveResults VCarveCalculator::generateVCarvePaths(
         // OpenVoronoi clearances[j] is in cm, convert to mm for depth
         // calculation
         double clearanceMm = clearances[j] * 10.0;
-        double depth = calculateVCarveDepth(clearanceMm, params.toolAngle,
-                                            params.maxVCarveDepth);
+        double depth = calculateVCarveDepth(clearanceMm, params.toolAngle, params.maxVCarveDepth);
 
         // Create V-carve point - chain points are already in world coordinates
         // (cm) Convert to mm for consistency with the rest of the system
@@ -86,17 +84,15 @@ VCarveResults VCarveCalculator::generateVCarvePaths(
     results.updateStatistics();
     results.success = true;
   } catch (const std::exception& e) {
-    results.errorMessage =
-        "Exception during V-carve generation: " + std::string(e.what());
+    results.errorMessage = "Exception during V-carve generation: " + std::string(e.what());
     results.success = false;
   }
 
   return results;
 }
 
-VCarveResults VCarveCalculator::generateVCarvePaths(
-    const std::vector<SampledMedialPath>& sampledPaths,
-    const Adapters::MedialAxisParameters& params) {
+VCarveResults VCarveCalculator::generateVCarvePaths(const std::vector<SampledMedialPath>& sampledPaths,
+                                                    const Adapters::MedialAxisParameters& params) {
   VCarveResults results;
 
   // Validate inputs
@@ -137,17 +133,14 @@ VCarveResults VCarveCalculator::generateVCarvePaths(
     results.updateStatistics();
     results.success = true;
   } catch (const std::exception& e) {
-    results.errorMessage =
-        "Exception during V-carve generation: " + std::string(e.what());
+    results.errorMessage = "Exception during V-carve generation: " + std::string(e.what());
     results.success = false;
   }
 
   return results;
 }
 
-double VCarveCalculator::calculateVCarveDepth(double clearanceRadius,
-                                              double toolAngle,
-                                              double maxDepth) {
+double VCarveCalculator::calculateVCarveDepth(double clearanceRadius, double toolAngle, double maxDepth) {
   if (clearanceRadius <= 0.0 || toolAngle <= 0.0 || toolAngle >= 180.0) {
     return 0.0;
   }
@@ -162,8 +155,7 @@ double VCarveCalculator::calculateVCarveDepth(double clearanceRadius,
   return std::min(depth, maxDepth);
 }
 
-bool VCarveCalculator::validateParameters(
-    const Adapters::MedialAxisParameters& params) {
+bool VCarveCalculator::validateParameters(const Adapters::MedialAxisParameters& params) {
   // Check tool angle is reasonable
   if (params.toolAngle <= 0.0 || params.toolAngle >= 180.0) {
     return false;

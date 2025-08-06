@@ -13,10 +13,9 @@
 namespace ChipCarving {
 namespace Geometry {
 
-std::vector<SampledMedialPath> sampleMedialAxisPaths(
-    const std::vector<std::vector<Point2D>>& chains,
-    const std::vector<std::vector<double>>& clearanceRadii,
-    double targetSpacing) {
+std::vector<SampledMedialPath> sampleMedialAxisPaths(const std::vector<std::vector<Point2D>>& chains,
+                                                     const std::vector<std::vector<double>>& clearanceRadii,
+                                                     double targetSpacing) {
   std::vector<SampledMedialPath> sampledPaths;
 
   // Validate input
@@ -79,13 +78,11 @@ std::vector<SampledMedialPath> sampleMedialAxisPaths(
             double t = double(j) / double(numIntermediatePoints + 1);
 
             // Linear interpolation of position
-            Point2D interpolatedPoint(
-                chain[i].x + t * (chain[i + 1].x - chain[i].x),
-                chain[i].y + t * (chain[i + 1].y - chain[i].y));
+            Point2D interpolatedPoint(chain[i].x + t * (chain[i + 1].x - chain[i].x),
+                                      chain[i].y + t * (chain[i + 1].y - chain[i].y));
 
             // Linear interpolation of clearance
-            double interpolatedClearance =
-                clearances[i] + t * (clearances[i + 1] - clearances[i]);
+            double interpolatedClearance = clearances[i] + t * (clearances[i + 1] - clearances[i]);
 
             enhancedChain.push_back(interpolatedPoint);
             enhancedClearances.push_back(interpolatedClearance);
@@ -114,8 +111,7 @@ std::vector<SampledMedialPath> sampleMedialAxisPaths(
     }
 
     // Calculate number of target points based on path length
-    int targetCount =
-        std::max(2, static_cast<int>(totalLength / targetSpacing) + 1);
+    int targetCount = std::max(2, static_cast<int>(totalLength / targetSpacing) + 1);
 
     if (targetCount > 2 && totalLength > 0.2) {
       // Add intermediate points at regular intervals
@@ -124,8 +120,7 @@ std::vector<SampledMedialPath> sampleMedialAxisPaths(
 
         // Find the point closest to this target distance
         size_t bestIndex = 0;
-        double bestDifference =
-            std::abs(cumulativeDistances[0] - targetDistance);
+        double bestDifference = std::abs(cumulativeDistances[0] - targetDistance);
 
         for (size_t i = 1; i < enhancedChain.size(); ++i) {
           double difference = std::abs(cumulativeDistances[i] - targetDistance);
@@ -137,11 +132,9 @@ std::vector<SampledMedialPath> sampleMedialAxisPaths(
 
         // Add if not already selected and not too close to existing points
         if (selectedSet.find(bestIndex) == selectedSet.end()) {
-          bool tooClose = std::any_of(
-              selectedSet.begin(), selectedSet.end(), [&](size_t selected) {
-                return distance(enhancedChain[selected],
-                                enhancedChain[bestIndex]) < 0.1;
-              });
+          bool tooClose = std::any_of(selectedSet.begin(), selectedSet.end(), [&](size_t selected) {
+            return distance(enhancedChain[selected], enhancedChain[bestIndex]) < 0.1;
+          });
 
           if (!tooClose) {
             selectedIndices.push_back(bestIndex);
@@ -156,8 +149,7 @@ std::vector<SampledMedialPath> sampleMedialAxisPaths(
 
     // Build the sampled path from selected points
     for (size_t idx : selectedIndices) {
-      sampledPath.points.emplace_back(enhancedChain[idx],
-                                      enhancedClearances[idx]);
+      sampledPath.points.emplace_back(enhancedChain[idx], enhancedClearances[idx]);
     }
 
     sampledPaths.push_back(sampledPath);

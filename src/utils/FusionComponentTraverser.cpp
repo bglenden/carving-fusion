@@ -11,8 +11,7 @@
 namespace ChipCarving {
 namespace Utils {
 
-FusionComponentTraverser::FusionComponentTraverser(
-    adsk::core::Ptr<adsk::fusion::Component> rootComponent)
+FusionComponentTraverser::FusionComponentTraverser(adsk::core::Ptr<adsk::fusion::Component> rootComponent)
     : rootComponent_(rootComponent) {
   if (!rootComponent_) {
     LOG_ERROR("FusionComponentTraverser initialized with null root component");
@@ -21,8 +20,7 @@ FusionComponentTraverser::FusionComponentTraverser(
   }
 }
 
-std::vector<adsk::core::Ptr<adsk::fusion::Component>>
-FusionComponentTraverser::getAllComponents() {
+std::vector<adsk::core::Ptr<adsk::fusion::Component>> FusionComponentTraverser::getAllComponents() {
   std::vector<adsk::core::Ptr<adsk::fusion::Component>> components;
   collectComponents(components);
 
@@ -61,8 +59,7 @@ size_t FusionComponentTraverser::getComponentCount() {
   return count;
 }
 
-adsk::core::Ptr<adsk::fusion::Component>
-FusionComponentTraverser::findComponent(
+adsk::core::Ptr<adsk::fusion::Component> FusionComponentTraverser::findComponent(
     std::function<bool(adsk::core::Ptr<adsk::fusion::Component>)> predicate) {
   if (!predicate) {
     return nullptr;
@@ -79,8 +76,7 @@ FusionComponentTraverser::findComponent(
   return nullptr;
 }
 
-void FusionComponentTraverser::collectComponents(
-    std::vector<adsk::core::Ptr<adsk::fusion::Component>>& components) {
+void FusionComponentTraverser::collectComponents(std::vector<adsk::core::Ptr<adsk::fusion::Component>>& components) {
   if (!rootComponent_) {
     LOG_ERROR("Cannot collect components - root component is null");
     return;

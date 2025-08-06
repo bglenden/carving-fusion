@@ -20,8 +20,7 @@ namespace Adapters {
 using namespace ChipCarving::Adapters;
 
 // FusionLogger Implementation
-FusionLogger::FusionLogger(const std::string& logFilePath)
-    : logFilePath_(logFilePath) {
+FusionLogger::FusionLogger(const std::string& logFilePath) : logFilePath_(logFilePath) {
   // Log rotation: Move existing log to backup before creating new one
   rotateLogFile();
 
@@ -34,9 +33,7 @@ FusionLogger::FusionLogger(const std::string& logFilePath)
     auto time_t = std::chrono::system_clock::to_time_t(now);
     logFile_ << "========================================" << std::endl;
     logFile_ << "NEW FUSION PLUGIN SESSION STARTED" << std::endl;
-    logFile_ << "Timestamp: "
-             << std::put_time(std::localtime(&time_t), "%Y-%m-%d %H:%M:%S")
-             << std::endl;
+    logFile_ << "Timestamp: " << std::put_time(std::localtime(&time_t), "%Y-%m-%d %H:%M:%S") << std::endl;
     logFile_ << "Log file: " << logFilePath_ << std::endl;
     logFile_ << "========================================" << std::endl;
     logFile_.flush();
@@ -68,8 +65,7 @@ void FusionLogger::logError(const std::string& message) const {
   writeLog(message, "ERROR");
 }
 
-void FusionLogger::writeLog(const std::string& message,
-                            const std::string& level) const {
+void FusionLogger::writeLog(const std::string& message, const std::string& level) const {
   // Check and rotate log file if needed before writing
   const_cast<FusionLogger*>(this)->checkAndRotateIfNeeded();
 
@@ -77,9 +73,7 @@ void FusionLogger::writeLog(const std::string& message,
   auto time_t = std::chrono::system_clock::to_time_t(now);
 
   std::stringstream timestampedMessage;
-  timestampedMessage << "["
-                     << std::put_time(std::localtime(&time_t), "%H:%M:%S")
-                     << "] "
+  timestampedMessage << "[" << std::put_time(std::localtime(&time_t), "%H:%M:%S") << "] "
                      << "[" << level << "] " << message;
 
   std::string fullMessage = timestampedMessage.str();
@@ -123,9 +117,9 @@ void FusionLogger::rotateLogFile() {
 
     // Always rotate on new session, or if file is larger than 1MB
     const size_t MAX_LOG_SIZE = 1 * 1024 * 1024;  // 1MB
-    (void)MAX_LOG_SIZE;  // Suppress unused variable warning (reserved for
-                         // future use)
-    bool shouldRotate = (fileSize > 0);  // Always rotate on startup for now
+    (void)MAX_LOG_SIZE;                           // Suppress unused variable warning (reserved for
+                                                  // future use)
+    bool shouldRotate = (fileSize > 0);           // Always rotate on startup for now
 
     if (shouldRotate) {
       // Create backup filename with timestamp
@@ -133,8 +127,7 @@ void FusionLogger::rotateLogFile() {
       auto time_t = std::chrono::system_clock::to_time_t(now);
 
       std::stringstream backupName;
-      backupName << logFilePath_ << ".backup_"
-                 << std::put_time(std::localtime(&time_t), "%Y%m%d_%H%M%S");
+      backupName << logFilePath_ << ".backup_" << std::put_time(std::localtime(&time_t), "%Y%m%d_%H%M%S");
 
       // Rename existing file to backup
       std::rename(logFilePath_.c_str(), backupName.str().c_str());
@@ -167,15 +160,13 @@ void FusionLogger::checkAndRotateIfNeeded() {
 // FusionUserInterface Implementation
 FusionUserInterface::FusionUserInterface(Ptr<UserInterface> ui) : ui_(ui) {}
 
-void FusionUserInterface::showMessageBox(const std::string& title,
-                                         const std::string& message) {
+void FusionUserInterface::showMessageBox(const std::string& title, const std::string& message) {
   if (ui_) {
     ui_->messageBox(message, title);
   }
 }
 
-std::string FusionUserInterface::showFileDialog(const std::string& title,
-                                                const std::string& filter) {
+std::string FusionUserInterface::showFileDialog(const std::string& title, const std::string& filter) {
   if (!ui_) {
     return "";
   }
@@ -221,8 +212,7 @@ bool FusionUserInterface::confirmAction(const std::string& message) {
   return true;
 }
 
-bool FusionUserInterface::showParameterDialog(const std::string& title,
-                                              MedialAxisParameters& params) {
+bool FusionUserInterface::showParameterDialog(const std::string& title, MedialAxisParameters& params) {
   if (!ui_) {
     return false;
   }
@@ -230,10 +220,8 @@ bool FusionUserInterface::showParameterDialog(const std::string& title,
   // For now, implement as simple message box - TODO(ui): Replace with proper
   // dialog
   std::string message = "Medial Axis Parameters\n\n";
-  message +=
-      "Polygon Tolerance: " + std::to_string(params.polygonTolerance) + "mm\n";
-  message +=
-      "Sampling Distance: " + std::to_string(params.samplingDistance) + "mm\n";
+  message += "Polygon Tolerance: " + std::to_string(params.polygonTolerance) + "mm\n";
+  message += "Sampling Distance: " + std::to_string(params.samplingDistance) + "mm\n";
   message += "Force Boundary Intersections: ";
   message += (params.forceBoundaryIntersections ? "Yes" : "No");
   message += "\n";
@@ -252,8 +240,7 @@ bool FusionUserInterface::showParameterDialog(const std::string& title,
   return true;  // Always proceed with defaults for now
 }
 
-SketchSelection FusionUserInterface::showSketchSelectionDialog(
-    const std::string& title) {
+SketchSelection FusionUserInterface::showSketchSelectionDialog(const std::string& title) {
   SketchSelection selection;
 
   if (!ui_) {

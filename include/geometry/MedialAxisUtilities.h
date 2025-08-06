@@ -18,21 +18,20 @@ namespace Geometry {
  * Represents a single sampled point along a medial axis path
  */
 struct SampledMedialPoint {
-    Point2D position;        ///< (x, y) position in world coordinates
-    double clearanceRadius;  ///< Clearance radius (max tool radius) at this point
+  Point2D position;        ///< (x, y) position in world coordinates
+  double clearanceRadius;  ///< Clearance radius (max tool radius) at this point
 
-    SampledMedialPoint(const Point2D& pos, double clearance)
-        : position(pos), clearanceRadius(clearance) {}
+  SampledMedialPoint(const Point2D& pos, double clearance) : position(pos), clearanceRadius(clearance) {}
 };
 
 /**
  * Represents a single continuous path of sampled medial axis points
  */
 struct SampledMedialPath {
-    std::vector<SampledMedialPoint> points;  ///< Sampled points along this path
-    double totalLength;                      ///< Total length of this path in mm
+  std::vector<SampledMedialPoint> points;  ///< Sampled points along this path
+  double totalLength;                      ///< Total length of this path in mm
 
-    SampledMedialPath() : totalLength(0.0) {}
+  SampledMedialPath() : totalLength(0.0) {}
 };
 
 /**
@@ -52,9 +51,9 @@ struct SampledMedialPath {
  * @param targetSpacing Target spacing between sampled points in mm (default 1.0mm)
  * @return Vector of sampled paths, each containing evenly-spaced points with clearances
  */
-std::vector<SampledMedialPath> sampleMedialAxisPaths(
-    const std::vector<std::vector<Point2D>>& chains,
-    const std::vector<std::vector<double>>& clearanceRadii, double targetSpacing = 1.0);
+std::vector<SampledMedialPath> sampleMedialAxisPaths(const std::vector<std::vector<Point2D>>& chains,
+                                                     const std::vector<std::vector<double>>& clearanceRadii,
+                                                     double targetSpacing = 1.0);
 
 }  // namespace Geometry
 }  // namespace ChipCarving

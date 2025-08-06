@@ -18,8 +18,7 @@ using namespace adsk::core;
 namespace ChipCarving {
 namespace Adapters {
 
-Ptr<adsk::core::Curve3D> FusionWorkspace::getCurveWorldGeometry(
-    Ptr<adsk::fusion::SketchCurve> sketchCurve) {
+Ptr<adsk::core::Curve3D> FusionWorkspace::getCurveWorldGeometry(Ptr<adsk::fusion::SketchCurve> sketchCurve) {
   if (!sketchCurve) {
     return nullptr;
   }

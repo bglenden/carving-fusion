@@ -12,12 +12,10 @@ namespace ChipCarving {
 namespace Commands {
 
 // GeneratePathsCommandHandler Implementation
-GeneratePathsCommandHandler::GeneratePathsCommandHandler(
-    std::shared_ptr<Core::PluginManager> pluginManager)
+GeneratePathsCommandHandler::GeneratePathsCommandHandler(std::shared_ptr<Core::PluginManager> pluginManager)
     : BaseCommandHandler(pluginManager) {}
 
-void GeneratePathsCommandHandler::notify(
-    const adsk::core::Ptr<adsk::core::CommandCreatedEventArgs>& eventArgs) {
+void GeneratePathsCommandHandler::notify(const adsk::core::Ptr<adsk::core::CommandCreatedEventArgs>& eventArgs) {
   try {
     if (!eventArgs || !pluginManager_) {
       return;
@@ -53,14 +51,10 @@ void GeneratePathsCommandHandler::notify(
     // Create and register execute handler
     class ExecuteHandler : public adsk::core::CommandEventHandler {
      public:
-      explicit ExecuteHandler(GeneratePathsCommandHandler* parent)
-          : parent_(parent) {}
-      void notify(const adsk::core::Ptr<adsk::core::CommandEventArgs>&
-                      eventArgs) override {
-        if (parent_ && eventArgs && eventArgs->command() &&
-            eventArgs->command()->commandInputs()) {
-          parent_->executeMedialAxisProcessing(
-              eventArgs->command()->commandInputs());
+      explicit ExecuteHandler(GeneratePathsCommandHandler* parent) : parent_(parent) {}
+      void notify(const adsk::core::Ptr<adsk::core::CommandEventArgs>& eventArgs) override {
+        if (parent_ && eventArgs && eventArgs->command() && eventArgs->command()->commandInputs()) {
+          parent_->executeMedialAxisProcessing(eventArgs->command()->commandInputs());
         }
       }
 
@@ -74,21 +68,18 @@ void GeneratePathsCommandHandler::notify(
     // Create and register preview handler (minimal implementation)
     class PreviewHandler : public adsk::core::CommandEventHandler {
      public:
-      explicit PreviewHandler(GeneratePathsCommandHandler* parent)
-          : parent_(parent) {
+      explicit PreviewHandler(GeneratePathsCommandHandler* parent) : parent_(parent) {
         (void)parent_;  // Suppress unused field warning - placeholder for
                         // preview functionality
       }
-      void notify(const adsk::core::Ptr<adsk::core::CommandEventArgs>&
-                      eventArgs) override {
+      void notify(const adsk::core::Ptr<adsk::core::CommandEventArgs>& eventArgs) override {
         (void)eventArgs;  // Suppress unused parameter warning - required by
                           // Fusion API
         // Minimal preview handler - just validate inputs without executing
       }
 
      private:
-      GeneratePathsCommandHandler*
-          parent_;  // TODO(developer): Use parent for preview functionality
+      GeneratePathsCommandHandler* parent_;  // TODO(developer): Use parent for preview functionality
     };
 
     auto onPreview = new PreviewHandler(this);
@@ -98,12 +89,11 @@ void GeneratePathsCommandHandler::notify(
     // extraction
     class InputChangedHandler : public adsk::core::InputChangedEventHandler {
      public:
-      explicit InputChangedHandler(GeneratePathsCommandHandler* parent)
-          : parent_(parent) {}
-      void notify(const adsk::core::Ptr<adsk::core::InputChangedEventArgs>&
-                      eventArgs) override {
+      explicit InputChangedHandler(GeneratePathsCommandHandler* parent) : parent_(parent) {}
+      void notify(const adsk::core::Ptr<adsk::core::InputChangedEventArgs>& eventArgs) override {
         try {
-          if (!eventArgs || !eventArgs->input()) return;
+          if (!eventArgs || !eventArgs->input())
+            return;
 
           auto input = eventArgs->input();
           std::string inputId = input->id();
@@ -111,11 +101,9 @@ void GeneratePathsCommandHandler::notify(
           // IMMEDIATE EXTRACTION: Extract geometry as soon as profiles are
           // selected
           if (inputId == "sketchProfiles") {
-            auto selectionInput =
-                input->cast<adsk::core::SelectionCommandInput>();
+            auto selectionInput = input->cast<adsk::core::SelectionCommandInput>();
             if (selectionInput) {
-              LOG_INFO("Selection changed: " << selectionInput->selectionCount()
-                                             << " entities selected");
+              LOG_INFO("Selection changed: " << selectionInput->selectionCount() << " entities selected");
 
               // VALIDATION: Remove invalid selections (non-closed curves)
               parent_->validateAndCleanSelection(selectionInput);
@@ -124,30 +112,25 @@ void GeneratePathsCommandHandler::notify(
               parent_->clearCachedGeometry();
 
               // Extract geometry immediately from each selected profile
-              for (int i = 0;
-                   i < static_cast<int>(selectionInput->selectionCount());
-                   i++) {
+              for (int i = 0; i < static_cast<int>(selectionInput->selectionCount()); i++) {
                 auto selection = selectionInput->selection(i);
                 if (selection && selection->entity()) {
                   auto entity = selection->entity();
                   auto profile = entity->cast<adsk::fusion::Profile>();
 
                   if (profile && profile->parentSketch()) {
-                    LOG_INFO("  Extracting geometry from Selection "
-                             << i << ": Profile from sketch '"
-                             << profile->parentSketch()->name() << "'");
+                    LOG_INFO("  Extracting geometry from Selection " << i << ": Profile from sketch '"
+                                                                     << profile->parentSketch()->name() << "'");
 
                     // Extract geometry IMMEDIATELY while profile is still valid
                     parent_->extractAndCacheProfileGeometry(profile, i);
                   } else {
-                    LOG_INFO("  Selection " << i << ": Not a profile ("
-                                            << entity->objectType() << ")");
+                    LOG_INFO("  Selection " << i << ": Not a profile (" << entity->objectType() << ")");
                   }
                 }
               }
 
-              LOG_INFO("Immediate extraction completed for "
-                       << selectionInput->selectionCount() << " selections");
+              LOG_INFO("Immediate extraction completed for " << selectionInput->selectionCount() << " selections");
             }
           }
         } catch (...) {
@@ -166,21 +149,22 @@ void GeneratePathsCommandHandler::notify(
     // is shown
     class ActivateHandler : public adsk::core::CommandEventHandler {
      public:
-      void notify(const adsk::core::Ptr<adsk::core::CommandEventArgs>&
-                      eventArgs) override {
+      void notify(const adsk::core::Ptr<adsk::core::CommandEventArgs>& eventArgs) override {
         try {
-          if (!eventArgs || !eventArgs->command()) return;
+          if (!eventArgs || !eventArgs->command())
+            return;
 
           auto cmd = eventArgs->command();
           auto inputs = cmd->commandInputs();
-          if (!inputs) return;
+          if (!inputs)
+            return;
 
           // Get the selection input
           auto selectionInput = inputs->itemById("sketchProfiles");
-          if (!selectionInput) return;
+          if (!selectionInput)
+            return;
 
-          auto profileSelection =
-              selectionInput->cast<adsk::core::SelectionCommandInput>();
+          auto profileSelection = selectionInput->cast<adsk::core::SelectionCommandInput>();
           if (profileSelection) {
             // Clear all existing filters
             profileSelection->clearSelectionFilter();
@@ -188,9 +172,8 @@ void GeneratePathsCommandHandler::notify(
             // Add only the Profiles filter
             profileSelection->addSelectionFilter("Profiles");
 
-            LOG_INFO(
-                "Cleared curve selection filters - only closed profiles can be "
-                "selected");
+            LOG_INFO("Cleared curve selection filters - only closed profiles can be "
+                     "selected");
           }
         } catch (...) {
           LOG_ERROR("Error clearing selection filters");
@@ -205,21 +188,22 @@ void GeneratePathsCommandHandler::notify(
     // closes
     class DestroyHandler : public adsk::core::CommandEventHandler {
      public:
-      void notify(const adsk::core::Ptr<adsk::core::CommandEventArgs>&
-                      eventArgs) override {
+      void notify(const adsk::core::Ptr<adsk::core::CommandEventArgs>& eventArgs) override {
         try {
-          if (!eventArgs || !eventArgs->command()) return;
+          if (!eventArgs || !eventArgs->command())
+            return;
 
           auto cmd = eventArgs->command();
           auto inputs = cmd->commandInputs();
-          if (!inputs) return;
+          if (!inputs)
+            return;
 
           // Get the selection input
           auto selectionInput = inputs->itemById("sketchProfiles");
-          if (!selectionInput) return;
+          if (!selectionInput)
+            return;
 
-          auto profileSelection =
-              selectionInput->cast<adsk::core::SelectionCommandInput>();
+          auto profileSelection = selectionInput->cast<adsk::core::SelectionCommandInput>();
           if (profileSelection) {
             // Clear current filters
             profileSelection->clearSelectionFilter();

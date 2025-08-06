@@ -234,66 +234,105 @@ endif()
 # Find required tools
 find_program(CPPLINT_EXECUTABLE cpplint)
 find_program(CLANG_FORMAT_EXECUTABLE clang-format)
+find_program(CLANG_TIDY_EXECUTABLE clang-tidy)
 
-# cpplint target - comprehensive C++ style checking
+# cpplint target - C++ style and C++14 compatibility checking
 if(CPPLINT_EXECUTABLE)
+    message(STATUS "Found cpplint: ${CPPLINT_EXECUTABLE}")
+    
+    # Main lint target using cpplint for C++ issues
     add_custom_target(lint
         COMMAND ${CPPLINT_EXECUTABLE}
-            --filter=-build/include_subdir,-legal/copyright,-readability/casting,-build/include,-build/namespaces
-            --linelength=120
             --recursive
-            src/
+            --extensions=h,cpp
+            --headers=h
+            --quiet
+            src/ include/
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-        COMMENT "Running cpplint on source files"
+        COMMENT "Checking C++ style and compatibility with cpplint"
     )
     
-    # Quick lint - only check critical issues (faster feedback)
-    add_custom_target(lint-quick 
+    # Quick lint - check only critical issues
+    add_custom_target(lint-quick
         COMMAND ${CPPLINT_EXECUTABLE}
-            --filter=-build/include_subdir,-legal/copyright,-readability/casting,-build/include,-build/namespaces,-whitespace/line_length,-whitespace/end_of_line,-whitespace/comments,-whitespace/blank_line
             --recursive
-            src/
+            --extensions=h,cpp
+            --headers=h
+            --quiet
+            --filter=-whitespace,-readability/todo,-runtime/references
+            src/ include/
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-        COMMENT "Running quick cpplint (critical issues only)"
+        COMMENT "Quick C++ checks with cpplint (critical issues only)"
     )
-
-    # Lint specific directories
-    add_custom_target(lint-core
+    
+    # Verbose lint with all details
+    add_custom_target(lint-verbose
         COMMAND ${CPPLINT_EXECUTABLE}
-            --filter=-build/include_subdir,-legal/copyright,-readability/casting,-build/include,-build/namespaces
-            --linelength=120
             --recursive
-            src/core/ src/geometry/ src/commands/
+            --extensions=h,cpp
+            --headers=h
+            --verbose=1
+            src/ include/
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-        COMMENT "Running cpplint on core source files"
+        COMMENT "Verbose C++ checking with cpplint"
     )
 else()
     message(WARNING "cpplint not found. Install with: pip3 install cpplint")
+    # Create dummy targets so make commands don't fail
+    add_custom_target(lint
+        COMMAND ${CMAKE_COMMAND} -E echo "cpplint not found. Please install with: pip3 install cpplint"
+        COMMENT "Lint target unavailable - cpplint not installed"
+    )
+    add_custom_target(lint-quick
+        COMMAND ${CMAKE_COMMAND} -E echo "cpplint not found. Please install with: pip3 install cpplint"
+        COMMENT "Lint-quick target unavailable - cpplint not installed"
+    )
 endif()
 
 # clang-format target - automatic code formatting
 if(CLANG_FORMAT_EXECUTABLE)
-    # Check if code needs formatting (dry run)
-    add_custom_target(format-check
-        COMMAND find src/ -name "*.cpp" -o -name "*.h" | xargs ${CLANG_FORMAT_EXECUTABLE} --dry-run --Werror --style=file
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-        COMMENT "Checking if code formatting is needed"
-    )
+    message(STATUS "Found clang-format: ${CLANG_FORMAT_EXECUTABLE}")
     
     # Apply automatic formatting 
     add_custom_target(format
-        COMMAND find src/ -name "*.cpp" -o -name "*.h" | xargs ${CLANG_FORMAT_EXECUTABLE} -i --style=Google
+        COMMAND find src/ include/ -name "*.cpp" -o -name "*.h" | 
+                xargs ${CLANG_FORMAT_EXECUTABLE} -i --style=file
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
         COMMENT "Auto-formatting source code with clang-format"
     )
+    
+    # Check if code needs formatting (dry run)
+    add_custom_target(format-check
+        COMMAND find src/ include/ -name "*.cpp" -o -name "*.h" | 
+                xargs ${CLANG_FORMAT_EXECUTABLE} --dry-run --Werror --style=file
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        COMMENT "Checking if code formatting is needed"
+    )
 else()
-    message(WARNING "clang-format not found. Available in Xcode or install with: brew install clang-format")
+    message(WARNING "clang-format not found. Install with: brew install clang-format")
+endif()
+
+# clang-tidy target - static analysis (optional, requires LLVM)
+if(CLANG_TIDY_EXECUTABLE)
+    message(STATUS "Found clang-tidy: ${CLANG_TIDY_EXECUTABLE}")
+    
+    # Comprehensive static analysis
+    add_custom_target(lint-analysis
+        COMMAND ${CLANG_TIDY_EXECUTABLE}
+            -p ${CMAKE_BINARY_DIR}
+            --config-file=${CMAKE_CURRENT_SOURCE_DIR}/.clang-tidy
+            src/**/*.cpp
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        COMMENT "Running static analysis with clang-tidy"
+    )
+else()
+    message(STATUS "clang-tidy not found. Install LLVM for static analysis: brew install llvm")
 endif()
 
 # Combined quality check target
 add_custom_target(quality-check
     DEPENDS lint-quick
-    COMMENT "Running comprehensive code quality checks"
+    COMMENT "Running code quality checks"
 )
 
 # Development workflow targets

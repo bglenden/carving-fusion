@@ -52,13 +52,17 @@ std::pair<Leaf::ArcParams, Leaf::ArcParams> Leaf::getArcParameters() const {
 
   // Calculate angle differences to determine arc direction
   double angleDiff1 = endAngle1 - startAngle1;
-  if (angleDiff1 > M_PI) angleDiff1 -= 2 * M_PI;
-  if (angleDiff1 < -M_PI) angleDiff1 += 2 * M_PI;
+  if (angleDiff1 > M_PI)
+    angleDiff1 -= 2 * M_PI;
+  if (angleDiff1 < -M_PI)
+    angleDiff1 += 2 * M_PI;
   anticlockwise1 = angleDiff1 < 0;
 
   double angleDiff2 = endAngle2 - startAngle2;
-  if (angleDiff2 > M_PI) angleDiff2 -= 2 * M_PI;
-  if (angleDiff2 < -M_PI) angleDiff2 += 2 * M_PI;
+  if (angleDiff2 > M_PI)
+    angleDiff2 -= 2 * M_PI;
+  if (angleDiff2 < -M_PI)
+    angleDiff2 += 2 * M_PI;
   anticlockwise2 = angleDiff2 < 0;
 
   ArcParams arc1(center1, radius_, startAngle1, endAngle1, anticlockwise1);
@@ -74,8 +78,7 @@ double Leaf::getSagitta() const {
   }
 
   const double halfChord = dist / 2.0;
-  const double d_center =
-      std::sqrt(std::max(0.0, radius_ * radius_ - halfChord * halfChord));
+  const double d_center = std::sqrt(std::max(0.0, radius_ * radius_ - halfChord * halfChord));
   return radius_ - d_center;
 }
 
@@ -84,8 +87,7 @@ bool Leaf::isValidGeometry() const {
   return dist >= 1e-9 && dist <= 2 * radius_;
 }
 
-void Leaf::drawToSketch(Adapters::ISketch* sketch,
-                        Adapters::ILogger* logger) const {
+void Leaf::drawToSketch(Adapters::ISketch* sketch, Adapters::ILogger* logger) const {
   (void)logger;  // Suppress unused parameter warning
   if (!sketch || !isValidGeometry()) {
     return;
@@ -120,8 +122,10 @@ void Leaf::drawToSketch(Adapters::ISketch* sketch,
   // This fixes the issue where some leaf shapes appeared as crescents instead
   // of footballs
   double angleDiff1 = arc1.endAngle - arc1.startAngle;
-  while (angleDiff1 > M_PI) angleDiff1 -= 2 * M_PI;
-  while (angleDiff1 < -M_PI) angleDiff1 += 2 * M_PI;
+  while (angleDiff1 > M_PI)
+    angleDiff1 -= 2 * M_PI;
+  while (angleDiff1 < -M_PI)
+    angleDiff1 += 2 * M_PI;
 
   double midAngle1;
   if (std::abs(angleDiff1) <= M_PI) {
@@ -142,8 +146,10 @@ void Leaf::drawToSketch(Adapters::ISketch* sketch,
 
   // Calculate midpoint for second arc - ensure we get the shorter arc
   double angleDiff2 = arc2.endAngle - arc2.startAngle;
-  while (angleDiff2 > M_PI) angleDiff2 -= 2 * M_PI;
-  while (angleDiff2 < -M_PI) angleDiff2 += 2 * M_PI;
+  while (angleDiff2 > M_PI)
+    angleDiff2 -= 2 * M_PI;
+  while (angleDiff2 < -M_PI)
+    angleDiff2 += 2 * M_PI;
 
   double midAngle2;
   if (std::abs(angleDiff2) <= M_PI) {
@@ -171,15 +177,13 @@ void Leaf::drawToSketch(Adapters::ISketch* sketch,
   }
 
   // Draw first arc: focus1 -> midpoint1 -> focus2
-  bool arc1Created =
-      sketch->addArcByThreePointsToSketch(focus1Idx, mid1Idx, focus2Idx);
+  bool arc1Created = sketch->addArcByThreePointsToSketch(focus1Idx, mid1Idx, focus2Idx);
   if (arc1Created) {
     midpointsToDelete.push_back(mid1Idx);
   }
 
   // Draw second arc: focus2 -> midpoint2 -> focus1
-  bool arc2Created =
-      sketch->addArcByThreePointsToSketch(focus2Idx, mid2Idx, focus1Idx);
+  bool arc2Created = sketch->addArcByThreePointsToSketch(focus2Idx, mid2Idx, focus1Idx);
   if (arc2Created) {
     midpointsToDelete.push_back(mid2Idx);
   }

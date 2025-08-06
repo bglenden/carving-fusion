@@ -48,15 +48,16 @@ void LogToConsole(LogLevel level, const std::string& message) {
     }
 
     // Create log message
-    std::string logMessage =
-        "[" + ss.str() + "] " + levelPrefix + " " + message;
+    std::string logMessage = "[" + ss.str() + "] " + levelPrefix + " " + message;
 
     // Get the application and UI
     Ptr<Application> app = Application::get();
-    if (!app) return;
+    if (!app)
+      return;
 
     Ptr<UserInterface> ui = app->userInterface();
-    if (!ui) return;
+    if (!ui)
+      return;
 
     // Try to write to Text Commands palette
     Ptr<Palette> textPalette = ui->palettes()->itemById("TextCommands");
@@ -69,6 +70,10 @@ void LogToConsole(LogLevel level, const std::string& message) {
   }
 }
 
-void SetMinLogLevel(LogLevel level) { g_minLogLevel = level; }
+void SetMinLogLevel(LogLevel level) {
+  g_minLogLevel = level;
+}
 
-LogLevel GetMinLogLevel() { return g_minLogLevel; }
+LogLevel GetMinLogLevel() {
+  return g_minLogLevel;
+}

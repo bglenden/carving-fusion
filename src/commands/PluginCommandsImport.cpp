@@ -15,22 +15,21 @@ namespace ChipCarving {
 namespace Commands {
 
 // BaseCommandHandler Implementation
-BaseCommandHandler::BaseCommandHandler(
-    std::shared_ptr<Core::PluginManager> pluginManager)
+BaseCommandHandler::BaseCommandHandler(std::shared_ptr<Core::PluginManager> pluginManager)
     : pluginManager_(pluginManager) {}
 
 // ImportDesignCommandHandler Implementation
-ImportDesignCommandHandler::ImportDesignCommandHandler(
-    std::shared_ptr<Core::PluginManager> pluginManager)
+ImportDesignCommandHandler::ImportDesignCommandHandler(std::shared_ptr<Core::PluginManager> pluginManager)
     : BaseCommandHandler(pluginManager) {}
 
-void ImportDesignCommandHandler::notify(
-    const adsk::core::Ptr<adsk::core::CommandCreatedEventArgs>& eventArgs) {
+void ImportDesignCommandHandler::notify(const adsk::core::Ptr<adsk::core::CommandCreatedEventArgs>& eventArgs) {
   try {
-    if (!eventArgs) return;
+    if (!eventArgs)
+      return;
 
     auto command = eventArgs->command();
-    if (!command) return;
+    if (!command)
+      return;
 
     // Set dialog size to fit input fields more compactly
     command->setDialogInitialSize(400, 350);  // width, height in pixels
@@ -38,42 +37,36 @@ void ImportDesignCommandHandler::notify(
 
     // Create command inputs for the dialog
     auto inputs = command->commandInputs();
-    if (!inputs) return;
+    if (!inputs)
+      return;
 
     // Add wide title to make dialog wider
-    inputs->addTextBoxCommandInput(
-        "titleText", "",
-        "<b>Import Design</b><br/>Import a JSON chip carving design file with "
-        "Leaf and TriArc shapes, then optionally select a construction plane "
-        "or surface for placement.",
-        3, true);
+    inputs->addTextBoxCommandInput("titleText", "",
+                                   "<b>Import Design</b><br/>Import a JSON chip carving design file with "
+                                   "Leaf and TriArc shapes, then optionally select a construction plane "
+                                   "or surface for placement.",
+                                   3, true);
 
     // Add file selection input
-    inputs->addBoolValueInput("fileSelectionButton", "Select Design File",
-                              false, "", true);
+    inputs->addBoolValueInput("fileSelectionButton", "Select Design File", false, "", true);
 
     // Add text input to show selected file (read-only)
-    auto filePathInput = inputs->addStringValueInput(
-        "selectedFilePath", "Selected File", "No file selected");
+    auto filePathInput = inputs->addStringValueInput("selectedFilePath", "Selected File", "No file selected");
     filePathInput->isReadOnly(true);
 
     // Add plane/surface selection input
-    auto planeSelection = inputs->addSelectionInput(
-        "targetPlane", "Target Plane/Surface (Optional)",
-        "Select construction plane or flat surface");
+    auto planeSelection = inputs->addSelectionInput("targetPlane", "Target Plane/Surface (Optional)",
+                                                    "Select construction plane or flat surface");
     planeSelection->addSelectionFilter("ConstructionPlanes");
     planeSelection->addSelectionFilter("PlanarFaces");
-    planeSelection->tooltip(
-        "Optional: Select a construction plane or flat surface for the sketch. "
-        "Must be parallel to XY plane. Defaults to XY plane if not selected.");
+    planeSelection->tooltip("Optional: Select a construction plane or flat surface for the sketch. "
+                            "Must be parallel to XY plane. Defaults to XY plane if not selected.");
 
     // Create and register execute handler
     class ExecuteHandler : public adsk::core::CommandEventHandler {
      public:
-      explicit ExecuteHandler(ImportDesignCommandHandler* parent)
-          : parent_(parent) {}
-      void notify(const adsk::core::Ptr<adsk::core::CommandEventArgs>&
-                      eventArgs) override {
+      explicit ExecuteHandler(ImportDesignCommandHandler* parent) : parent_(parent) {}
+      void notify(const adsk::core::Ptr<adsk::core::CommandEventArgs>& eventArgs) override {
         parent_->executeImportDesign(eventArgs);
       }
 
@@ -87,10 +80,8 @@ void ImportDesignCommandHandler::notify(
     // Create and register input changed handler
     class InputChangedHandler : public adsk::core::InputChangedEventHandler {
      public:
-      explicit InputChangedHandler(ImportDesignCommandHandler* parent)
-          : parent_(parent) {}
-      void notify(const adsk::core::Ptr<adsk::core::InputChangedEventArgs>&
-                      eventArgs) override {
+      explicit InputChangedHandler(ImportDesignCommandHandler* parent) : parent_(parent) {}
+      void notify(const adsk::core::Ptr<adsk::core::InputChangedEventArgs>& eventArgs) override {
         parent_->handleInputChanged(eventArgs);
       }
 
@@ -107,15 +98,17 @@ void ImportDesignCommandHandler::notify(
   }
 }
 
-void ImportDesignCommandHandler::handleInputChanged(
-    const adsk::core::Ptr<adsk::core::InputChangedEventArgs>& args) {
-  if (!args) return;
+void ImportDesignCommandHandler::handleInputChanged(const adsk::core::Ptr<adsk::core::InputChangedEventArgs>& args) {
+  if (!args)
+    return;
 
   auto inputs = args->inputs();
-  if (!inputs) return;
+  if (!inputs)
+    return;
 
   auto changedInput = args->input();
-  if (!changedInput) return;
+  if (!changedInput)
+    return;
 
   // Check if file selection button was clicked
   if (changedInput->id() == "fileSelectionButton") {
@@ -125,22 +118,18 @@ void ImportDesignCommandHandler::handleInputChanged(
       if (factory) {
         auto ui = factory->createUserInterface();
         if (ui) {
-          selectedFilePath_ =
-              ui->showFileDialog("Select Design File", "JSON Files (*.json)");
+          selectedFilePath_ = ui->showFileDialog("Select Design File", "JSON Files (*.json)");
 
           // Update the file path display
           auto filePathInput = inputs->itemById("selectedFilePath");
           if (filePathInput) {
-            auto stringInput =
-                filePathInput->cast<adsk::core::StringValueCommandInput>();
+            auto stringInput = filePathInput->cast<adsk::core::StringValueCommandInput>();
             if (stringInput) {
               if (!selectedFilePath_.empty()) {
                 // Show just the filename, not the full path
                 size_t lastSlash = selectedFilePath_.find_last_of("/\\");
                 std::string filename =
-                    (lastSlash != std::string::npos)
-                        ? selectedFilePath_.substr(lastSlash + 1)
-                        : selectedFilePath_;
+                    (lastSlash != std::string::npos) ? selectedFilePath_.substr(lastSlash + 1) : selectedFilePath_;
                 stringInput->value(filename);
               } else {
                 stringInput->value("No file selected");
@@ -153,13 +142,14 @@ void ImportDesignCommandHandler::handleInputChanged(
   }
 }
 
-void ImportDesignCommandHandler::executeImportDesign(
-    const adsk::core::Ptr<adsk::core::CommandEventArgs>& args) {
-  if (!args || !pluginManager_) return;
+void ImportDesignCommandHandler::executeImportDesign(const adsk::core::Ptr<adsk::core::CommandEventArgs>& args) {
+  if (!args || !pluginManager_)
+    return;
 
   try {
     auto inputs = args->command()->commandInputs();
-    if (!inputs) return;
+    if (!inputs)
+      return;
 
     // Check if a file was selected
     if (selectedFilePath_.empty()) {
@@ -168,8 +158,7 @@ void ImportDesignCommandHandler::executeImportDesign(
         if (factory) {
           auto ui = factory->createUserInterface();
           if (ui) {
-            ui->showMessageBox("Import Design",
-                               "Please select a JSON design file.");
+            ui->showMessageBox("Import Design", "Please select a JSON design file.");
           }
         }
       }
@@ -180,16 +169,14 @@ void ImportDesignCommandHandler::executeImportDesign(
     std::string planeEntityId;
     auto planeSelection = inputs->itemById("targetPlane");
     if (planeSelection) {
-      auto selectionInput =
-          planeSelection->cast<adsk::core::SelectionCommandInput>();
+      auto selectionInput = planeSelection->cast<adsk::core::SelectionCommandInput>();
       if (selectionInput && selectionInput->selectionCount() > 0) {
         auto selection = selectionInput->selection(0);
         if (selection) {
           auto entity = selection->entity();
           if (entity) {
             // Try to cast to construction plane
-            auto constructionPlane =
-                entity->cast<adsk::fusion::ConstructionPlane>();
+            auto constructionPlane = entity->cast<adsk::fusion::ConstructionPlane>();
             if (constructionPlane) {
               planeEntityId = constructionPlane->entityToken();
             } else {

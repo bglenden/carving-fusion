@@ -138,10 +138,8 @@ Point2D TriArc::getPerpendicularNormal(int arcIndex) const {
 }
 
 bool TriArc::hasValidBulgeFactors() const {
-  return std::all_of(
-      bulgeFactors_.begin(), bulgeFactors_.end(), [](double bulge) {
-        return bulge <= 0 && bulge >= MIN_BULGE && bulge <= MAX_BULGE;
-      });
+  return std::all_of(bulgeFactors_.begin(), bulgeFactors_.end(),
+                     [](double bulge) { return bulge <= 0 && bulge >= MIN_BULGE && bulge <= MAX_BULGE; });
 }
 
 void TriArc::clampBulgeFactors() {
@@ -173,8 +171,7 @@ double TriArc::getChordLength(int arcIndex) const {
   return distance(p1, p2);
 }
 
-Point2D TriArc::calculateArcCenter(const Point2D& p1, const Point2D& p2,
-                                   double bulgeFactor, int arcIndex) const {
+Point2D TriArc::calculateArcCenter(const Point2D& p1, const Point2D& p2, double bulgeFactor, int arcIndex) const {
   double chordLength = distance(p1, p2);
   if (chordLength < EPSILON) {
     return midpoint(p1, p2);  // Degenerate edge
@@ -191,8 +188,7 @@ Point2D TriArc::calculateArcCenter(const Point2D& p1, const Point2D& p2,
   Point2D normal = getPerpendicularNormal(arcIndex);
 
   // Position center at correct distance along normal
-  return Point2D(chordMid.x + normal.x * distMidToCenter,
-                 chordMid.y + normal.y * distMidToCenter);
+  return Point2D(chordMid.x + normal.x * distMidToCenter, chordMid.y + normal.y * distMidToCenter);
 }
 
 double TriArc::calculateRadius(double chordLength, double sagitta) {
@@ -205,9 +201,7 @@ double TriArc::calculateRadius(double chordLength, double sagitta) {
   return (sagitta / 2.0) + (chordLength * chordLength) / (8.0 * sagitta);
 }
 
-std::pair<double, double> TriArc::calculateArcAngles(const Point2D& center,
-                                                     const Point2D& p1,
-                                                     const Point2D& p2,
+std::pair<double, double> TriArc::calculateArcAngles(const Point2D& center, const Point2D& p1, const Point2D& p2,
                                                      bool /* isConcave */) {
   // Calculate angles from center to both points
   double startAngle = std::atan2(p1.y - center.y, p1.x - center.x);

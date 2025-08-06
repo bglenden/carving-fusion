@@ -15,10 +15,9 @@
 namespace ChipCarving {
 namespace Geometry {
 
-VCarveResults VCarveCalculator::generateVCarvePathsWithSurface(
-    const std::vector<SampledMedialPath>& sampledPaths,
-    const Adapters::MedialAxisParameters& params, double sketchPlaneZ,
-    SurfaceQueryFunction surfaceQuery) {
+VCarveResults VCarveCalculator::generateVCarvePathsWithSurface(const std::vector<SampledMedialPath>& sampledPaths,
+                                                               const Adapters::MedialAxisParameters& params,
+                                                               double sketchPlaneZ, SurfaceQueryFunction surfaceQuery) {
   VCarveResults results;
 
   // Validate inputs
@@ -46,16 +45,13 @@ VCarveResults VCarveCalculator::generateVCarvePathsWithSurface(
       // Convert each sampled point to V-carve point with surface-adjusted depth
       for (const auto& sampledPoint : sampledPath.points) {
         // Calculate base V-carve depth from clearance radius
-        double baseDepth =
-            calculateVCarveDepth(sampledPoint.clearanceRadius, params.toolAngle,
-                                 params.maxVCarveDepth);
+        double baseDepth = calculateVCarveDepth(sampledPoint.clearanceRadius, params.toolAngle, params.maxVCarveDepth);
 
         // Get position in mm
         Point2D positionMm = sampledPoint.position;
 
         // Query surface Z at this XY position (units: cm for Fusion API)
-        double surfaceZ = surfaceQuery(
-            positionMm.x / 10.0, positionMm.y / 10.0);  // Convert mm to cm
+        double surfaceZ = surfaceQuery(positionMm.x / 10.0, positionMm.y / 10.0);  // Convert mm to cm
 
         // Calculate final depth based on surface projection
         double finalDepth;
@@ -76,16 +72,13 @@ VCarveResults VCarveCalculator::generateVCarvePathsWithSurface(
           static bool loggedOnce = false;
           if (!loggedOnce) {
             LOG_DEBUG("=== V-CARVE DEPTH CALCULATION DEBUG ===");
-            LOG_DEBUG("  XY position (mm): (" << positionMm.x << ", "
-                                              << positionMm.y << ")");
-            LOG_DEBUG("  XY position (cm): (" << positionMm.x / 10.0 << ", "
-                                              << positionMm.y / 10.0 << ")");
+            LOG_DEBUG("  XY position (mm): (" << positionMm.x << ", " << positionMm.y << ")");
+            LOG_DEBUG("  XY position (cm): (" << positionMm.x / 10.0 << ", " << positionMm.y / 10.0 << ")");
             LOG_DEBUG("  surfaceZ (cm): " << surfaceZ);
             LOG_DEBUG("  baseDepth (cm): " << baseDepth);
             LOG_DEBUG("  sketchPlaneZ (cm): " << sketchPlaneZ);
             LOG_DEBUG("  finalDepth (cm): " << finalDepth);
-            LOG_DEBUG(
-                "  clearanceRadius (mm): " << sampledPoint.clearanceRadius);
+            LOG_DEBUG("  clearanceRadius (mm): " << sampledPoint.clearanceRadius);
             loggedOnce = true;
           }
         } else {
@@ -94,8 +87,7 @@ VCarveResults VCarveCalculator::generateVCarvePathsWithSurface(
         }
 
         // Create V-carve point with adjusted depth
-        VCarvePoint vcarvePoint(positionMm, finalDepth,
-                                sampledPoint.clearanceRadius);
+        VCarvePoint vcarvePoint(positionMm, finalDepth, sampledPoint.clearanceRadius);
         vcarvePath.points.push_back(vcarvePoint);
       }
 
@@ -120,8 +112,7 @@ VCarveResults VCarveCalculator::generateVCarvePathsWithSurface(
     results.updateStatistics();
     results.success = true;
   } catch (const std::exception& e) {
-    results.errorMessage =
-        "Exception during V-carve generation: " + std::string(e.what());
+    results.errorMessage = "Exception during V-carve generation: " + std::string(e.what());
     results.success = false;
   }
 

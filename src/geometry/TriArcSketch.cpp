@@ -20,8 +20,7 @@
 
 using namespace ChipCarving::Geometry;
 
-void TriArc::drawToSketch(Adapters::ISketch* sketch,
-                          Adapters::ILogger* logger) const {
+void TriArc::drawToSketch(Adapters::ISketch* sketch, Adapters::ILogger* logger) const {
   (void)logger;  // Suppress unused parameter warning
   if (!sketch) {
     return;
@@ -77,8 +76,7 @@ void TriArc::drawToSketch(Adapters::ISketch* sketch,
       // For concave arcs (negative bulge), the arc curves toward the triangle
       // center
       Point2D chordDir = Point2D(p2.x - p1.x, p2.y - p1.y);
-      double chordLen =
-          std::sqrt(chordDir.x * chordDir.x + chordDir.y * chordDir.y);
+      double chordLen = std::sqrt(chordDir.x * chordDir.x + chordDir.y * chordDir.y);
       if (chordLen > 1e-9) {
         chordDir.x /= chordLen;
         chordDir.y /= chordLen;
@@ -90,8 +88,7 @@ void TriArc::drawToSketch(Adapters::ISketch* sketch,
       // For concave arcs, determine which direction curves toward triangle
       // center
       Point2D triangleCenter = getCenter();
-      Point2D toCenter =
-          Point2D(triangleCenter.x - chordMid.x, triangleCenter.y - chordMid.y);
+      Point2D toCenter = Point2D(triangleCenter.x - chordMid.x, triangleCenter.y - chordMid.y);
 
       // Choose perpendicular direction that points toward triangle center for
       // concave arcs
@@ -119,8 +116,7 @@ void TriArc::drawToSketch(Adapters::ISketch* sketch,
       }
 
       // Draw arc using three points: start vertex, midpoint, end vertex
-      bool arcCreated =
-          sketch->addArcByThreePointsToSketch(startIdx, midIdx, endIdx);
+      bool arcCreated = sketch->addArcByThreePointsToSketch(startIdx, midIdx, endIdx);
 
       if (arcCreated) {
         // Track midpoint for deletion (only if arc was successfully created)

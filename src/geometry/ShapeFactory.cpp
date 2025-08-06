@@ -14,8 +14,7 @@
 
 using namespace ChipCarving::Geometry;
 
-std::unique_ptr<Shape> ShapeFactory::createFromJson(
-    const std::string& shapeJson, const Adapters::ILogger* logger) {
+std::unique_ptr<Shape> ShapeFactory::createFromJson(const std::string& shapeJson, const Adapters::ILogger* logger) {
   std::string shapeType = extractShapeType(shapeJson);
   // Debug logging disabled for performance
   // if (logger) {
@@ -47,17 +46,16 @@ std::unique_ptr<Shape> ShapeFactory::createFromJson(
   }
 }
 
-std::unique_ptr<Shape> ShapeFactory::createLeaf(
-    const std::vector<Point2D>& vertices, double radius,
-    const Adapters::ILogger* logger) {
+std::unique_ptr<Shape> ShapeFactory::createLeaf(const std::vector<Point2D>& vertices, double radius,
+                                                const Adapters::ILogger* logger) {
   (void)logger;  // Suppress unused parameter warning
   validateLeafParameters(vertices, radius);
   return std::make_unique<Leaf>(vertices[0], vertices[1], radius);
 }
 
-std::unique_ptr<Shape> ShapeFactory::createTriArc(
-    const std::vector<Point2D>& vertices, const std::vector<double>& curvatures,
-    const Adapters::ILogger* logger) {
+std::unique_ptr<Shape> ShapeFactory::createTriArc(const std::vector<Point2D>& vertices,
+                                                  const std::vector<double>& curvatures,
+                                                  const Adapters::ILogger* logger) {
   (void)logger;  // Suppress unused parameter warning
   validateTriArcParameters(vertices, curvatures);
 
@@ -68,8 +66,7 @@ std::unique_ptr<Shape> ShapeFactory::createTriArc(
     bulgeFactors[i] = curvatures[i];  // Direct mapping for now
   }
 
-  return std::make_unique<TriArc>(vertices[0], vertices[1], vertices[2],
-                                  bulgeFactors);
+  return std::make_unique<TriArc>(vertices[0], vertices[1], vertices[2], bulgeFactors);
 }
 
 std::string ShapeFactory::extractShapeType(const std::string& shapeJson) {
@@ -84,8 +81,7 @@ std::string ShapeFactory::extractShapeType(const std::string& shapeJson) {
   throw std::runtime_error("No shape type found in JSON");
 }
 
-std::vector<Point2D> ShapeFactory::extractVertices(
-    const std::string& shapeJson) {
+std::vector<Point2D> ShapeFactory::extractVertices(const std::string& shapeJson) {
   // Extract "vertices": [{"x": 1.0, "y": 2.0}, ...]
   std::regex verticesRegex("\"vertices\"\\s*:\\s*\\[([^\\]]+)\\]");
   std::smatch match;
@@ -98,11 +94,9 @@ std::vector<Point2D> ShapeFactory::extractVertices(
   std::vector<Point2D> vertices;
 
   // Extract individual points: {"x": 1.0, "y": 2.0}
-  std::regex pointRegex(
-      "\\{\\s*\"x\"\\s*:\\s*([-+]?[0-9]*\\.?[0-9]+)\\s*,\\s*\"y\"\\s*:\\s*([-+]"
-      "?[0-9]*\\.?[0-9]+)\\s*\\}");
-  std::sregex_iterator iter(verticesArray.begin(), verticesArray.end(),
-                            pointRegex);
+  std::regex pointRegex("\\{\\s*\"x\"\\s*:\\s*([-+]?[0-9]*\\.?[0-9]+)\\s*,\\s*\"y\"\\s*:\\s*([-+]"
+                        "?[0-9]*\\.?[0-9]+)\\s*\\}");
+  std::sregex_iterator iter(verticesArray.begin(), verticesArray.end(), pointRegex);
   std::sregex_iterator end;
 
   for (; iter != end; ++iter) {
@@ -130,8 +124,7 @@ double ShapeFactory::extractRadius(const std::string& shapeJson) {
   throw std::runtime_error("No radius found in JSON");
 }
 
-std::vector<double> ShapeFactory::extractCurvatures(
-    const std::string& shapeJson) {
+std::vector<double> ShapeFactory::extractCurvatures(const std::string& shapeJson) {
   // Extract "curvatures": [-0.125, -0.125, -0.125]
   std::regex curvaturesRegex("\"curvatures\"\\s*:\\s*\\[([^\\]]+)\\]");
   std::smatch match;
@@ -145,8 +138,7 @@ std::vector<double> ShapeFactory::extractCurvatures(
 
   // Extract individual numbers
   std::regex numberRegex("[-+]?[0-9]*\\.?[0-9]+");
-  std::sregex_iterator iter(curvaturesArray.begin(), curvaturesArray.end(),
-                            numberRegex);
+  std::sregex_iterator iter(curvaturesArray.begin(), curvaturesArray.end(), numberRegex);
   std::sregex_iterator end;
 
   for (; iter != end; ++iter) {
@@ -160,49 +152,38 @@ std::vector<double> ShapeFactory::extractCurvatures(
   return curvatures;
 }
 
-void ShapeFactory::validateLeafParameters(const std::vector<Point2D>& vertices,
-                                          double radius) {
+void ShapeFactory::validateLeafParameters(const std::vector<Point2D>& vertices, double radius) {
   if (vertices.size() != 2) {
-    throw std::runtime_error("Leaf shape requires exactly 2 vertices, got " +
-                             std::to_string(vertices.size()));
+    throw std::runtime_error("Leaf shape requires exactly 2 vertices, got " + std::to_string(vertices.size()));
   }
 
   if (radius <= 0.0) {
-    throw std::runtime_error("Leaf radius must be positive, got " +
-                             std::to_string(radius));
+    throw std::runtime_error("Leaf radius must be positive, got " + std::to_string(radius));
   }
 
   // Check minimum radius requirement
   double chordLength = distance(vertices[0], vertices[1]);
   if (radius < chordLength / 2.0) {
-    throw std::runtime_error("Leaf radius (" + std::to_string(radius) +
-                             ") must be at least half the chord length (" +
+    throw std::runtime_error("Leaf radius (" + std::to_string(radius) + ") must be at least half the chord length (" +
                              std::to_string(chordLength / 2.0) + ")");
   }
 }
 
-void ShapeFactory::validateTriArcParameters(
-    const std::vector<Point2D>& vertices,
-    const std::vector<double>& curvatures) {
+void ShapeFactory::validateTriArcParameters(const std::vector<Point2D>& vertices,
+                                            const std::vector<double>& curvatures) {
   if (vertices.size() != 3) {
-    throw std::runtime_error("TriArc shape requires exactly 3 vertices, got " +
-                             std::to_string(vertices.size()));
+    throw std::runtime_error("TriArc shape requires exactly 3 vertices, got " + std::to_string(vertices.size()));
   }
 
   if (curvatures.size() != 3) {
-    throw std::runtime_error(
-        "TriArc shape requires exactly 3 curvatures, got " +
-        std::to_string(curvatures.size()));
+    throw std::runtime_error("TriArc shape requires exactly 3 curvatures, got " + std::to_string(curvatures.size()));
   }
 
   // Check for degenerate triangle
-  double area =
-      std::abs(
-          (vertices[1].x - vertices[0].x) * (vertices[2].y - vertices[0].y) -
-          (vertices[2].x - vertices[0].x) * (vertices[1].y - vertices[0].y)) /
-      2.0;
+  double area = std::abs((vertices[1].x - vertices[0].x) * (vertices[2].y - vertices[0].y) -
+                         (vertices[2].x - vertices[0].x) * (vertices[1].y - vertices[0].y)) /
+                2.0;
   if (area < 1e-9) {
-    throw std::runtime_error(
-        "TriArc vertices are collinear (degenerate triangle)");
+    throw std::runtime_error("TriArc vertices are collinear (degenerate triangle)");
   }
 }

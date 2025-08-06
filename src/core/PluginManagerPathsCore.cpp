@@ -20,9 +20,8 @@
 namespace ChipCarving {
 namespace Core {
 
-bool PluginManager::executeMedialAxisGeneration(
-    const Adapters::SketchSelection& selection,
-    const Adapters::MedialAxisParameters& params) {
+bool PluginManager::executeMedialAxisGeneration(const Adapters::SketchSelection& selection,
+                                                const Adapters::MedialAxisParameters& params) {
   if (!initialized_) {
     return false;
   }
@@ -33,8 +32,7 @@ bool PluginManager::executeMedialAxisGeneration(
 
     // Validate selection
     if (!selection.isValid || selection.closedPathCount == 0) {
-      std::string errorMsg =
-          "Invalid profile selection: " + selection.errorMessage;
+      std::string errorMsg = "Invalid profile selection: " + selection.errorMessage;
       ui_->showMessageBox("Medial Axis Generation - Error", errorMsg);
       return false;
     }
@@ -49,14 +47,12 @@ bool PluginManager::executeMedialAxisGeneration(
     std::string sourcePlaneId;
     if (!selection.selectedEntityIds.empty()) {
       // Use workspace to extract plane info from first selected profile
-      sourcePlaneId = workspace_->extractPlaneEntityIdFromProfile(
-          selection.selectedEntityIds[0]);
+      sourcePlaneId = workspace_->extractPlaneEntityIdFromProfile(selection.selectedEntityIds[0]);
     }
 
     // Only create visualization sketch if generateVisualization is enabled
     std::unique_ptr<Adapters::ISketch> constructionSketch;
-    std::string sketchName =
-        "Medial Axis - " + params.toolName;  // Define here for result message
+    std::string sketchName = "Medial Axis - " + params.toolName;  // Define here for result message
 
     if (params.generateVisualization) {
       // Create or find existing sketch for construction geometry visualization
@@ -72,27 +68,21 @@ bool PluginManager::executeMedialAxisGeneration(
       if (!params.targetSurfaceId.empty()) {
         // Target surface specified - create sketch in the component containing
         // the surface
-        LOG_DEBUG("Creating construction sketch in target surface component: '"
-                  << params.targetSurfaceId << "'");
+        LOG_DEBUG("Creating construction sketch in target surface component: '" << params.targetSurfaceId << "'");
 
-        constructionSketch = workspace_->createSketchInTargetComponent(
-            sketchName, params.targetSurfaceId);
+        constructionSketch = workspace_->createSketchInTargetComponent(sketchName, params.targetSurfaceId);
       } else if (!sourcePlaneId.empty()) {
         // Debug logging
         LOG_DEBUG("Using source plane entity ID for construction sketch: '"
-                  << sourcePlaneId << "' (length: " << sourcePlaneId.length()
-                  << ")");
+                  << sourcePlaneId << "' (length: " << sourcePlaneId.length() << ")");
 
-        constructionSketch =
-            workspace_->createSketchOnPlane(sketchName, sourcePlaneId);
+        constructionSketch = workspace_->createSketchOnPlane(sketchName, sourcePlaneId);
       } else if (!lastImportedPlaneEntityId_.empty()) {
         // Additional debug logging
         LOG_DEBUG("Using stored plane entity ID for construction sketch: '"
-                  << lastImportedPlaneEntityId_ << "' (length: "
-                  << lastImportedPlaneEntityId_.length() << ")");
+                  << lastImportedPlaneEntityId_ << "' (length: " << lastImportedPlaneEntityId_.length() << ")");
 
-        constructionSketch = workspace_->createSketchOnPlane(
-            sketchName, lastImportedPlaneEntityId_);
+        constructionSketch = workspace_->createSketchOnPlane(sketchName, lastImportedPlaneEntityId_);
       } else {
         constructionSketch = workspace_->createSketch(sketchName);
       }
@@ -108,27 +98,20 @@ bool PluginManager::executeMedialAxisGeneration(
     auto extractionStart = std::chrono::high_resolution_clock::now();
     std::vector<std::vector<Geometry::Point2D>> profilePolygons;
     std::vector<Adapters::IWorkspace::TransformParams> profileTransforms;
-    bool extractionSuccess =
-        extractProfileGeometry(selection, profilePolygons, profileTransforms);
+    bool extractionSuccess = extractProfileGeometry(selection, profilePolygons, profileTransforms);
     auto extractionEnd = std::chrono::high_resolution_clock::now();
-    auto extractionDuration =
-        std::chrono::duration_cast<std::chrono::milliseconds>(extractionEnd -
-                                                              extractionStart);
-    logger_->logInfo("⏱️ Profile geometry extraction took: " +
-                     std::to_string(extractionDuration.count()) + "ms");
+    auto extractionDuration = std::chrono::duration_cast<std::chrono::milliseconds>(extractionEnd - extractionStart);
+    logger_->logInfo("⏱️ Profile geometry extraction took: " + std::to_string(extractionDuration.count()) + "ms");
 
     if (!extractionSuccess || profilePolygons.empty()) {
       LOG_INFO("Profile extraction failed or no polygons found");
-      std::string errorMsg =
-          "Failed to extract geometry from selected profiles.\nPlease "
-          "ensure valid closed sketch profiles are selected.";
-      ui_->showMessageBox("Medial Axis Generation - Extraction Error",
-                          errorMsg);
+      std::string errorMsg = "Failed to extract geometry from selected profiles.\nPlease "
+                             "ensure valid closed sketch profiles are selected.";
+      ui_->showMessageBox("Medial Axis Generation - Extraction Error", errorMsg);
       return false;
     }
 
-    LOG_INFO("Starting medial axis computation for " << profilePolygons.size()
-                                                     << " profiles");
+    LOG_INFO("Starting medial axis computation for " << profilePolygons.size() << " profiles");
 
     std::vector<Geometry::MedialAxisResults> allResults;
     int successCount = 0;
@@ -140,8 +123,7 @@ bool PluginManager::executeMedialAxisGeneration(
     for (size_t i = 0; i < profilePolygons.size(); ++i) {
       const auto& polygon = profilePolygons[i];
 
-      LOG_INFO("Processing profile " << i << " with " << polygon.size()
-                                     << " vertices");
+      LOG_INFO("Processing profile " << i << " with " << polygon.size() << " vertices");
 
       try {
         // Log polygon bounds before medial axis computation
@@ -163,20 +145,14 @@ bool PluginManager::executeMedialAxisGeneration(
         auto medialStart = std::chrono::high_resolution_clock::now();
         auto results = medialProcessor_->computeMedialAxis(polygon);
         auto medialEnd = std::chrono::high_resolution_clock::now();
-        LOG_INFO("  Medial axis computation completed. Success: "
-                 << results.success);
-        auto medialDuration =
-            std::chrono::duration_cast<std::chrono::milliseconds>(medialEnd -
-                                                                  medialStart);
+        LOG_INFO("  Medial axis computation completed. Success: " << results.success);
+        auto medialDuration = std::chrono::duration_cast<std::chrono::milliseconds>(medialEnd - medialStart);
         logger_->logInfo("⏱️ MedialAxis computation " + std::to_string(i) +
-                         " took: " + std::to_string(medialDuration.count()) +
-                         "ms");
+                         " took: " + std::to_string(medialDuration.count()) + "ms");
 
         if (results.success) {
-          LOG_INFO("  Medial axis SUCCESS: "
-                   << results.chains.size() << " chains, "
-                   << results.totalPoints
-                   << " points, length=" << results.totalLength);
+          LOG_INFO("  Medial axis SUCCESS: " << results.chains.size() << " chains, " << results.totalPoints
+                                             << " points, length=" << results.totalLength);
           // Log medial axis results bounds
           if (!results.chains.empty() && !results.chains[0].empty()) {
             // Find bounds of medial axis result
@@ -207,17 +183,13 @@ bool PluginManager::executeMedialAxisGeneration(
             auto vizStart = std::chrono::high_resolution_clock::now();
             // Use the corresponding transform for this profile
             if (i < profileTransforms.size()) {
-              addConstructionGeometryVisualization(
-                  constructionSketch.get(), results, params,
-                  profileTransforms[i], polygon);
+              addConstructionGeometryVisualization(constructionSketch.get(), results, params, profileTransforms[i],
+                                                   polygon);
             }
             auto vizEnd = std::chrono::high_resolution_clock::now();
-            auto vizDuration =
-                std::chrono::duration_cast<std::chrono::milliseconds>(vizEnd -
-                                                                      vizStart);
+            auto vizDuration = std::chrono::duration_cast<std::chrono::milliseconds>(vizEnd - vizStart);
             logger_->logInfo("⏱️ Shape " + std::to_string(i) +
-                             " visualization took: " +
-                             std::to_string(vizDuration.count()) + "ms");
+                             " visualization took: " + std::to_string(vizDuration.count()) + "ms");
           }
         } else {
           LOG_ERROR("  Medial axis FAILED: " << results.errorMessage);
@@ -227,11 +199,8 @@ bool PluginManager::executeMedialAxisGeneration(
       }
     }
     auto allMedialEnd = std::chrono::high_resolution_clock::now();
-    auto allMedialDuration =
-        std::chrono::duration_cast<std::chrono::milliseconds>(allMedialEnd -
-                                                              allMedialStart);
-    logger_->logInfo("⏱️ All medial axis computations took: " +
-                     std::to_string(allMedialDuration.count()) + "ms");
+    auto allMedialDuration = std::chrono::duration_cast<std::chrono::milliseconds>(allMedialEnd - allMedialStart);
+    logger_->logInfo("⏱️ All medial axis computations took: " + std::to_string(allMedialDuration.count()) + "ms");
 
     // Finalize construction geometry sketch if visualization is enabled
     auto visualizationStart = std::chrono::high_resolution_clock::now();
@@ -240,10 +209,9 @@ bool PluginManager::executeMedialAxisGeneration(
     }
     auto visualizationEnd = std::chrono::high_resolution_clock::now();
     auto visualizationDuration =
-        std::chrono::duration_cast<std::chrono::milliseconds>(
-            visualizationEnd - visualizationStart);
-    logger_->logInfo("⏱️ Construction geometry visualization took: " +
-                     std::to_string(visualizationDuration.count()) + "ms");
+        std::chrono::duration_cast<std::chrono::milliseconds>(visualizationEnd - visualizationStart);
+    logger_->logInfo("⏱️ Construction geometry visualization took: " + std::to_string(visualizationDuration.count()) +
+                     "ms");
 
     // Generate V-carve toolpaths if enabled
     auto vcarveStart = std::chrono::high_resolution_clock::now();
@@ -263,17 +231,13 @@ bool PluginManager::executeMedialAxisGeneration(
       if (!params.targetSurfaceId.empty()) {
         // Target surface specified - create sketch in the component containing
         // the surface
-        LOG_DEBUG("Creating V-carve sketch in target surface component: '"
-                  << params.targetSurfaceId << "'");
+        LOG_DEBUG("Creating V-carve sketch in target surface component: '" << params.targetSurfaceId << "'");
 
-        vcarveSketch = workspace_->createSketchInTargetComponent(
-            vcarveSketchName, params.targetSurfaceId);
+        vcarveSketch = workspace_->createSketchInTargetComponent(vcarveSketchName, params.targetSurfaceId);
       } else if (!sourcePlaneId.empty()) {
-        vcarveSketch =
-            workspace_->createSketchOnPlane(vcarveSketchName, sourcePlaneId);
+        vcarveSketch = workspace_->createSketchOnPlane(vcarveSketchName, sourcePlaneId);
       } else if (!lastImportedPlaneEntityId_.empty()) {
-        vcarveSketch = workspace_->createSketchOnPlane(
-            vcarveSketchName, lastImportedPlaneEntityId_);
+        vcarveSketch = workspace_->createSketchOnPlane(vcarveSketchName, lastImportedPlaneEntityId_);
       } else {
         vcarveSketch = workspace_->createSketch(vcarveSketchName);
       }
@@ -281,46 +245,37 @@ bool PluginManager::executeMedialAxisGeneration(
       if (vcarveSketch) {
         // Generate V-carve toolpaths directly from medial axis results (in
         // memory)
-        bool vcarveSuccess = generateVCarveToolpaths(
-            allResults, params, vcarveSketch.get(), profileTransforms);
+        bool vcarveSuccess = generateVCarveToolpaths(allResults, params, vcarveSketch.get(), profileTransforms);
         if (vcarveSuccess) {
           vcarveSketch->finishSketch();
         }
       }
     }
     auto vcarveEnd = std::chrono::high_resolution_clock::now();
-    auto vcarveDuration = std::chrono::duration_cast<std::chrono::milliseconds>(
-        vcarveEnd - vcarveStart);
-    logger_->logInfo("⏱️ V-carve toolpath generation took: " +
-                     std::to_string(vcarveDuration.count()) + "ms");
+    auto vcarveDuration = std::chrono::duration_cast<std::chrono::milliseconds>(vcarveEnd - vcarveStart);
+    logger_->logInfo("⏱️ V-carve toolpath generation took: " + std::to_string(vcarveDuration.count()) + "ms");
 
     // Show results to user
     std::string resultMsg = "Medial Axis Generation Complete\n\n";
-    resultMsg += "Processed: " + std::to_string(successCount) + " of " +
-                 std::to_string(profilePolygons.size()) + " profiles\n";
-    resultMsg += "Total Points: " + std::to_string(totalPoints) + "\n";
     resultMsg +=
-        "Total Length: " + std::to_string(static_cast<int>(totalLength)) +
-        " mm\n\n";
+        "Processed: " + std::to_string(successCount) + " of " + std::to_string(profilePolygons.size()) + " profiles\n";
+    resultMsg += "Total Points: " + std::to_string(totalPoints) + "\n";
+    resultMsg += "Total Length: " + std::to_string(static_cast<int>(totalLength)) + " mm\n\n";
     if (params.generateVisualization) {
       resultMsg += "Construction geometry created in sketch: " + sketchName;
     }
 
     if (params.generateVCarveToolpaths) {
-      resultMsg +=
-          "\nV-carve toolpaths: " + ("V-Carve Toolpaths - " + params.toolName);
+      resultMsg += "\nV-carve toolpaths: " + ("V-Carve Toolpaths - " + params.toolName);
     }
 
     // Success popup removed - only log the results
     auto totalEnd = std::chrono::high_resolution_clock::now();
-    auto totalDuration = std::chrono::duration_cast<std::chrono::milliseconds>(
-        totalEnd - totalStart);
-    logger_->logInfo("⏱️ === TOTAL GENERATE PATHS took: " +
-                     std::to_string(totalDuration.count()) + "ms ===");
+    auto totalDuration = std::chrono::duration_cast<std::chrono::milliseconds>(totalEnd - totalStart);
+    logger_->logInfo("⏱️ === TOTAL GENERATE PATHS took: " + std::to_string(totalDuration.count()) + "ms ===");
     return true;
   } catch (const std::exception& e) {
-    std::string errorMsg =
-        "Failed to generate medial axis: " + std::string(e.what());
+    std::string errorMsg = "Failed to generate medial axis: " + std::string(e.what());
     ui_->showMessageBox("Medial Axis Generation - Error", errorMsg);
     return false;
   } catch (...) {

@@ -23,8 +23,7 @@ using namespace ChipCarving::Geometry;
 // Definition for static constexpr member (required for C++14)
 constexpr double TriArc::MAX_BULGE;
 
-TriArc::TriArc(const Point2D& v1, const Point2D& v2, const Point2D& v3,
-               const std::array<double, 3>& bulges)
+TriArc::TriArc(const Point2D& v1, const Point2D& v2, const Point2D& v3, const std::array<double, 3>& bulges)
     : vertices_{v1, v2, v3}, bulgeFactors_(bulges) {
   // Ensure all bulge factors are negative (concave arcs only)
   for (size_t i = 0; i < 3; ++i) {
@@ -47,9 +46,8 @@ bool TriArc::contains(const Point2D& point) const {
   // curved edges
 
   // Use barycentric coordinates to test triangle containment
-  double denom =
-      (vertices_[1].y - vertices_[2].y) * (vertices_[0].x - vertices_[2].x) +
-      (vertices_[2].x - vertices_[1].x) * (vertices_[0].y - vertices_[2].y);
+  double denom = (vertices_[1].y - vertices_[2].y) * (vertices_[0].x - vertices_[2].x) +
+                 (vertices_[2].x - vertices_[1].x) * (vertices_[0].y - vertices_[2].y);
 
   if (std::abs(denom) < 1e-10) {
     return false;  // Degenerate triangle

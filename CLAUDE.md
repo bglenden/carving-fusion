@@ -14,8 +14,7 @@ The Fusion 360 CNC Chip Carving Plugin is a mature C++ add-in (v0.9.87) that con
 mkdir build && cd build
 cmake ..
 make                    # Build everything
-make test              # Run tests via CTest
-make install-fusion    # Install to Fusion 360
+make install           # Install to Fusion 360
 
 # Debug build with full symbols
 cmake -DCMAKE_BUILD_TYPE=Debug .. && make
@@ -27,28 +26,19 @@ cmake -DCMAKE_BUILD_TYPE=Release .. && make
 make clean             # Clean build artifacts
 # or for complete clean:
 rm -rf build && mkdir build && cd build && cmake ..
-
-# Common workflows
-make test_and_build    # Run tests, only build if they pass
-make run_tests         # Build and run tests with verbose output
-make chip_carving_tests && ./tests/chip_carving_tests  # Direct test execution
 ```
 
 ### Testing Commands
 ```bash
 # Run all tests (287+ unit tests)
 make test                    # Run tests via CTest
-make run_tests              # Run tests with verbose output
+make run_tests              # Build and run tests with verbose output
 make chip_carving_tests && ./tests/chip_carving_tests  # Direct execution
 
 # Run specific test suites
 ./tests/chip_carving_tests --gtest_filter="MedialAxisProcessor*"
 ./tests/chip_carving_tests --gtest_filter="TriArc*"
 ./tests/chip_carving_tests --gtest_filter="FusionWorkspace*"
-
-# Generate code coverage report
-cmake .. -DENABLE_COVERAGE=ON    # Configure with coverage
-make coverage                    # Run tests and generate report
 
 # Run specific regression tests (if needed)
 # Note: These are already included in 'make test'
@@ -58,20 +48,44 @@ make coverage                    # Run tests and generate report
 
 ### Code Quality Commands
 ```bash
-# Full lint check
-make lint
+# Typical workflow - format then lint
+make format lint       # Auto-format and check for issues
 
-# Quick lint (critical issues only) 
-make lint-quick
+# Individual commands
+make format            # Auto-format all code with clang-format
+make lint              # Check C++ style with cpplint (currently 14 issues)
+make lint-quick        # Quick check for critical issues only
+make lint-verbose      # Detailed cpplint output with explanations
+make format-check      # Check if formatting is needed (dry run)
 
-# Auto-format code
-make format
+# Pre-commit workflow
+make pre-commit        # Run quality checks before committing
+```
 
-# Pre-commit checks (format + lint-quick)
-make pre-commit
+### Complete Make Targets Reference
+```bash
+# Primary targets
+make                   # Build plugin and tests
+make install           # Build and install plugin to Fusion 360
+make clean             # Clean build artifacts
+make test              # Run all tests via CTest
 
-# Run all quality checks before committing
-make lint-quick && ./run_tests.sh
+# Test targets
+make chip_carving_tests        # Build test executable
+make run_tests                # Build and run tests with verbose output
+make standalone_medial_axis_test  # Build standalone test program
+
+# Code quality targets
+make format            # Auto-format code with clang-format
+make format-check      # Check if formatting needed (no changes)
+make lint              # Full cpplint style checking
+make lint-quick        # Quick cpplint (critical issues only)
+make lint-verbose      # Detailed cpplint with explanations
+make quality-check     # Run comprehensive quality checks
+make pre-commit        # Format and lint before committing
+
+# Development targets
+make increment_version # Increment build version number
 ```
 
 ## High-Level Architecture
@@ -241,3 +255,7 @@ Control via `CHIP_CARVING_PLUGIN_MODE` environment variable:
 
 ### Development Preparation
 - Before doing a commit and push, install the plug-in since sometimes it shows compiler problems that don't show up with the test programs.
+
+## Development Tips and Memories
+
+- Typically when we want to "make lint" we would normally actually "make format lint"

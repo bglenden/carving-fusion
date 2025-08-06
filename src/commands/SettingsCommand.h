@@ -27,10 +27,8 @@ namespace Commands {
  */
 class SettingsCommandHandler : public adsk::core::CommandCreatedEventHandler {
  public:
-  explicit SettingsCommandHandler(
-      std::shared_ptr<Core::PluginManager> pluginManager);
-  void notify(const adsk::core::Ptr<adsk::core::CommandCreatedEventArgs>&
-                  eventArgs) override;
+  explicit SettingsCommandHandler(std::shared_ptr<Core::PluginManager> pluginManager);
+  void notify(const adsk::core::Ptr<adsk::core::CommandCreatedEventArgs>& eventArgs) override;
 
  private:
   std::shared_ptr<Core::PluginManager> pluginManager_;

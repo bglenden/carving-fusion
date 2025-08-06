@@ -10,8 +10,9 @@
 #include <Core/CoreAll.h>
 #include <Fusion/FusionAll.h>
 
-#include "../../include/utils/Optional.h"
 #include <string>
+
+#include "../../include/utils/Optional.h"
 
 namespace ChipCarving {
 namespace Utils {
@@ -37,8 +38,7 @@ class UIParameterHelper {
    */
   template <typename T>
   adsk::core::Ptr<T> getInput(const std::string& inputId) {
-    (void)
-        inputId;  // Suppress unused parameter warning - used in specializations
+    (void)inputId;  // Suppress unused parameter warning - used in specializations
     // Default implementation returns nullptr - specializations provide actual
     // functionality
     return nullptr;
@@ -96,24 +96,21 @@ class UIParameterHelper {
  * Specialization for StringValueCommandInput
  */
 template <>
-adsk::core::Ptr<adsk::core::StringValueCommandInput>
-UIParameterHelper::getInput<adsk::core::StringValueCommandInput>(
+adsk::core::Ptr<adsk::core::StringValueCommandInput> UIParameterHelper::getInput<adsk::core::StringValueCommandInput>(
     const std::string& inputId);
 
 /**
  * Specialization for BoolValueCommandInput
  */
 template <>
-adsk::core::Ptr<adsk::core::BoolValueCommandInput>
-UIParameterHelper::getInput<adsk::core::BoolValueCommandInput>(
+adsk::core::Ptr<adsk::core::BoolValueCommandInput> UIParameterHelper::getInput<adsk::core::BoolValueCommandInput>(
     const std::string& inputId);
 
 /**
  * Specialization for ValueCommandInput
  */
 template <>
-adsk::core::Ptr<adsk::core::ValueCommandInput>
-UIParameterHelper::getInput<adsk::core::ValueCommandInput>(
+adsk::core::Ptr<adsk::core::ValueCommandInput> UIParameterHelper::getInput<adsk::core::ValueCommandInput>(
     const std::string& inputId);
 
 /**
@@ -121,15 +118,13 @@ UIParameterHelper::getInput<adsk::core::ValueCommandInput>(
  */
 template <>
 adsk::core::Ptr<adsk::core::IntegerSpinnerCommandInput>
-UIParameterHelper::getInput<adsk::core::IntegerSpinnerCommandInput>(
-    const std::string& inputId);
+UIParameterHelper::getInput<adsk::core::IntegerSpinnerCommandInput>(const std::string& inputId);
 
 /**
  * Specialization for SelectionCommandInput
  */
 template <>
-adsk::core::Ptr<adsk::core::SelectionCommandInput>
-UIParameterHelper::getInput<adsk::core::SelectionCommandInput>(
+adsk::core::Ptr<adsk::core::SelectionCommandInput> UIParameterHelper::getInput<adsk::core::SelectionCommandInput>(
     const std::string& inputId);
 
 }  // namespace Utils

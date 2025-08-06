@@ -14,9 +14,8 @@ using namespace adsk::core;
 namespace ChipCarving {
 namespace Adapters {
 
-bool FusionWorkspace::extractCurvesFromProfile(
-    adsk::core::Ptr<adsk::fusion::Profile> profile,
-    std::vector<CurveData>& allCurves, TransformParams& transform) {
+bool FusionWorkspace::extractCurvesFromProfile(adsk::core::Ptr<adsk::fusion::Profile> profile,
+                                               std::vector<CurveData>& allCurves, TransformParams& transform) {
   LOG_DEBUG("Starting curve extraction from profile");
 
   if (!profile) {
@@ -34,23 +33,19 @@ bool FusionWorkspace::extractCurvesFromProfile(
       // Check if the sketch curves are planar
       // Fusion 360 sketches are always on a plane, but we can verify the curves
       // are 2D
-      Ptr<adsk::fusion::SketchCurves> allSketchCurves =
-          profileSketch->sketchCurves();
+      Ptr<adsk::fusion::SketchCurves> allSketchCurves = profileSketch->sketchCurves();
       if (allSketchCurves) {
         LOG_DEBUG("Sketch has " << allSketchCurves->count() << " curves");
 
         // Check if any curve is explicitly 3D (not supported for our use case)
         bool has3DCurves = false;
-        for (size_t i = 0; i < allSketchCurves->count() && i < 5;
-             ++i) {  // Check first 5 curves
+        for (size_t i = 0; i < allSketchCurves->count() && i < 5; ++i) {  // Check first 5 curves
           Ptr<adsk::fusion::SketchCurve> curve = allSketchCurves->item(i);
           if (curve) {
             // Get the curve's is2D property if it exists
             // For now, just log the curve type
             try {
-              if (curve->objectType() &&
-                  std::string(curve->objectType()).find("3D") !=
-                      std::string::npos) {
+              if (curve->objectType() && std::string(curve->objectType()).find("3D") != std::string::npos) {
                 has3DCurves = true;
                 LOG_WARNING("Found 3D curve at index " << i);
               }
@@ -80,28 +75,23 @@ bool FusionWorkspace::extractCurvesFromProfile(
           if (plane) {
             Ptr<adsk::core::Vector3D> normal = plane->normal();
             if (normal) {
-              LOG_DEBUG("Sketch plane normal: (" << normal->x() << ", "
-                                                 << normal->y() << ", "
-                                                 << normal->z() << ")");
+              LOG_DEBUG("Sketch plane normal: (" << normal->x() << ", " << normal->y() << ", " << normal->z() << ")");
 
               // Check if the sketch plane is parallel to XY plane (normal close
               // to Z-axis)
               if (std::abs(normal->z()) > 0.99) {
                 if (normal->z() > 0) {
-                  LOG_DEBUG(
-                      "Sketch plane is correctly oriented (parallel to XY "
-                      "plane)");
+                  LOG_DEBUG("Sketch plane is correctly oriented (parallel to XY "
+                            "plane)");
                 } else {
-                  LOG_DEBUG(
-                      "Sketch plane is parallel to XY plane but pointing down");
+                  LOG_DEBUG("Sketch plane is parallel to XY plane but pointing down");
                 }
 
                 // Get the sketch plane Z position
                 Ptr<adsk::core::Point3D> origin = plane->origin();
                 if (origin) {
                   transform.sketchPlaneZ = origin->z();
-                  LOG_DEBUG("Sketch plane Z position: "
-                            << transform.sketchPlaneZ << " cm");
+                  LOG_DEBUG("Sketch plane Z position: " << transform.sketchPlaneZ << " cm");
                 }
               }
             }
@@ -149,8 +139,7 @@ bool FusionWorkspace::extractCurvesFromProfile(
 
   // CRITICAL FIX: Curves come in arbitrary order from Fusion, not connected
   // order We need to chain them properly to form a closed polygon
-  LOG_DEBUG("Found " << profileCurves->count()
-                     << " curves - need to chain them in order");
+  LOG_DEBUG("Found " << profileCurves->count() << " curves - need to chain them in order");
 
   // First, collect all curves with their stroke points and endpoints
   allCurves.clear();
@@ -182,8 +171,7 @@ bool FusionWorkspace::extractCurvesFromProfile(
     }
 
     // Log detailed information about the curve type
-    LOG_DEBUG("Curve " << i
-                       << " - SketchCurve type: " << sketchCurve->objectType());
+    LOG_DEBUG("Curve " << i << " - SketchCurve type: " << sketchCurve->objectType());
 
     // Check what this object actually is and what methods it has
     if (Ptr<adsk::fusion::SketchLine> line = sketchCurve) {
@@ -191,8 +179,7 @@ bool FusionWorkspace::extractCurvesFromProfile(
       // Try to get basic properties
       try {
         auto geom = line->geometry();
-        LOG_DEBUG("SketchLine.geometry() returned: " << (geom ? "valid pointer"
-                                                              : "NULL"));
+        LOG_DEBUG("SketchLine.geometry() returned: " << (geom ? "valid pointer" : "NULL"));
         if (geom) {
           LOG_DEBUG("Line geometry type: " << geom->objectType());
         }
@@ -206,8 +193,7 @@ bool FusionWorkspace::extractCurvesFromProfile(
     // Get the 3D curve geometry using helper function
     Ptr<adsk::core::Curve3D> curve3D = getCurveWorldGeometry(sketchCurve);
     if (!curve3D) {
-      LOG_WARNING("Could not get geometry for curve "
-                  << i << " using getCurveWorldGeometry");
+      LOG_WARNING("Could not get geometry for curve " << i << " using getCurveWorldGeometry");
       continue;  // Skip this curve
     }
 
@@ -225,8 +211,7 @@ bool FusionWorkspace::extractCurvesFromProfile(
       }
       LOG_DEBUG("Got 3D curve evaluator for curve " << i);
     } catch (const std::exception& e) {
-      LOG_ERROR("Exception getting 3D curve evaluator for curve " << i << ": "
-                                                                  << e.what());
+      LOG_ERROR("Exception getting 3D curve evaluator for curve " << i << ": " << e.what());
       continue;
     } catch (...) {
       LOG_ERROR("Unknown exception getting 3D curve evaluator for curve " << i);
@@ -240,13 +225,11 @@ bool FusionWorkspace::extractCurvesFromProfile(
       continue;
     }
 
-    LOG_DEBUG("Parameter extents for curve " << i << ": " << startParam
-                                             << " to " << endParam);
+    LOG_DEBUG("Parameter extents for curve " << i << ": " << startParam << " to " << endParam);
 
     // Tessellate the curve using getStrokes (adaptive tessellation)
     std::vector<Ptr<adsk::core::Point3D>> strokePoints;
-    if (!evaluator->getStrokes(startParam, endParam, chordTolerance,
-                               strokePoints)) {
+    if (!evaluator->getStrokes(startParam, endParam, chordTolerance, strokePoints)) {
       LOG_WARNING("getStrokes failed for curve " << i);
       continue;
     }
@@ -256,8 +239,7 @@ bool FusionWorkspace::extractCurvesFromProfile(
       continue;
     }
 
-    LOG_DEBUG("getStrokes succeeded for curve "
-              << i << ": " << strokePoints.size() << " points");
+    LOG_DEBUG("getStrokes succeeded for curve " << i << ": " << strokePoints.size() << " points");
 
     // Store stroke points and endpoints
     curveData.strokePoints = strokePoints;
@@ -266,11 +248,9 @@ bool FusionWorkspace::extractCurvesFromProfile(
     curveData.endPoint = curveData.strokePoints.back();
 
     // Log the endpoints for debugging
-    LOG_DEBUG("Curve " << i << " start: (" << curveData.startPoint->x() << ", "
-                       << curveData.startPoint->y() << ", "
+    LOG_DEBUG("Curve " << i << " start: (" << curveData.startPoint->x() << ", " << curveData.startPoint->y() << ", "
                        << curveData.startPoint->z() << ")");
-    LOG_DEBUG("Curve " << i << " end: (" << curveData.endPoint->x() << ", "
-                       << curveData.endPoint->y() << ", "
+    LOG_DEBUG("Curve " << i << " end: (" << curveData.endPoint->x() << ", " << curveData.endPoint->y() << ", "
                        << curveData.endPoint->z() << ")");
 
     allCurves.push_back(curveData);

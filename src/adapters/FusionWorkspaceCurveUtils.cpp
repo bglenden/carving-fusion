@@ -19,10 +19,8 @@ using namespace adsk::core;
 namespace ChipCarving {
 namespace Adapters {
 
-std::string FusionWorkspace::extractPlaneEntityIdFromProfile(
-    const std::string& profileEntityId) {
-  LOG_DEBUG("extractPlaneEntityIdFromProfile called with profileEntityId: "
-            << profileEntityId);
+std::string FusionWorkspace::extractPlaneEntityIdFromProfile(const std::string& profileEntityId) {
+  LOG_DEBUG("extractPlaneEntityIdFromProfile called with profileEntityId: " << profileEntityId);
 
   try {
     if (!app_) {
@@ -54,21 +52,22 @@ std::string FusionWorkspace::extractPlaneEntityIdFromProfile(
       return "";
     }
 
-    for (int sketchIndex = 0; sketchIndex < static_cast<int>(sketches->count());
-         ++sketchIndex) {
+    for (int sketchIndex = 0; sketchIndex < static_cast<int>(sketches->count()); ++sketchIndex) {
       Ptr<adsk::fusion::Sketch> sketch = sketches->item(sketchIndex);
-      if (!sketch) continue;
+      if (!sketch)
+        continue;
 
       LOG_DEBUG("Checking sketch " << sketchIndex << ": " << sketch->name());
 
       // Check profiles in this sketch
       Ptr<adsk::fusion::Profiles> profiles = sketch->profiles();
-      if (!profiles) continue;
+      if (!profiles)
+        continue;
 
-      for (int profileIndex = 0;
-           profileIndex < static_cast<int>(profiles->count()); ++profileIndex) {
+      for (int profileIndex = 0; profileIndex < static_cast<int>(profiles->count()); ++profileIndex) {
         Ptr<adsk::fusion::Profile> profile = profiles->item(profileIndex);
-        if (!profile) continue;
+        if (!profile)
+          continue;
 
         std::string currentProfileId = profile->entityToken();
         LOG_DEBUG("Profile " << profileIndex << " token: " << currentProfileId);
@@ -81,8 +80,7 @@ std::string FusionWorkspace::extractPlaneEntityIdFromProfile(
           Ptr<adsk::core::Base> referenceEntity = sketch->referencePlane();
           if (referenceEntity) {
             // Try to cast to construction plane
-            Ptr<adsk::fusion::ConstructionPlane> constructionPlane =
-                referenceEntity;
+            Ptr<adsk::fusion::ConstructionPlane> constructionPlane = referenceEntity;
             if (constructionPlane) {
               std::string planeToken = constructionPlane->entityToken();
               LOG_DEBUG("Extracted construction plane token: " << planeToken);
@@ -97,23 +95,20 @@ std::string FusionWorkspace::extractPlaneEntityIdFromProfile(
               return faceToken;
             }
 
-            LOG_WARNING(
-                "Reference plane found but couldn't extract entity token");
+            LOG_WARNING("Reference plane found but couldn't extract entity token");
           } else {
             LOG_WARNING("Profile's sketch has no reference plane");
           }
 
           // If we can't get the plane token, return empty string but log the
           // attempt
-          LOG_WARNING(
-              "Could not extract plane entity ID from profile's sketch");
+          LOG_WARNING("Could not extract plane entity ID from profile's sketch");
           return "";
         }
       }
     }
 
-    LOG_DEBUG("Profile with token '" << profileEntityId
-                                     << "' not found in any sketch");
+    LOG_DEBUG("Profile with token '" << profileEntityId << "' not found in any sketch");
     return "";
   } catch (const std::exception& e) {
     LOG_ERROR("Exception in extractPlaneEntityIdFromProfile: " << e.what());

@@ -12,19 +12,15 @@
 namespace ChipCarving {
 namespace Utils {
 
-UIParameterHelper::UIParameterHelper(
-    adsk::core::Ptr<adsk::core::CommandInputs> inputs)
-    : inputs_(inputs) {
+UIParameterHelper::UIParameterHelper(adsk::core::Ptr<adsk::core::CommandInputs> inputs) : inputs_(inputs) {
   if (!inputs_) {
     LOG_ERROR("UIParameterHelper initialized with null inputs");
   } else {
-    LOG_DEBUG("UIParameterHelper initialized with " << inputs_->count()
-                                                    << " inputs");
+    LOG_DEBUG("UIParameterHelper initialized with " << inputs_->count() << " inputs");
   }
 }
 
-void UIParameterHelper::logParameterAccess(const std::string& inputId,
-                                           bool success) const {
+void UIParameterHelper::logParameterAccess(const std::string& inputId, bool success) const {
   if (success) {
     LOG_DEBUG("Successfully accessed parameter: " << inputId);
   } else {
@@ -34,42 +30,42 @@ void UIParameterHelper::logParameterAccess(const std::string& inputId,
 
 // Template specializations
 template <>
-adsk::core::Ptr<adsk::core::StringValueCommandInput>
-UIParameterHelper::getInput<adsk::core::StringValueCommandInput>(
+adsk::core::Ptr<adsk::core::StringValueCommandInput> UIParameterHelper::getInput<adsk::core::StringValueCommandInput>(
     const std::string& inputId) {
-  if (!inputs_) return nullptr;
+  if (!inputs_)
+    return nullptr;
   return inputs_->itemById(inputId);
 }
 
 template <>
-adsk::core::Ptr<adsk::core::BoolValueCommandInput>
-UIParameterHelper::getInput<adsk::core::BoolValueCommandInput>(
+adsk::core::Ptr<adsk::core::BoolValueCommandInput> UIParameterHelper::getInput<adsk::core::BoolValueCommandInput>(
     const std::string& inputId) {
-  if (!inputs_) return nullptr;
+  if (!inputs_)
+    return nullptr;
   return inputs_->itemById(inputId);
 }
 
 template <>
-adsk::core::Ptr<adsk::core::ValueCommandInput>
-UIParameterHelper::getInput<adsk::core::ValueCommandInput>(
+adsk::core::Ptr<adsk::core::ValueCommandInput> UIParameterHelper::getInput<adsk::core::ValueCommandInput>(
     const std::string& inputId) {
-  if (!inputs_) return nullptr;
+  if (!inputs_)
+    return nullptr;
   return inputs_->itemById(inputId);
 }
 
 template <>
 adsk::core::Ptr<adsk::core::IntegerSpinnerCommandInput>
-UIParameterHelper::getInput<adsk::core::IntegerSpinnerCommandInput>(
-    const std::string& inputId) {
-  if (!inputs_) return nullptr;
+UIParameterHelper::getInput<adsk::core::IntegerSpinnerCommandInput>(const std::string& inputId) {
+  if (!inputs_)
+    return nullptr;
   return inputs_->itemById(inputId);
 }
 
 template <>
-adsk::core::Ptr<adsk::core::SelectionCommandInput>
-UIParameterHelper::getInput<adsk::core::SelectionCommandInput>(
+adsk::core::Ptr<adsk::core::SelectionCommandInput> UIParameterHelper::getInput<adsk::core::SelectionCommandInput>(
     const std::string& inputId) {
-  if (!inputs_) return nullptr;
+  if (!inputs_)
+    return nullptr;
   return inputs_->itemById(inputId);
 }
 
@@ -118,8 +114,7 @@ int UIParameterHelper::getIntegerValue(const std::string& inputId) {
   return 0;
 }
 
-Optional<std::string> UIParameterHelper::getDropdownValue(
-    const std::string& inputId) {
+Optional<std::string> UIParameterHelper::getDropdownValue(const std::string& inputId) {
   auto dropdownInput = inputs_->itemById(inputId);
   if (!dropdownInput) {
     logParameterAccess(inputId, false);

@@ -9,10 +9,9 @@ using namespace adsk::fusion;
 static HelloWorldCommandCreatedHandler* cmdCreatedHandler = nullptr;
 static HelloWorldCommandExecuteHandler* cmdExecuteHandler = nullptr;
 
-void CreateHelloWorldCommand(
-    Ptr<Application> app, Ptr<UserInterface> ui, Ptr<ToolbarPanel> panel,
-    std::vector<Ptr<CommandDefinition>>& commandDefinitions,
-    std::vector<Ptr<Control>>& controls) {
+void CreateHelloWorldCommand(Ptr<Application> app, Ptr<UserInterface> ui, Ptr<ToolbarPanel> panel,
+                             std::vector<Ptr<CommandDefinition>>& commandDefinitions,
+                             std::vector<Ptr<Control>>& controls) {
   try {
     // Command ID and info
     std::string cmdId = "ChipCarvingHelloWorldCpp";
@@ -26,9 +25,8 @@ void CreateHelloWorldCommand(
       // Create the command definition
       std::string cmdName = "Hello World";
       std::string cmdTooltip = "Test C++ add-in functionality";
-      cmdDef = ui->commandDefinitions()->addButtonDefinition(
-          cmdId, cmdName, cmdTooltip,
-          "./resources/hello");  // Icon folder
+      cmdDef = ui->commandDefinitions()->addButtonDefinition(cmdId, cmdName, cmdTooltip,
+                                                             "./resources/hello");  // Icon folder
 
       LogToConsole("Hello World command definition created");
 
@@ -55,21 +53,21 @@ void CreateHelloWorldCommand(
       LogToConsole("Hello World command already in panel");
     }
   } catch (std::exception& e) {
-    LogToConsole("ERROR creating Hello World command: " +
-                 std::string(e.what()));
+    LogToConsole("ERROR creating Hello World command: " + std::string(e.what()));
     throw;
   }
 }
 
-void HelloWorldCommandCreatedHandler::notify(
-    const Ptr<CommandCreatedEventArgs>& eventArgs) {
+void HelloWorldCommandCreatedHandler::notify(const Ptr<CommandCreatedEventArgs>& eventArgs) {
   try {
     LogToConsole("Hello World command created event fired");
 
-    if (!eventArgs) return;
+    if (!eventArgs)
+      return;
 
     Ptr<Command> cmd = eventArgs->command();
-    if (!cmd) return;
+    if (!cmd)
+      return;
 
     // Set the command to execute when created (no dialog)
     cmd->isOKButtonVisible(false);
@@ -87,17 +85,18 @@ void HelloWorldCommandCreatedHandler::notify(
   }
 }
 
-void HelloWorldCommandExecuteHandler::notify(
-    const Ptr<CommandEventArgs>& eventArgs) {
+void HelloWorldCommandExecuteHandler::notify(const Ptr<CommandEventArgs>& eventArgs) {
   try {
     LogToConsole("Hello World command execute event fired");
 
     // Get the application and UI
     Ptr<Application> app = Application::get();
-    if (!app) return;
+    if (!app)
+      return;
 
     Ptr<UserInterface> ui = app->userInterface();
-    if (!ui) return;
+    if (!ui)
+      return;
 
     // Show message box
     std::string message = "Hello from C++ Add-in!\n\n";

@@ -12,8 +12,7 @@ namespace ChipCarving {
 namespace Commands {
 
 // Enhanced UI Phase 4: Command execution implementation
-void GeneratePathsCommandHandler::executeMedialAxisProcessing(
-    adsk::core::Ptr<adsk::core::CommandInputs> inputs) {
+void GeneratePathsCommandHandler::executeMedialAxisProcessing(adsk::core::Ptr<adsk::core::CommandInputs> inputs) {
   try {
     // LOG: Start of method execution
     if (pluginManager_) {
@@ -26,12 +25,10 @@ void GeneratePathsCommandHandler::executeMedialAxisProcessing(
     }
 
     // Get parameters from dialog inputs
-    ChipCarving::Adapters::MedialAxisParameters params =
-        getParametersFromInputs(inputs);
+    ChipCarving::Adapters::MedialAxisParameters params = getParametersFromInputs(inputs);
 
     // Get selected profiles from dialog
-    ChipCarving::Adapters::SketchSelection selection =
-        getSelectionFromInputs(inputs);
+    ChipCarving::Adapters::SketchSelection selection = getSelectionFromInputs(inputs);
 
     // DEBUG: Log selection details extensively
     // Note: We're going to call the NEW executeMedialAxisGeneration method
@@ -43,8 +40,7 @@ void GeneratePathsCommandHandler::executeMedialAxisProcessing(
       if (pluginManager_) {
         // This should call executeMedialAxisGeneration(), NOT
         // executeGeneratePaths()
-        bool success =
-            pluginManager_->executeMedialAxisGeneration(selection, params);
+        bool success = pluginManager_->executeMedialAxisGeneration(selection, params);
         if (!success) {
           // The error was already shown by executeMedialAxisGeneration
           return;
@@ -65,8 +61,7 @@ void GeneratePathsCommandHandler::executeMedialAxisProcessing(
 
     // Execute medial axis generation with construction geometry visualization
     if (pluginManager_) {
-      bool success =
-          pluginManager_->executeMedialAxisGeneration(selection, params);
+      bool success = pluginManager_->executeMedialAxisGeneration(selection, params);
       if (!success) {
         // Error handling is done within executeMedialAxisGeneration
         return;

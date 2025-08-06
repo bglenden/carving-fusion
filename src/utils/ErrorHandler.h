@@ -18,8 +18,7 @@ namespace Utils {
  * Callback function type for error handling
  * Parameters: errorMessage, errorContext
  */
-using ErrorCallback =
-    std::function<void(const std::string&, const std::string&)>;
+using ErrorCallback = std::function<void(const std::string&, const std::string&)>;
 
 /**
  * Result wrapper for operations that can fail
@@ -35,11 +34,19 @@ class Result {
     return Result<T>(T{}, false, error);
   }
 
-  bool isSuccess() const { return success_; }
-  bool hasError() const { return !success_; }
+  bool isSuccess() const {
+    return success_;
+  }
+  bool hasError() const {
+    return !success_;
+  }
 
-  const T& getValue() const { return value_; }
-  const std::string& getError() const { return error_; }
+  const T& getValue() const {
+    return value_;
+  }
+  const std::string& getError() const {
+    return error_;
+  }
 
  private:
   Result(T value, bool success, const std::string& error)
@@ -66,25 +73,21 @@ class ErrorHandler {
  public:
   // Execute function with standard error handling
   template <typename T>
-  static Result<T> executeWithHandling(const std::string& operation,
-                                       std::function<T()> func,
+  static Result<T> executeWithHandling(const std::string& operation, std::function<T()> func,
                                        ErrorCallback errorCallback = nullptr);
 
   // Execute function with custom error handling
   template <typename T>
-  static Result<T> executeWithCustomHandling(
-      const std::string& operation, std::function<T()> func,
-      std::function<void(const std::exception&)> stdExceptionHandler,
-      std::function<void()> unknownExceptionHandler);
+  static Result<T> executeWithCustomHandling(const std::string& operation, std::function<T()> func,
+                                             std::function<void(const std::exception&)> stdExceptionHandler,
+                                             std::function<void()> unknownExceptionHandler);
 
   // Fusion 360 specific error handling (returns false on error)
-  static bool executeFusionOperation(const std::string& operation,
-                                     std::function<bool()> func,
+  static bool executeFusionOperation(const std::string& operation, std::function<bool()> func,
                                      bool showMessageToUser = false);
 
   // Void operations with error logging only
-  static void executeWithLogging(const std::string& operation,
-                                 std::function<void()> func);
+  static void executeWithLogging(const std::string& operation, std::function<void()> func);
 
   // Configuration
   static void setGlobalErrorCallback(ErrorCallback callback);
@@ -96,16 +99,14 @@ class ErrorHandler {
   static bool consoleLoggingEnabled_;
   static bool userMessagesEnabled_;
 
-  static void handleStandardException(const std::string& operation,
-                                      const std::exception& e);
+  static void handleStandardException(const std::string& operation, const std::exception& e);
   static void handleUnknownException(const std::string& operation);
   static void logError(const std::string& operation, const std::string& error);
 };
 
 // Template implementations
 template <typename T>
-Result<T> ErrorHandler::executeWithHandling(const std::string& operation,
-                                            std::function<T()> func,
+Result<T> ErrorHandler::executeWithHandling(const std::string& operation, std::function<T()> func,
                                             ErrorCallback errorCallback) {
   try {
     T result = func();
@@ -136,10 +137,9 @@ Result<T> ErrorHandler::executeWithHandling(const std::string& operation,
 }
 
 template <typename T>
-Result<T> ErrorHandler::executeWithCustomHandling(
-    const std::string& operation, std::function<T()> func,
-    std::function<void(const std::exception&)> stdExceptionHandler,
-    std::function<void()> unknownExceptionHandler) {
+Result<T> ErrorHandler::executeWithCustomHandling(const std::string& operation, std::function<T()> func,
+                                                  std::function<void(const std::exception&)> stdExceptionHandler,
+                                                  std::function<void()> unknownExceptionHandler) {
   try {
     T result = func();
     return Result<T>::success(result);
@@ -162,4 +162,3 @@ Result<T> ErrorHandler::executeWithCustomHandling(
 
 }  // namespace Utils
 }  // namespace ChipCarving
-

@@ -5,13 +5,7 @@
 
 namespace ChipCarving {
 
-enum class PluginMode {
-  STANDARD,
-  DEBUG_MODE,
-  COMMANDS_ONLY,
-  UI_SIMPLE,
-  REFACTORED
-};
+enum class PluginMode { STANDARD, DEBUG_MODE, COMMANDS_ONLY, UI_SIMPLE, REFACTORED };
 
 class PluginInitializer {
  public:

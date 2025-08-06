@@ -21,8 +21,7 @@ namespace Utils {
  * Parameters: component, componentIndex
  * Returns: true to continue traversal, false to stop
  */
-using ComponentCallback =
-    std::function<bool(adsk::core::Ptr<adsk::fusion::Component>, size_t)>;
+using ComponentCallback = std::function<bool(adsk::core::Ptr<adsk::fusion::Component>, size_t)>;
 
 /**
  * Utility class to abstract common Fusion 360 component traversal patterns
@@ -39,8 +38,7 @@ using ComponentCallback =
  */
 class FusionComponentTraverser {
  public:
-  explicit FusionComponentTraverser(
-      adsk::core::Ptr<adsk::fusion::Component> rootComponent);
+  explicit FusionComponentTraverser(adsk::core::Ptr<adsk::fusion::Component> rootComponent);
 
   // Get all components (root + all occurrences) as a vector
   std::vector<adsk::core::Ptr<adsk::fusion::Component>> getAllComponents();
@@ -57,14 +55,12 @@ class FusionComponentTraverser {
 
   // Get components containing specific entity type
   template <typename T>
-  std::vector<adsk::core::Ptr<adsk::fusion::Component>>
-  getComponentsContaining();
+  std::vector<adsk::core::Ptr<adsk::fusion::Component>> getComponentsContaining();
 
  private:
   adsk::core::Ptr<adsk::fusion::Component> rootComponent_;
 
-  void collectComponents(
-      std::vector<adsk::core::Ptr<adsk::fusion::Component>>& components);
+  void collectComponents(std::vector<adsk::core::Ptr<adsk::fusion::Component>>& components);
 };
 
 // Template specializations for common entity types
@@ -78,4 +74,3 @@ FusionComponentTraverser::getComponentsContaining<adsk::fusion::BRepBodies>();
 
 }  // namespace Utils
 }  // namespace ChipCarving
-

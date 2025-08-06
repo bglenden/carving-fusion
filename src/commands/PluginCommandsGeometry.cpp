@@ -17,8 +17,8 @@ void GeneratePathsCommandHandler::clearCachedGeometry() {
   LOG_INFO("Cleared cached profile geometry");
 }
 
-void GeneratePathsCommandHandler::extractAndCacheProfileGeometry(
-    adsk::core::Ptr<adsk::fusion::Profile> profile, int index) {
+void GeneratePathsCommandHandler::extractAndCacheProfileGeometry(adsk::core::Ptr<adsk::fusion::Profile> profile,
+                                                                 int index) {
   if (!profile) {
     LOG_INFO("Cannot extract geometry from null profile at index " << index);
     return;
@@ -35,8 +35,7 @@ void GeneratePathsCommandHandler::extractAndCacheProfileGeometry(
       // Get plane entity ID
       auto referenceEntity = sketch->referencePlane();
       if (referenceEntity) {
-        auto constructionPlane =
-            referenceEntity->cast<adsk::fusion::ConstructionPlane>();
+        auto constructionPlane = referenceEntity->cast<adsk::fusion::ConstructionPlane>();
         if (constructionPlane) {
           profileGeom.planeEntityId = constructionPlane->entityToken();
         } else {
@@ -77,24 +76,27 @@ void GeneratePathsCommandHandler::extractAndCacheProfileGeometry(
     if (profileLoops) {
       for (size_t loopIdx = 0; loopIdx < profileLoops->count(); ++loopIdx) {
         auto loop = profileLoops->item(static_cast<int>(loopIdx));
-        if (!loop) continue;
+        if (!loop)
+          continue;
 
         auto profileCurves = loop->profileCurves();
-        if (!profileCurves) continue;
+        if (!profileCurves)
+          continue;
 
         // Collect curve data for proper chaining
         allCurves.reserve(profileCurves->count());
-        for (size_t curveIdx = 0; curveIdx < profileCurves->count();
-             ++curveIdx) {
+        for (size_t curveIdx = 0; curveIdx < profileCurves->count(); ++curveIdx) {
           CurveData curveData;
           curveData.originalIndex = curveIdx;
           curveData.used = false;
 
           auto profileCurve = profileCurves->item(static_cast<int>(curveIdx));
-          if (!profileCurve) continue;
+          if (!profileCurve)
+            continue;
 
           auto sketchEntity = profileCurve->sketchEntity();
-          if (!sketchEntity) continue;
+          if (!sketchEntity)
+            continue;
 
           // Extract geometry using the same approach as existing code
           adsk::core::Ptr<adsk::core::Curve3D> worldGeometry = nullptr;
@@ -106,31 +108,22 @@ void GeneratePathsCommandHandler::extractAndCacheProfileGeometry(
             if (auto line = sketchEntity->cast<adsk::fusion::SketchLine>()) {
               worldGeometry = line->worldGeometry();
               LOG_INFO("    Curve " << curveIdx << " is a SketchLine");
-            } else if (auto arc =
-                           sketchEntity->cast<adsk::fusion::SketchArc>()) {
+            } else if (auto arc = sketchEntity->cast<adsk::fusion::SketchArc>()) {
               worldGeometry = arc->worldGeometry();
               LOG_INFO("    Curve " << curveIdx << " is a SketchArc");
-            } else if (auto circle =
-                           sketchEntity->cast<adsk::fusion::SketchCircle>()) {
+            } else if (auto circle = sketchEntity->cast<adsk::fusion::SketchCircle>()) {
               worldGeometry = circle->worldGeometry();
               LOG_INFO("    Curve " << curveIdx << " is a SketchCircle");
-            } else if (auto spline =
-                           sketchEntity
-                               ->cast<adsk::fusion::SketchFittedSpline>()) {
+            } else if (auto spline = sketchEntity->cast<adsk::fusion::SketchFittedSpline>()) {
               worldGeometry = spline->worldGeometry();
               LOG_INFO("    Curve " << curveIdx << " is a SketchFittedSpline");
-            } else if (auto nurbs = sketchEntity->cast<
-                                    adsk::fusion::SketchControlPointSpline>()) {
+            } else if (auto nurbs = sketchEntity->cast<adsk::fusion::SketchControlPointSpline>()) {
               worldGeometry = nurbs->worldGeometry();
-              LOG_INFO("    Curve " << curveIdx
-                                    << " is a SketchControlPointSpline");
-            } else if (auto ellipse =
-                           sketchEntity->cast<adsk::fusion::SketchEllipse>()) {
+              LOG_INFO("    Curve " << curveIdx << " is a SketchControlPointSpline");
+            } else if (auto ellipse = sketchEntity->cast<adsk::fusion::SketchEllipse>()) {
               worldGeometry = ellipse->worldGeometry();
               LOG_INFO("    Curve " << curveIdx << " is a SketchEllipse");
-            } else if (auto ellipticalArc =
-                           sketchEntity
-                               ->cast<adsk::fusion::SketchEllipticalArc>()) {
+            } else if (auto ellipticalArc = sketchEntity->cast<adsk::fusion::SketchEllipticalArc>()) {
               worldGeometry = ellipticalArc->worldGeometry();
               LOG_INFO("    Curve " << curveIdx << " is a SketchEllipticalArc");
             }
@@ -147,13 +140,11 @@ void GeneratePathsCommandHandler::extractAndCacheProfileGeometry(
                 std::vector<adsk::core::Ptr<adsk::core::Point3D>> strokePoints;
 
                 // Determine tolerance based on curve type
-                double chordTolerance =
-                    0.01;  // Default: 0.1mm tolerance for accurate curves
+                double chordTolerance = 0.01;  // Default: 0.1mm tolerance for accurate curves
 
                 // For lines, use coarser tolerance since they don't need
                 // tessellation
-                if (auto line =
-                        sketchEntity->cast<adsk::fusion::SketchLine>()) {
+                if (auto line = sketchEntity->cast<adsk::fusion::SketchLine>()) {
                   chordTolerance = 0.1;  // 1mm tolerance for lines (should only
                                          // give 2 points)
                 } else {
@@ -163,29 +154,20 @@ void GeneratePathsCommandHandler::extractAndCacheProfileGeometry(
                                            // curve representation
                 }
 
-                LOG_INFO("    Using tolerance " << chordTolerance
-                                                << " cm for tessellation");
-                if (evaluator->getStrokes(startParam, endParam, chordTolerance,
-                                          strokePoints)) {
-                  LOG_INFO("    Generated " << strokePoints.size()
-                                            << " stroke points");
+                LOG_INFO("    Using tolerance " << chordTolerance << " cm for tessellation");
+                if (evaluator->getStrokes(startParam, endParam, chordTolerance, strokePoints)) {
+                  LOG_INFO("    Generated " << strokePoints.size() << " stroke points");
 
                   // Validate tessellation quality for non-linear curves
-                  if (!sketchEntity->cast<adsk::fusion::SketchLine>() &&
-                      strokePoints.size() < 3) {
-                    LOG_WARNING("    Insufficient tessellation for curve " +
-                                std::to_string(curveIdx) + " (" +
-                                std::to_string(strokePoints.size()) +
-                                " points) - attempting finer tolerance");
+                  if (!sketchEntity->cast<adsk::fusion::SketchLine>() && strokePoints.size() < 3) {
+                    LOG_WARNING("    Insufficient tessellation for curve " + std::to_string(curveIdx) + " (" +
+                                std::to_string(strokePoints.size()) + " points) - attempting finer tolerance");
 
                     // Try again with finer tolerance
                     strokePoints.clear();
-                    chordTolerance =
-                        0.001;  // 0.01mm for very fine tessellation
-                    if (evaluator->getStrokes(startParam, endParam,
-                                              chordTolerance, strokePoints)) {
-                      LOG_INFO("    Retessellated with finer tolerance: "
-                               << strokePoints.size() << " points");
+                    chordTolerance = 0.001;  // 0.01mm for very fine tessellation
+                    if (evaluator->getStrokes(startParam, endParam, chordTolerance, strokePoints)) {
+                      LOG_INFO("    Retessellated with finer tolerance: " << strokePoints.size() << " points");
                     }
                   }
                   // Store stroke points and endpoints for chaining
@@ -196,13 +178,11 @@ void GeneratePathsCommandHandler::extractAndCacheProfileGeometry(
                   }
                   allCurves.push_back(curveData);
                 } else {
-                  LOG_ERROR("    getStrokes failed for curve "
-                            << curveIdx
-                            << " - geometry will be missing from profile");
+                  LOG_ERROR("    getStrokes failed for curve " << curveIdx
+                                                               << " - geometry will be missing from profile");
                   // Try fallback with endpoints only for critical path
                   // continuity
-                  std::vector<adsk::core::Ptr<adsk::core::Point3D>>
-                      fallbackPoints;
+                  std::vector<adsk::core::Ptr<adsk::core::Point3D>> fallbackPoints;
                   adsk::core::Ptr<adsk::core::Point3D> startPt, endPt;
                   if (evaluator->getPointAtParameter(startParam, startPt) &&
                       evaluator->getPointAtParameter(endParam, endPt)) {
@@ -212,10 +192,9 @@ void GeneratePathsCommandHandler::extractAndCacheProfileGeometry(
                     curveData.startPoint = startPt;
                     curveData.endPoint = endPt;
                     allCurves.push_back(curveData);
-                    LOG_WARNING(
-                        "    Using fallback endpoints-only approach for "
-                        "curve " +
-                        std::to_string(curveIdx));
+                    LOG_WARNING("    Using fallback endpoints-only approach for "
+                                "curve " +
+                                std::to_string(curveIdx));
                   }
                 }
               }
@@ -242,11 +221,9 @@ void GeneratePathsCommandHandler::extractAndCacheProfileGeometry(
         }
       }
 
-      const double tolerance =
-          hadTessellationIssues ? baseTolerance * 10 : baseTolerance;
+      const double tolerance = hadTessellationIssues ? baseTolerance * 10 : baseTolerance;
       if (hadTessellationIssues) {
-        LOG_WARNING("  Using relaxed chaining tolerance " +
-                    std::to_string(tolerance) +
+        LOG_WARNING("  Using relaxed chaining tolerance " + std::to_string(tolerance) +
                     " cm due to tessellation issues");
       }
 
@@ -261,19 +238,18 @@ void GeneratePathsCommandHandler::extractAndCacheProfileGeometry(
         bool foundNext = false;
 
         for (size_t i = 0; i < allCurves.size(); ++i) {
-          if (allCurves[i].used) continue;
+          if (allCurves[i].used)
+            continue;
 
           // Check if this curve's start connects to current end
-          double distStart = std::sqrt(
-              std::pow(currentEndPoint->x() - allCurves[i].startPoint->x(), 2) +
-              std::pow(currentEndPoint->y() - allCurves[i].startPoint->y(), 2) +
-              std::pow(currentEndPoint->z() - allCurves[i].startPoint->z(), 2));
+          double distStart = std::sqrt(std::pow(currentEndPoint->x() - allCurves[i].startPoint->x(), 2) +
+                                       std::pow(currentEndPoint->y() - allCurves[i].startPoint->y(), 2) +
+                                       std::pow(currentEndPoint->z() - allCurves[i].startPoint->z(), 2));
 
           // Check if this curve's end connects to current end (needs reversal)
-          double distEnd = std::sqrt(
-              std::pow(currentEndPoint->x() - allCurves[i].endPoint->x(), 2) +
-              std::pow(currentEndPoint->y() - allCurves[i].endPoint->y(), 2) +
-              std::pow(currentEndPoint->z() - allCurves[i].endPoint->z(), 2));
+          double distEnd = std::sqrt(std::pow(currentEndPoint->x() - allCurves[i].endPoint->x(), 2) +
+                                     std::pow(currentEndPoint->y() - allCurves[i].endPoint->y(), 2) +
+                                     std::pow(currentEndPoint->z() - allCurves[i].endPoint->z(), 2));
 
           if (distStart < tolerance) {
             // Normal orientation
@@ -295,10 +271,8 @@ void GeneratePathsCommandHandler::extractAndCacheProfileGeometry(
         }
 
         if (!foundNext) {
-          LOG_ERROR("    Could not find connecting curve at position "
-                    << chainPos << " of " << allCurves.size());
-          LOG_ERROR("    Current endpoint: (" << currentEndPoint->x() << ", "
-                                              << currentEndPoint->y() << ", "
+          LOG_ERROR("    Could not find connecting curve at position " << chainPos << " of " << allCurves.size());
+          LOG_ERROR("    Current endpoint: (" << currentEndPoint->x() << ", " << currentEndPoint->y() << ", "
                                               << currentEndPoint->z() << ")");
 
           // Log remaining unconnected curves for debugging
@@ -306,15 +280,12 @@ void GeneratePathsCommandHandler::extractAndCacheProfileGeometry(
           for (size_t i = 0; i < allCurves.size(); ++i) {
             if (!allCurves[i].used) {
               LOG_ERROR("    Unconnected curve "
-                        << i << ": start(" << allCurves[i].startPoint->x()
-                        << ", " << allCurves[i].startPoint->y() << ") end("
-                        << allCurves[i].endPoint->x() << ", "
-                        << allCurves[i].endPoint->y() << ")");
+                        << i << ": start(" << allCurves[i].startPoint->x() << ", " << allCurves[i].startPoint->y()
+                        << ") end(" << allCurves[i].endPoint->x() << ", " << allCurves[i].endPoint->y() << ")");
               unconnectedCount++;
             }
           }
-          LOG_ERROR("    Total unconnected curves: "
-                    << unconnectedCount << " - profile will be incomplete");
+          LOG_ERROR("    Total unconnected curves: " << unconnectedCount << " - profile will be incomplete");
           break;
         }
       }
@@ -348,17 +319,15 @@ void GeneratePathsCommandHandler::extractAndCacheProfileGeometry(
         }
       }
 
-      LOG_INFO("  Successfully chained curves, extracted " << vertices.size()
-                                                           << " vertices");
+      LOG_INFO("  Successfully chained curves, extracted " << vertices.size() << " vertices");
     }
 
     profileGeom.vertices = vertices;
 
     // Validate extraction results
     if (vertices.size() < 3) {
-      LOG_ERROR("Extracted polygon has insufficient vertices ("
-                << vertices.size()
-                << ") - minimum 3 required for valid polygon");
+      LOG_ERROR("Extracted polygon has insufficient vertices (" << vertices.size()
+                                                                << ") - minimum 3 required for valid polygon");
     }
 
     // Set transform parameters (identity for now since vertices are in world
@@ -368,14 +337,12 @@ void GeneratePathsCommandHandler::extractAndCacheProfileGeometry(
     profileGeom.transform.scale = 1.0;
 
     // Log detailed geometry information for debugging
-    LOG_INFO("Extracted " << vertices.size() << " vertices from profile "
-                          << index);
+    LOG_INFO("Extracted " << vertices.size() << " vertices from profile " << index);
     if (!vertices.empty()) {
       // Log first few vertices for debugging
       size_t numToLog = std::min(size_t(6), vertices.size());
       for (size_t i = 0; i < numToLog; ++i) {
-        LOG_INFO("  Vertex " << i << ": (" << vertices[i].first << ", "
-                             << vertices[i].second << ")");
+        LOG_INFO("  Vertex " << i << ": (" << vertices[i].first << ", " << vertices[i].second << ")");
       }
       if (vertices.size() > 6) {
         LOG_INFO("  ... and " << (vertices.size() - 6) << " more vertices");
@@ -390,8 +357,7 @@ void GeneratePathsCommandHandler::extractAndCacheProfileGeometry(
         minY = std::min(minY, v.second);
         maxY = std::max(maxY, v.second);
       }
-      LOG_INFO("  Bounding box: (" << minX << ", " << minY << ") to (" << maxX
-                                   << ", " << maxY << ")");
+      LOG_INFO("  Bounding box: (" << minX << ", " << minY << ") to (" << maxX << ", " << maxY << ")");
       LOG_INFO("  Size: " << (maxX - minX) << " x " << (maxY - minY) << " cm");
     }
 
@@ -401,16 +367,13 @@ void GeneratePathsCommandHandler::extractAndCacheProfileGeometry(
     }
     cachedProfiles_[index] = profileGeom;
 
-    LOG_INFO("Successfully cached geometry for profile "
-             << index << " from sketch '" << profileGeom.sketchName << "' with "
-             << vertices.size() << " vertices and area " << profileGeom.area
-             << " sq cm");
+    LOG_INFO("Successfully cached geometry for profile " << index << " from sketch '" << profileGeom.sketchName
+                                                         << "' with " << vertices.size() << " vertices and area "
+                                                         << profileGeom.area << " sq cm");
   } catch (const std::exception& e) {
-    LOG_INFO("Exception during geometry extraction for profile "
-             << index << ": " << e.what());
+    LOG_INFO("Exception during geometry extraction for profile " << index << ": " << e.what());
   } catch (...) {
-    LOG_INFO("Unknown exception during geometry extraction for profile "
-             << index);
+    LOG_INFO("Unknown exception during geometry extraction for profile " << index);
   }
 }
 

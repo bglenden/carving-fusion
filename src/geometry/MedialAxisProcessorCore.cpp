@@ -22,19 +22,17 @@ namespace Geometry {
 
 // Helper function to check if two line segments intersect
 // Based on the orientation method
-static bool doSegmentsIntersect(const Point2D& p1, const Point2D& q1,
-                                const Point2D& p2, const Point2D& q2) {
-  auto orientation = [](const Point2D& p, const Point2D& q,
-                        const Point2D& r) -> int {
+static bool doSegmentsIntersect(const Point2D& p1, const Point2D& q1, const Point2D& p2, const Point2D& q2) {
+  auto orientation = [](const Point2D& p, const Point2D& q, const Point2D& r) -> int {
     double val = (q.y - p.y) * (r.x - q.x) - (q.x - p.x) * (r.y - q.y);
-    if (std::abs(val) < 1e-10) return 0;  // Collinear
-    return (val > 0) ? 1 : 2;             // Clockwise or Counterclockwise
+    if (std::abs(val) < 1e-10)
+      return 0;                // Collinear
+    return (val > 0) ? 1 : 2;  // Clockwise or Counterclockwise
   };
 
-  auto onSegment = [](const Point2D& p, const Point2D& q,
-                      const Point2D& r) -> bool {
-    if (q.x <= std::max(p.x, r.x) && q.x >= std::min(p.x, r.x) &&
-        q.y <= std::max(p.y, r.y) && q.y >= std::min(p.y, r.y))
+  auto onSegment = [](const Point2D& p, const Point2D& q, const Point2D& r) -> bool {
+    if (q.x <= std::max(p.x, r.x) && q.x >= std::min(p.x, r.x) && q.y <= std::max(p.y, r.y) &&
+        q.y >= std::min(p.y, r.y))
       return true;
     return false;
   };
@@ -45,40 +43,40 @@ static bool doSegmentsIntersect(const Point2D& p1, const Point2D& q1,
   int o4 = orientation(p2, q2, q1);
 
   // General case
-  if (o1 != o2 && o3 != o4) return true;
+  if (o1 != o2 && o3 != o4)
+    return true;
 
   // Special Cases
   // p1, q1 and p2 are collinear and p2 lies on segment p1q1
-  if (o1 == 0 && onSegment(p1, p2, q1)) return true;
+  if (o1 == 0 && onSegment(p1, p2, q1))
+    return true;
 
   // p1, q1 and q2 are collinear and q2 lies on segment p1q1
-  if (o2 == 0 && onSegment(p1, q2, q1)) return true;
+  if (o2 == 0 && onSegment(p1, q2, q1))
+    return true;
 
   // p2, q2 and p1 are collinear and p1 lies on segment p2q2
-  if (o3 == 0 && onSegment(p2, p1, q2)) return true;
+  if (o3 == 0 && onSegment(p2, p1, q2))
+    return true;
 
   // p2, q2 and q1 are collinear and q1 lies on segment p2q2
-  if (o4 == 0 && onSegment(p2, q1, q2)) return true;
+  if (o4 == 0 && onSegment(p2, q1, q2))
+    return true;
 
   return false;  // Doesn't fall in any of the above cases
 }
 
 MedialAxisProcessor::MedialAxisProcessor()
-    : polygonTolerance_(0.25),
-      medialThreshold_(0.8),
-      verbose_(false),
-      medialAxisWalkPoints_(0) {}
+    : polygonTolerance_(0.25), medialThreshold_(0.8), verbose_(false), medialAxisWalkPoints_(0) {}
 
-MedialAxisProcessor::MedialAxisProcessor(double polygonTolerance,
-                                         double medialThreshold)
+MedialAxisProcessor::MedialAxisProcessor(double polygonTolerance, double medialThreshold)
     : polygonTolerance_(polygonTolerance),
       medialThreshold_(medialThreshold),
       verbose_(false),
       medialAxisWalkPoints_(0) {}
 
 MedialAxisResults MedialAxisProcessor::computeMedialAxis(const Shape& shape) {
-  (void)
-      shape;  // Suppress unused parameter warning - this function is deprecated
+  (void)shape;  // Suppress unused parameter warning - this function is deprecated
   log("ERROR: Shape-based medial axis computation is deprecated!");
   log("Polygonization must be done via "
       "FusionAPIAdapter::extractProfileVertices()");
@@ -87,19 +85,16 @@ MedialAxisResults MedialAxisProcessor::computeMedialAxis(const Shape& shape) {
 
   MedialAxisResults results;
   results.success = false;
-  results.errorMessage =
-      "Shape-based polygonization is deprecated. Use Fusion profile extraction "
-      "instead.";
+  results.errorMessage = "Shape-based polygonization is deprecated. Use Fusion profile extraction "
+                         "instead.";
   return results;
 }
 
-MedialAxisResults MedialAxisProcessor::computeMedialAxis(
-    const std::vector<Point2D>& polygon) {
+MedialAxisResults MedialAxisProcessor::computeMedialAxis(const std::vector<Point2D>& polygon) {
   // Debug output to verify function is called
   LOG_DEBUG("computeMedialAxis called with " << polygon.size() << " vertices");
 
-  log("[MedialAxisProcessor] computeMedialAxis called with " +
-      std::to_string(polygon.size()) + " vertices");
+  log("[MedialAxisProcessor] computeMedialAxis called with " + std::to_string(polygon.size()) + " vertices");
   MedialAxisResults results;
 
   if (polygon.size() < 3) {
@@ -116,46 +111,38 @@ MedialAxisResults MedialAxisProcessor::computeMedialAxis(
     if (i == polygon.size() - 2 && next == polygon.size() - 1) {
       // Check if last vertex matches first vertex
       double distToFirst =
-          std::sqrt(std::pow(polygon[next].x - polygon[0].x, 2) +
-                    std::pow(polygon[next].y - polygon[0].y, 2));
+          std::sqrt(std::pow(polygon[next].x - polygon[0].x, 2) + std::pow(polygon[next].y - polygon[0].y, 2));
       if (distToFirst < 1e-10) {
         // This is a properly closed polygon, skip this check
         continue;
       }
     }
 
-    double dist = std::sqrt(std::pow(polygon[i].x - polygon[next].x, 2) +
-                            std::pow(polygon[i].y - polygon[next].y, 2));
+    double dist = std::sqrt(std::pow(polygon[i].x - polygon[next].x, 2) + std::pow(polygon[i].y - polygon[next].y, 2));
     if (dist < 1e-10) {
-      results.errorMessage =
-          "Polygon has duplicate consecutive vertices at index " +
-          std::to_string(i);
+      results.errorMessage = "Polygon has duplicate consecutive vertices at index " + std::to_string(i);
       log("Error: " + results.errorMessage);
       return results;
     }
   }
 
-  log("Computing medial axis for polygon with " +
-      std::to_string(polygon.size()) + " vertices");
+  log("Computing medial axis for polygon with " + std::to_string(polygon.size()) + " vertices");
 
   // Transform to unit circle
-  std::vector<Point2D> transformedPolygon =
-      transformToUnitCircle(polygon, results.transform);
+  std::vector<Point2D> transformedPolygon = transformToUnitCircle(polygon, results.transform);
 
   if (verbose_) {
-    log("Original bounds: (" + std::to_string(results.transform.originalMin.x) +
-        ", " + std::to_string(results.transform.originalMin.y) + ") to (" +
-        std::to_string(results.transform.originalMax.x) + ", " +
-        std::to_string(results.transform.originalMax.y) + ")");
+    log("Original bounds: (" + std::to_string(results.transform.originalMin.x) + ", " +
+        std::to_string(results.transform.originalMin.y) + ") to (" + std::to_string(results.transform.originalMax.x) +
+        ", " + std::to_string(results.transform.originalMax.y) + ")");
     log("Scale factor: " + std::to_string(results.transform.scale));
-    log("Offset: (" + std::to_string(results.transform.offset.x) + ", " +
-        std::to_string(results.transform.offset.y) + ")");
+    log("Offset: (" + std::to_string(results.transform.offset.x) + ", " + std::to_string(results.transform.offset.y) +
+        ")");
   }
 
   // Validate for OpenVoronoi
   if (!validatePolygonForOpenVoronoi(transformedPolygon)) {
-    results.errorMessage =
-        "Polygon failed validation for OpenVoronoi computation";
+    results.errorMessage = "Polygon failed validation for OpenVoronoi computation";
     log("Error: " + results.errorMessage);
     return results;
   }
@@ -172,8 +159,8 @@ MedialAxisResults MedialAxisProcessor::computeMedialAxis(
   return results;
 }
 
-std::vector<Point2D> MedialAxisProcessor::transformToUnitCircle(
-    const std::vector<Point2D>& polygon, TransformParams& transform) {
+std::vector<Point2D> MedialAxisProcessor::transformToUnitCircle(const std::vector<Point2D>& polygon,
+                                                                TransformParams& transform) {
   if (polygon.empty()) {
     log("Warning: transformToUnitCircle called with empty polygon");
     return polygon;
@@ -218,33 +205,26 @@ std::vector<Point2D> MedialAxisProcessor::transformToUnitCircle(
   for (const auto& point : transformed) {
     double distance = std::sqrt(point.x * point.x + point.y * point.y);
     if (distance > 1.0) {
-      log("Warning: Transformed point distance " + std::to_string(distance) +
-          " exceeds unit circle");
+      log("Warning: Transformed point distance " + std::to_string(distance) + " exceeds unit circle");
     }
   }
 
   return transformed;
 }
 
-Point2D MedialAxisProcessor::transformFromUnitCircle(
-    const Point2D& unitPoint, const TransformParams& transform) {
+Point2D MedialAxisProcessor::transformFromUnitCircle(const Point2D& unitPoint, const TransformParams& transform) {
   // Reverse scaling then translation
-  Point2D scaled =
-      Point2D(unitPoint.x / transform.scale, unitPoint.y / transform.scale);
-  Point2D worldPoint =
-      Point2D(scaled.x + transform.offset.x, scaled.y + transform.offset.y);
+  Point2D scaled = Point2D(unitPoint.x / transform.scale, unitPoint.y / transform.scale);
+  Point2D worldPoint = Point2D(scaled.x + transform.offset.x, scaled.y + transform.offset.y);
   return worldPoint;
 }
 
-bool MedialAxisProcessor::validatePolygonForOpenVoronoi(
-    const std::vector<Point2D>& polygon) {
+bool MedialAxisProcessor::validatePolygonForOpenVoronoi(const std::vector<Point2D>& polygon) {
   log("=== POLYGON VALIDATION START ===");
-  log("Validating polygon with " + std::to_string(polygon.size()) +
-      " vertices for OpenVoronoi");
+  log("Validating polygon with " + std::to_string(polygon.size()) + " vertices for OpenVoronoi");
 
   if (polygon.size() < 3) {
-    log("ERROR: Polygon must have at least 3 vertices, got " +
-        std::to_string(polygon.size()));
+    log("ERROR: Polygon must have at least 3 vertices, got " + std::to_string(polygon.size()));
     return false;
   }
 
@@ -290,15 +270,12 @@ bool MedialAxisProcessor::validatePolygonForOpenVoronoi(
       if (doSegmentsIntersect(p1, q1, p2, q2)) {
         intersectionCount++;
         if (intersectionCount <= MAX_INTERSECTIONS_TO_LOG) {
-          log("Self-intersection detected: Edge " + std::to_string(i) + "-" +
-              std::to_string((i + 1) % numEdges) + " intersects edge " +
-              std::to_string(j) + "-" + std::to_string((j + 1) % numEdges));
-          log("  Edge 1: (" + std::to_string(p1.x) + ", " +
-              std::to_string(p1.y) + ") to (" + std::to_string(q1.x) + ", " +
-              std::to_string(q1.y) + ")");
-          log("  Edge 2: (" + std::to_string(p2.x) + ", " +
-              std::to_string(p2.y) + ") to (" + std::to_string(q2.x) + ", " +
-              std::to_string(q2.y) + ")");
+          log("Self-intersection detected: Edge " + std::to_string(i) + "-" + std::to_string((i + 1) % numEdges) +
+              " intersects edge " + std::to_string(j) + "-" + std::to_string((j + 1) % numEdges));
+          log("  Edge 1: (" + std::to_string(p1.x) + ", " + std::to_string(p1.y) + ") to (" + std::to_string(q1.x) +
+              ", " + std::to_string(q1.y) + ")");
+          log("  Edge 2: (" + std::to_string(p2.x) + ", " + std::to_string(p2.y) + ") to (" + std::to_string(q2.x) +
+              ", " + std::to_string(q2.y) + ")");
         } else if (intersectionCount == MAX_INTERSECTIONS_TO_LOG + 1) {
           log("... (additional self-intersections not logged)");
         }
@@ -320,13 +297,11 @@ bool MedialAxisProcessor::validatePolygonForOpenVoronoi(
   for (size_t i = 0; i < numEdges; ++i) {
     Point2D p1 = polygon[i];
     Point2D p2 = polygon[(i + 1) % numEdges];
-    double edgeLength =
-        std::sqrt(std::pow(p2.x - p1.x, 2) + std::pow(p2.y - p1.y, 2));
+    double edgeLength = std::sqrt(std::pow(p2.x - p1.x, 2) + std::pow(p2.y - p1.y, 2));
 
     if (edgeLength < 1e-10) {
-      log("ERROR: Degenerate edge " + std::to_string(i) + " between (" +
-          std::to_string(p1.x) + ", " + std::to_string(p1.y) + ") and (" +
-          std::to_string(p2.x) + ", " + std::to_string(p2.y) +
+      log("ERROR: Degenerate edge " + std::to_string(i) + " between (" + std::to_string(p1.x) + ", " +
+          std::to_string(p1.y) + ") and (" + std::to_string(p2.x) + ", " + std::to_string(p2.y) +
           ") length: " + std::to_string(edgeLength));
       degenerateCount++;
       if (degenerateCount >= 3) {
@@ -337,8 +312,7 @@ bool MedialAxisProcessor::validatePolygonForOpenVoronoi(
   }
 
   if (degenerateCount > 0) {
-    log("ERROR: " + std::to_string(degenerateCount) +
-        " degenerate edges detected");
+    log("ERROR: " + std::to_string(degenerateCount) + " degenerate edges detected");
     return false;
   }
 
@@ -348,13 +322,10 @@ bool MedialAxisProcessor::validatePolygonForOpenVoronoi(
   log("Checking if all points are within unit circle...");
   int outsideCount = 0;
   for (size_t i = 0; i < polygon.size(); ++i) {
-    double distance =
-        std::sqrt(polygon[i].x * polygon[i].x + polygon[i].y * polygon[i].y);
+    double distance = std::sqrt(polygon[i].x * polygon[i].x + polygon[i].y * polygon[i].y);
     if (distance > 1.0) {
-      log("ERROR: Point " + std::to_string(i) + " at (" +
-          std::to_string(polygon[i].x) + ", " + std::to_string(polygon[i].y) +
-          ") is outside unit circle (distance: " + std::to_string(distance) +
-          ")");
+      log("ERROR: Point " + std::to_string(i) + " at (" + std::to_string(polygon[i].x) + ", " +
+          std::to_string(polygon[i].y) + ") is outside unit circle (distance: " + std::to_string(distance) + ")");
       outsideCount++;
       if (outsideCount >= 3) {
         log("... (additional points outside unit circle not logged)");
@@ -364,8 +335,7 @@ bool MedialAxisProcessor::validatePolygonForOpenVoronoi(
   }
 
   if (outsideCount > 0) {
-    log("ERROR: " + std::to_string(outsideCount) +
-        " points are outside unit circle");
+    log("ERROR: " + std::to_string(outsideCount) + " points are outside unit circle");
     return false;
   }
 

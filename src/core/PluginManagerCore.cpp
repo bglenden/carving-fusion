@@ -46,10 +46,8 @@ bool PluginManager::initialize() {
     }
 
     // Initialize MedialAxisProcessor with default parameters
-    medialProcessor_ =
-        std::make_unique<Geometry::MedialAxisProcessor>(0.25, 0.8);
-    medialProcessor_->setVerbose(
-        true);  // Enable verbose logging to debug crash
+    medialProcessor_ = std::make_unique<Geometry::MedialAxisProcessor>(0.25, 0.8);
+    medialProcessor_->setVerbose(true);  // Enable verbose logging to debug crash
 
     // Log startup (file logs have been removed)
 
@@ -88,7 +86,9 @@ void PluginManager::shutdown() {
   }
 }
 
-std::string PluginManager::getVersion() const { return ADDIN_VERSION_STRING; }
+std::string PluginManager::getVersion() const {
+  return ADDIN_VERSION_STRING;
+}
 
 std::string PluginManager::getName() const {
   return std::string(ADDIN_NAME) + " (Refactored)";

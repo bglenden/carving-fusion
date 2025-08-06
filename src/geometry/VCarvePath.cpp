@@ -57,7 +57,9 @@ double VCarvePath::getMinDepth() const {
   return minDepth;
 }
 
-bool VCarvePath::isValid() const { return points.size() >= 2; }
+bool VCarvePath::isValid() const {
+  return points.size() >= 2;
+}
 
 void VCarveResults::updateStatistics() {
   totalPaths = static_cast<int>(paths.size());
@@ -98,10 +100,9 @@ void VCarveResults::updateStatistics() {
 
 std::string VCarveResults::getSummary() const {
   std::ostringstream oss;
-  oss << "V-Carve Results: " << totalPaths << " paths, " << totalPoints
-      << " points, " << static_cast<int>(totalLength) << "mm length, "
-      << "depths " << static_cast<int>(minDepth * 10) / 10.0 << "-"
-      << static_cast<int>(maxDepth * 10) / 10.0 << "mm";
+  oss << "V-Carve Results: " << totalPaths << " paths, " << totalPoints << " points, " << static_cast<int>(totalLength)
+      << "mm length, "
+      << "depths " << static_cast<int>(minDepth * 10) / 10.0 << "-" << static_cast<int>(maxDepth * 10) / 10.0 << "mm";
   return oss.str();
 }
 

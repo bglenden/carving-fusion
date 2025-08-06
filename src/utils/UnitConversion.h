@@ -19,14 +19,18 @@ namespace Utils {
  * @param lengthInCm Length value in centimeters (from Fusion API)
  * @return Length value in millimeters
  */
-inline double fusionLengthToMm(double lengthInCm) { return lengthInCm * 10.0; }
+inline double fusionLengthToMm(double lengthInCm) {
+  return lengthInCm * 10.0;
+}
 
 /**
  * Convert length from millimeters to Fusion's database units (cm)
  * @param lengthInMm Length value in millimeters
  * @return Length value in centimeters (for Fusion API)
  */
-inline double mmToFusionLength(double lengthInMm) { return lengthInMm / 10.0; }
+inline double mmToFusionLength(double lengthInMm) {
+  return lengthInMm / 10.0;
+}
 
 /**
  * Convert angle from Fusion's database units (radians) to degrees

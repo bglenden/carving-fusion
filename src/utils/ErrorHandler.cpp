@@ -18,8 +18,7 @@ ErrorCallback ErrorHandler::globalErrorCallback_ = nullptr;
 bool ErrorHandler::consoleLoggingEnabled_ = true;
 bool ErrorHandler::userMessagesEnabled_ = false;
 
-bool ErrorHandler::executeFusionOperation(const std::string& operation,
-                                          std::function<bool()> func,
+bool ErrorHandler::executeFusionOperation(const std::string& operation, std::function<bool()> func,
                                           bool showMessageToUser) {
   LOG_DEBUG("Executing Fusion operation: " << operation);
 
@@ -63,8 +62,7 @@ bool ErrorHandler::executeFusionOperation(const std::string& operation,
   }
 }
 
-void ErrorHandler::executeWithLogging(const std::string& operation,
-                                      std::function<void()> func) {
+void ErrorHandler::executeWithLogging(const std::string& operation, std::function<void()> func) {
   LOG_DEBUG("Executing operation with logging: " << operation);
 
   try {
@@ -99,8 +97,7 @@ void ErrorHandler::enableUserMessages(bool enabled) {
   LOG_DEBUG("User messages " << (enabled ? "enabled" : "disabled"));
 }
 
-void ErrorHandler::handleStandardException(const std::string& operation,
-                                           const std::exception& e) {
+void ErrorHandler::handleStandardException(const std::string& operation, const std::exception& e) {
   std::string errorMsg = "Exception in " + operation + ": " + e.what();
   logError(operation, errorMsg);
 
@@ -118,8 +115,7 @@ void ErrorHandler::handleUnknownException(const std::string& operation) {
   }
 }
 
-void ErrorHandler::logError(const std::string& operation,
-                            const std::string& error) {
+void ErrorHandler::logError(const std::string& operation, const std::string& error) {
   LOG_ERROR("[" << operation << "] " << error);
 
   if (consoleLoggingEnabled_) {

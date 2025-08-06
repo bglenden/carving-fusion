@@ -5,13 +5,15 @@
 BasedOnStyle: Google
 
 # Indentation
-IndentWidth: 4
-TabWidth: 4
+IndentWidth: 2
+TabWidth: 2
 UseTab: Never
 ContinuationIndentWidth: 4
+IndentPPDirectives: None
+AccessModifierOffset: -1
 
-# Line length
-ColumnLimit: 100
+# Line length  
+ColumnLimit: 120
 
 # Braces
 BreakBeforeBraces: Attach
@@ -62,5 +64,15 @@ PointerAlignment: Left
 
 # Other
 KeepEmptyLinesAtTheStartOfBlocks: false
-MaxEmptyLinesToKeep: 2
+MaxEmptyLinesToKeep: 1
 NamespaceIndentation: None
+
+# Ensure newline at end of file (cpplint requirement)
+InsertNewlineAtEOF: true
+
+# Remove trailing whitespace (cpplint requirement)
+# Note: This is handled automatically by clang-format
+
+# Ensure consistent line endings
+DeriveLineEnding: false
+LineEnding: LF

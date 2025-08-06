@@ -27,8 +27,7 @@ bool PluginManager::executeImportDesign() {
     auto totalStart = std::chrono::high_resolution_clock::now();
 
     // Get file selection from user
-    std::string filePath =
-        ui_->showFileDialog("Select Design File", "JSON Files (*.json)");
+    std::string filePath = ui_->showFileDialog("Select Design File", "JSON Files (*.json)");
 
     if (filePath.empty()) {
       return true;  // User cancelled, not an error
@@ -38,10 +37,8 @@ bool PluginManager::executeImportDesign() {
     auto parseStart = std::chrono::high_resolution_clock::now();
     auto design = Parsers::DesignParser::parseFromFile(filePath, logger_.get());
     auto parseEnd = std::chrono::high_resolution_clock::now();
-    auto parseDuration = std::chrono::duration_cast<std::chrono::milliseconds>(
-        parseEnd - parseStart);
-    logger_->logInfo(
-        "⏱️ JSON parsing took: " + std::to_string(parseDuration.count()) + "ms");
+    auto parseDuration = std::chrono::duration_cast<std::chrono::milliseconds>(parseEnd - parseStart);
+    logger_->logInfo("⏱️ JSON parsing took: " + std::to_string(parseDuration.count()) + "ms");
 
     // Clear previous imports
     importedShapes_.clear();
@@ -73,27 +70,21 @@ bool PluginManager::executeImportDesign() {
         auto shapeStart = std::chrono::high_resolution_clock::now();
         sketch->addShape(shape.get(), logger_.get());
         auto shapeEnd = std::chrono::high_resolution_clock::now();
-        auto shapeDuration =
-            std::chrono::duration_cast<std::chrono::milliseconds>(shapeEnd -
-                                                                  shapeStart);
-        logger_->logInfo("⏱️ Shape " + std::to_string(i) + " drawing took: " +
-                         std::to_string(shapeDuration.count()) + "ms");
+        auto shapeDuration = std::chrono::duration_cast<std::chrono::milliseconds>(shapeEnd - shapeStart);
+        logger_->logInfo("⏱️ Shape " + std::to_string(i) + " drawing took: " + std::to_string(shapeDuration.count()) +
+                         "ms");
       } catch (const std::exception& e) {
         // Continue with other shapes
       }
     }
 
     auto sketchEnd = std::chrono::high_resolution_clock::now();
-    auto sketchDuration = std::chrono::duration_cast<std::chrono::milliseconds>(
-        sketchEnd - sketchStart);
-    logger_->logInfo("⏱️ Total sketch creation took: " +
-                     std::to_string(sketchDuration.count()) + "ms");
+    auto sketchDuration = std::chrono::duration_cast<std::chrono::milliseconds>(sketchEnd - sketchStart);
+    logger_->logInfo("⏱️ Total sketch creation took: " + std::to_string(sketchDuration.count()) + "ms");
 
     auto totalEnd = std::chrono::high_resolution_clock::now();
-    auto totalDuration = std::chrono::duration_cast<std::chrono::milliseconds>(
-        totalEnd - totalStart);
-    logger_->logInfo(
-        "⏱️ TOTAL IMPORT took: " + std::to_string(totalDuration.count()) + "ms");
+    auto totalDuration = std::chrono::duration_cast<std::chrono::milliseconds>(totalEnd - totalStart);
+    logger_->logInfo("⏱️ TOTAL IMPORT took: " + std::to_string(totalDuration.count()) + "ms");
 
     // Log completion (no popup)
     return true;
@@ -108,8 +99,7 @@ bool PluginManager::executeImportDesign() {
   }
 }
 
-bool PluginManager::executeImportDesign(const std::string& filePath,
-                                        const std::string& planeEntityId) {
+bool PluginManager::executeImportDesign(const std::string& filePath, const std::string& planeEntityId) {
   if (!initialized_) {
     return false;
   }
@@ -140,15 +130,13 @@ bool PluginManager::executeImportDesign(const std::string& filePath,
     lastImportedPlaneEntityId_ = planeEntityId;
 
     // Debug logging
-    LOG_DEBUG("Stored plane entity ID during import: '"
-              << planeEntityId << "' (length: " << planeEntityId.length()
-              << ")");
+    LOG_DEBUG("Stored plane entity ID during import: '" << planeEntityId << "' (length: " << planeEntityId.length()
+                                                        << ")");
 
     // Create sketch on specified plane or XY plane
     std::unique_ptr<Adapters::ISketch> sketch;
     if (!planeEntityId.empty()) {
-      sketch =
-          workspace_->createSketchOnPlane("Imported Design", planeEntityId);
+      sketch = workspace_->createSketchOnPlane("Imported Design", planeEntityId);
     } else {
       sketch = workspace_->createSketch("Imported Design");
     }

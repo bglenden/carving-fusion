@@ -15,8 +15,7 @@
 using namespace ChipCarving::Parsers;
 using namespace ChipCarving::Geometry;
 
-DesignFile DesignParser::parseFromFile(const std::string& filePath,
-                                       const Adapters::ILogger* logger) {
+DesignFile DesignParser::parseFromFile(const std::string& filePath, const Adapters::ILogger* logger) {
   std::ifstream file(filePath);
   if (!file.is_open()) {
     throw std::runtime_error("Failed to open file: " + filePath);
@@ -35,15 +34,13 @@ DesignFile DesignParser::parseFromFile(const std::string& filePath,
   return parseFromString(jsonContent, logger);
 }
 
-DesignFile DesignParser::parseFromString(const std::string& jsonContent,
-                                         const Adapters::ILogger* logger) {
+DesignFile DesignParser::parseFromString(const std::string& jsonContent, const Adapters::ILogger* logger) {
   DesignFile design;
 
   // Parse version
   design.version = extractString(jsonContent, "version");
   if (design.version != "2.0") {
-    throw std::runtime_error("Unsupported schema version: " + design.version +
-                             ". Expected version 2.0");
+    throw std::runtime_error("Unsupported schema version: " + design.version + ". Expected version 2.0");
   }
 
   // Parse metadata (optional)
@@ -127,8 +124,8 @@ DesignMetadata DesignParser::parseMetadata(const std::string& jsonContent) {
   return metadata;
 }
 
-std::vector<std::unique_ptr<Shape>> DesignParser::parseShapes(
-    const std::string& jsonContent, const Adapters::ILogger* logger) {
+std::vector<std::unique_ptr<Shape>> DesignParser::parseShapes(const std::string& jsonContent,
+                                                              const Adapters::ILogger* logger) {
   std::vector<std::unique_ptr<Shape>> shapes;
 
   std::string shapesArray = extractArray(jsonContent, "shapes");
@@ -144,16 +141,14 @@ std::vector<std::unique_ptr<Shape>> DesignParser::parseShapes(
       auto shape = ShapeFactory::createFromJson(shapeJson, logger);
       shapes.push_back(std::move(shape));
     } catch (const std::exception& e) {
-      throw std::runtime_error("Failed to parse shape: " +
-                               std::string(e.what()));
+      throw std::runtime_error("Failed to parse shape: " + std::string(e.what()));
     }
   }
 
   return shapes;
 }
 
-std::vector<BackgroundImage> DesignParser::parseBackgroundImages(
-    const std::string& jsonContent) {
+std::vector<BackgroundImage> DesignParser::parseBackgroundImages(const std::string& jsonContent) {
   std::vector<BackgroundImage> images;
 
   try {
@@ -161,8 +156,7 @@ std::vector<BackgroundImage> DesignParser::parseBackgroundImages(
 
     // Extract individual image objects from array
     std::regex imageRegex(R"(\{[^\{\}]*(?:\{[^\{\}]*\}[^\{\}]*)*\})");
-    std::sregex_iterator iter(imagesArray.begin(), imagesArray.end(),
-                              imageRegex);
+    std::sregex_iterator iter(imagesArray.begin(), imagesArray.end(), imageRegex);
     std::sregex_iterator end;
 
     for (; iter != end; ++iter) {
@@ -183,8 +177,7 @@ std::vector<BackgroundImage> DesignParser::parseBackgroundImages(
 
       images.push_back(image);
     }
-  }
-  catch (const std::exception&) {
+  } catch (const std::exception&) {
     // Background images are optional
   }
 
@@ -197,8 +190,7 @@ Point2D DesignParser::parsePoint(const std::string& pointJson) {
   return Point2D(x, y);
 }
 
-std::string DesignParser::extractString(const std::string& json,
-                                        const std::string& key) {
+std::string DesignParser::extractString(const std::string& json, const std::string& key) {
   std::regex regex("\"" + key + "\"\\s*:\\s*\"([^\"]+)\"");
   std::smatch match;
 
@@ -209,8 +201,7 @@ std::string DesignParser::extractString(const std::string& json,
   throw std::runtime_error("String key '" + key + "' not found in JSON");
 }
 
-double DesignParser::extractNumber(const std::string& json,
-                                   const std::string& key) {
+double DesignParser::extractNumber(const std::string& json, const std::string& key) {
   std::regex regex("\"" + key + "\"\\s*:\\s*([-+]?[0-9]*\\.?[0-9]+)");
   std::smatch match;
 
@@ -221,11 +212,8 @@ double DesignParser::extractNumber(const std::string& json,
   throw std::runtime_error("Number key '" + key + "' not found in JSON");
 }
 
-std::string DesignParser::extractArray(const std::string& json,
-                                       const std::string& key) {
-  std::regex regex(
-      "\"" + key +
-      "\"\\s*:\\s*\\[([^\\[\\]]*(?:\\[[^\\[\\]]*\\][^\\[\\]]*)*)\\]");
+std::string DesignParser::extractArray(const std::string& json, const std::string& key) {
+  std::regex regex("\"" + key + "\"\\s*:\\s*\\[([^\\[\\]]*(?:\\[[^\\[\\]]*\\][^\\[\\]]*)*)\\]");
   std::smatch match;
 
   if (std::regex_search(json, match, regex)) {
@@ -235,8 +223,7 @@ std::string DesignParser::extractArray(const std::string& json,
   throw std::runtime_error("Array key '" + key + "' not found in JSON");
 }
 
-std::string DesignParser::extractObject(const std::string& json,
-                                        const std::string& key) {
+std::string DesignParser::extractObject(const std::string& json, const std::string& key) {
   // Find the key and then extract the matching braces
   std::string pattern = "\"" + key + "\"\\s*:\\s*\\{";
   std::regex startRegex(pattern);
@@ -247,8 +234,7 @@ std::string DesignParser::extractObject(const std::string& json,
   }
 
   // Find the start of the object
-  size_t start =
-      match.position() + match.length() - 1;  // Position of opening brace
+  size_t start = match.position() + match.length() - 1;  // Position of opening brace
   size_t braceCount = 1;
   size_t pos = start + 1;
 

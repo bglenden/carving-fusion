@@ -65,14 +65,14 @@ PluginMode PluginInitializer::GetModeFromEnv() {
 
 void PluginInitializer::LogMessage(const std::string& message) {
   try {
-    if (!ui) return;
+    if (!ui)
+      return;
 
     auto now = std::chrono::system_clock::now();
     auto time_t = std::chrono::system_clock::to_time_t(now);
 
     std::stringstream ss;
-    ss << "[" << std::put_time(std::localtime(&time_t), "%Y-%m-%d %H:%M:%S")
-       << "] ";
+    ss << "[" << std::put_time(std::localtime(&time_t), "%Y-%m-%d %H:%M:%S") << "] ";
     ss << "ChipCarvingCpp: " << message;
 
     Ptr<Palettes> palettes = ui->palettes();
@@ -96,8 +96,7 @@ bool PluginInitializer::CreateToolbarPanel() {
     if (!workspaces) {
       return false;
     }
-    Ptr<Workspace> designWorkspace =
-        workspaces->itemById("FusionSolidEnvironment");
+    Ptr<Workspace> designWorkspace = workspaces->itemById("FusionSolidEnvironment");
     if (!designWorkspace) {
       return false;
     }
@@ -159,8 +158,7 @@ bool PluginInitializer::CreateToolbarPanel() {
   }
 }
 
-bool PluginInitializer::InitializePlugin(const char* /* context */,
-                                         PluginMode mode) {
+bool PluginInitializer::InitializePlugin(const char* /* context */, PluginMode mode) {
   try {
     app = Application::get();
     if (!app) {
@@ -172,8 +170,7 @@ bool PluginInitializer::InitializePlugin(const char* /* context */,
       return false;
     }
 
-    LOG_WARNING("Starting Chip Carving Paths C++ Add-in v"
-                << ADDIN_VERSION_STRING);
+    LOG_WARNING("Starting Chip Carving Paths C++ Add-in v" << ADDIN_VERSION_STRING);
 
     // Create plugin manager based on mode
     switch (mode) {
@@ -196,8 +193,7 @@ bool PluginInitializer::InitializePlugin(const char* /* context */,
 
     // Initialize plugin manager with factory
     std::string logPath = "/tmp/chip_carving_cpp.log";
-    auto factory =
-        std::make_unique<Adapters::FusionAPIFactory>(app, ui, logPath);
+    auto factory = std::make_unique<Adapters::FusionAPIFactory>(app, ui, logPath);
     pluginManager = std::make_unique<Core::PluginManager>(std::move(factory));
     if (!pluginManager->initialize()) {
       return false;
@@ -210,15 +206,12 @@ bool PluginInitializer::InitializePlugin(const char* /* context */,
     return true;
   } catch (const std::exception& e) {
     if (ui) {
-      ui->messageBox(
-          "Failed to start Chip Carving Paths add-in: " + std::string(e.what()),
-          "Chip Carving Paths Error");
+      ui->messageBox("Failed to start Chip Carving Paths add-in: " + std::string(e.what()), "Chip Carving Paths Error");
     }
     return false;
   } catch (...) {
     if (ui) {
-      ui->messageBox("Failed to start Chip Carving Paths add-in: Unknown error",
-                     "Chip Carving Paths Error");
+      ui->messageBox("Failed to start Chip Carving Paths add-in: Unknown error", "Chip Carving Paths Error");
     }
     return false;
   }
@@ -266,8 +259,7 @@ void PluginInitializer::CreateImportDesignCommand() {
     if (!cmdDef) {
       std::string cmdName = "Import Design";
       std::string cmdTooltip = "Import chip carving design from JSON file";
-      cmdDef = cmdDefs->addButtonDefinition(cmdId, cmdName, cmdTooltip,
-                                            "./resources/import");
+      cmdDef = cmdDefs->addButtonDefinition(cmdId, cmdName, cmdTooltip, "./resources/import");
       if (cmdDef) {
         commandDefinitions.push_back(cmdDef);
       } else {
@@ -278,10 +270,8 @@ void PluginInitializer::CreateImportDesignCommand() {
     // Create and connect event handler
     if (!importHandler && pluginManager) {
       // Convert unique_ptr to shared_ptr for command handler
-      std::shared_ptr<Core::PluginManager> sharedManager(
-          pluginManager.get(), [](Core::PluginManager*) {});
-      importHandler =
-          std::make_shared<Commands::ImportDesignCommandHandler>(sharedManager);
+      std::shared_ptr<Core::PluginManager> sharedManager(pluginManager.get(), [](Core::PluginManager*) {});
+      importHandler = std::make_shared<Commands::ImportDesignCommandHandler>(sharedManager);
       cmdDef->commandCreated()->add(importHandler.get());
     }
 
@@ -316,8 +306,7 @@ void PluginInitializer::CreateGeneratePathsCommand() {
     if (!cmdDef) {
       std::string cmdName = "Generate Paths";
       std::string cmdTooltip = "Generate CNC toolpaths from imported design";
-      cmdDef = cmdDefs->addButtonDefinition(cmdId, cmdName, cmdTooltip,
-                                            "./resources/generate");
+      cmdDef = cmdDefs->addButtonDefinition(cmdId, cmdName, cmdTooltip, "./resources/generate");
       if (cmdDef) {
         commandDefinitions.push_back(cmdDef);
       } else {
@@ -328,10 +317,8 @@ void PluginInitializer::CreateGeneratePathsCommand() {
     // Create and connect event handler
     if (!generateHandler && pluginManager) {
       // Convert unique_ptr to shared_ptr for command handler
-      std::shared_ptr<Core::PluginManager> sharedManager(
-          pluginManager.get(), [](Core::PluginManager*) {});
-      generateHandler = std::make_shared<Commands::GeneratePathsCommandHandler>(
-          sharedManager);
+      std::shared_ptr<Core::PluginManager> sharedManager(pluginManager.get(), [](Core::PluginManager*) {});
+      generateHandler = std::make_shared<Commands::GeneratePathsCommandHandler>(sharedManager);
       cmdDef->commandCreated()->add(generateHandler.get());
     }
 
@@ -366,8 +353,7 @@ void PluginInitializer::CreateSettingsCommand() {
     if (!cmdDef) {
       std::string cmdName = "Settings";
       std::string cmdTooltip = "Configure plugin settings and preferences";
-      cmdDef = cmdDefs->addButtonDefinition(cmdId, cmdName, cmdTooltip,
-                                            "./resources/settings");
+      cmdDef = cmdDefs->addButtonDefinition(cmdId, cmdName, cmdTooltip, "./resources/settings");
       if (cmdDef) {
         commandDefinitions.push_back(cmdDef);
       } else {
@@ -378,10 +364,8 @@ void PluginInitializer::CreateSettingsCommand() {
     // Create and connect event handler
     if (!settingsHandler && pluginManager) {
       // Convert unique_ptr to shared_ptr for command handler
-      std::shared_ptr<Core::PluginManager> sharedManager(
-          pluginManager.get(), [](Core::PluginManager*) {});
-      settingsHandler =
-          std::make_shared<Commands::SettingsCommandHandler>(sharedManager);
+      std::shared_ptr<Core::PluginManager> sharedManager(pluginManager.get(), [](Core::PluginManager*) {});
+      settingsHandler = std::make_shared<Commands::SettingsCommandHandler>(sharedManager);
       cmdDef->commandCreated()->add(settingsHandler.get());
     }
 

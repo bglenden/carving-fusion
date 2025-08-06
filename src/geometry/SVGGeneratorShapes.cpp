@@ -15,16 +15,13 @@
 
 using namespace ChipCarving::Geometry;
 
-void SVGGenerator::addLeaf(const Leaf& leaf, const std::string& color,
-                           double strokeWidth) {
+void SVGGenerator::addLeaf(const Leaf& leaf, const std::string& color, double strokeWidth) {
   if (!leaf.isValidGeometry()) {
     // Draw as a simple line for invalid geometry
     Point2D f1 = worldToSVG(leaf.getFocus1());
     Point2D f2 = worldToSVG(leaf.getFocus2());
-    svg_ << "  <line x1=\"" << f1.x << "\" y1=\"" << f1.y << "\" x2=\"" << f2.x
-         << "\" y2=\"" << f2.y << "\" stroke=\"" << color
-         << "\" stroke-width=\"" << strokeWidth
-         << "\" stroke-dasharray=\"5,5\"/>\n";
+    svg_ << "  <line x1=\"" << f1.x << "\" y1=\"" << f1.y << "\" x2=\"" << f2.x << "\" y2=\"" << f2.y << "\" stroke=\""
+         << color << "\" stroke-width=\"" << strokeWidth << "\" stroke-dasharray=\"5,5\"/>\n";
     return;
   }
 
@@ -46,22 +43,18 @@ void SVGGenerator::addLeaf(const Leaf& leaf, const std::string& color,
 
   // First arc from f1 to f2
   Point2D arcEnd1 = worldToSVG(leaf.getFocus2());
-  svg_ << "A " << radius_svg << "," << radius_svg << " 0 0,"
-       << (arc1.anticlockwise ? "0" : "1") << " " << arcEnd1.x << ","
-       << arcEnd1.y << " ";
+  svg_ << "A " << radius_svg << "," << radius_svg << " 0 0," << (arc1.anticlockwise ? "0" : "1") << " " << arcEnd1.x
+       << "," << arcEnd1.y << " ";
 
   // Second arc from f2 back to f1
   Point2D arcEnd2 = worldToSVG(leaf.getFocus1());
-  svg_ << "A " << radius_svg << "," << radius_svg << " 0 0,"
-       << (arc2.anticlockwise ? "0" : "1") << " " << arcEnd2.x << ","
-       << arcEnd2.y;
+  svg_ << "A " << radius_svg << "," << radius_svg << " 0 0," << (arc2.anticlockwise ? "0" : "1") << " " << arcEnd2.x
+       << "," << arcEnd2.y;
 
-  svg_ << "\" stroke=\"" << color << "\" stroke-width=\"" << strokeWidth
-       << "\" fill=\"none\"/>\n";
+  svg_ << "\" stroke=\"" << color << "\" stroke-width=\"" << strokeWidth << "\" fill=\"none\"/>\n";
 }
 
-void SVGGenerator::addTriArc(const TriArc& triArc, const std::string& color,
-                             double strokeWidth) {
+void SVGGenerator::addTriArc(const TriArc& triArc, const std::string& color, double strokeWidth) {
   // Create SVG path for the curved triangle
   svg_ << "  <path d=\"";
 
@@ -86,17 +79,15 @@ void SVGGenerator::addTriArc(const TriArc& triArc, const std::string& color,
       double radius_svg = worldToSVG(arc.radius);
 
       // For concave arcs, always use small arc (large-arc-flag=0)
-      svg_ << "A " << radius_svg << "," << radius_svg << " 0 0,"
-           << (arc.anticlockwise ? "0" : "1") << " " << vNext_svg.x << ","
-           << vNext_svg.y << " ";
+      svg_ << "A " << radius_svg << "," << radius_svg << " 0 0," << (arc.anticlockwise ? "0" : "1") << " "
+           << vNext_svg.x << "," << vNext_svg.y << " ";
     }
   }
 
   // Close the path
   svg_ << "Z";
 
-  svg_ << "\" stroke=\"" << color << "\" stroke-width=\"" << strokeWidth
-       << "\" fill=\"none\"/>\n";
+  svg_ << "\" stroke=\"" << color << "\" stroke-width=\"" << strokeWidth << "\" fill=\"none\"/>\n";
 }
 
 void SVGGenerator::addTriArcDebugMarkers(const TriArc& triArc) {
@@ -136,8 +127,7 @@ void SVGGenerator::addTriArcDebugMarkers(const TriArc& triArc) {
       // Add normal vector from chord midpoint
       Point2D chordMid = triArc.getChordMidpoint(i);
       Point2D normal = triArc.getPerpendicularNormal(i);
-      Point2D normalEnd =
-          Point2D(chordMid.x + normal.x * 2.0, chordMid.y + normal.y * 2.0);
+      Point2D normalEnd = Point2D(chordMid.x + normal.x * 2.0, chordMid.y + normal.y * 2.0);
       addLine(chordMid, normalEnd, "orange", 1.0);
       addPoint(chordMid, "orange", 1.5, "M" + std::to_string(i));
     }
@@ -147,8 +137,7 @@ void SVGGenerator::addTriArcDebugMarkers(const TriArc& triArc) {
   for (int i = 0; i < 3; ++i) {
     Point2D chordMid = triArc.getChordMidpoint(i);
     double bulge = triArc.getBulgeFactor(i);
-    std::string bulgeText =
-        "b" + std::to_string(i) + "=" + std::to_string(bulge).substr(0, 5);
+    std::string bulgeText = "b" + std::to_string(i) + "=" + std::to_string(bulge).substr(0, 5);
     addText(Point2D(chordMid.x, chordMid.y - 1.5), bulgeText, "purple", 8.0);
   }
 }
@@ -171,16 +160,11 @@ void SVGGenerator::addDebugMarkers(const Leaf& leaf) {
   addPoint(leaf.getCentroid(), "green", 2.0, "Mid");
 
   // Add chord line
-  addLine(leaf.getFocus1(), leaf.getFocus2(), "gray", 0.5,
-          "stroke-dasharray=\"2,2\"");
+  addLine(leaf.getFocus1(), leaf.getFocus2(), "gray", 0.5, "stroke-dasharray=\"2,2\"");
 
   // Add radius lines from centers to foci
-  addLine(centers.first, leaf.getFocus1(), "lightblue", 0.5,
-          "stroke-dasharray=\"1,1\"");
-  addLine(centers.first, leaf.getFocus2(), "lightblue", 0.5,
-          "stroke-dasharray=\"1,1\"");
-  addLine(centers.second, leaf.getFocus1(), "lightblue", 0.5,
-          "stroke-dasharray=\"1,1\"");
-  addLine(centers.second, leaf.getFocus2(), "lightblue", 0.5,
-          "stroke-dasharray=\"1,1\"");
+  addLine(centers.first, leaf.getFocus1(), "lightblue", 0.5, "stroke-dasharray=\"1,1\"");
+  addLine(centers.first, leaf.getFocus2(), "lightblue", 0.5, "stroke-dasharray=\"1,1\"");
+  addLine(centers.second, leaf.getFocus1(), "lightblue", 0.5, "stroke-dasharray=\"1,1\"");
+  addLine(centers.second, leaf.getFocus2(), "lightblue", 0.5, "stroke-dasharray=\"1,1\"");
 }

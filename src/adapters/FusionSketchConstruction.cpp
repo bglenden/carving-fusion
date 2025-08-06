@@ -19,16 +19,14 @@ using namespace adsk::core;
 namespace ChipCarving {
 namespace Adapters {
 
-bool FusionSketch::addConstructionLine(double x1, double y1, double x2,
-                                       double y2) {
+bool FusionSketch::addConstructionLine(double x1, double y1, double x2, double y2) {
   if (!sketch_) {
     return false;
   }
 
   try {
     // Get sketch lines collection
-    Ptr<adsk::fusion::SketchLines> lines =
-        sketch_->sketchCurves()->sketchLines();
+    Ptr<adsk::fusion::SketchLines> lines = sketch_->sketchCurves()->sketchLines();
     if (!lines) {
       return false;
     }
@@ -36,20 +34,16 @@ bool FusionSketch::addConstructionLine(double x1, double y1, double x2,
     // Debug: Log if sketch is on non-XY plane
     if (sketch_->referencePlane()) {
       LOG_DEBUG("Adding construction line to sketch on reference plane");
-      LOG_DEBUG("  Line coords (mm): (" << x1 << ", " << y1 << ") to (" << x2
-                                        << ", " << y2 << ")");
+      LOG_DEBUG("  Line coords (mm): (" << x1 << ", " << y1 << ") to (" << x2 << ", " << y2 << ")");
     }
 
     // Create start and end points (convert from mm to Fusion's database units -
     // cm)
-    Ptr<Point3D> startPoint = Point3D::create(Utils::mmToFusionLength(x1),
-                                              Utils::mmToFusionLength(y1), 0);
-    Ptr<Point3D> endPoint = Point3D::create(Utils::mmToFusionLength(x2),
-                                            Utils::mmToFusionLength(y2), 0);
+    Ptr<Point3D> startPoint = Point3D::create(Utils::mmToFusionLength(x1), Utils::mmToFusionLength(y1), 0);
+    Ptr<Point3D> endPoint = Point3D::create(Utils::mmToFusionLength(x2), Utils::mmToFusionLength(y2), 0);
 
     // Add line to sketch
-    Ptr<adsk::fusion::SketchLine> line =
-        lines->addByTwoPoints(startPoint, endPoint);
+    Ptr<adsk::fusion::SketchLine> line = lines->addByTwoPoints(startPoint, endPoint);
     if (!line) {
       return false;
     }
@@ -70,27 +64,23 @@ bool FusionSketch::addConstructionLine(double x1, double y1, double x2,
   }
 }
 
-bool FusionSketch::addConstructionCircle(double centerX, double centerY,
-                                         double radius) {
+bool FusionSketch::addConstructionCircle(double centerX, double centerY, double radius) {
   if (!sketch_) {
     return false;
   }
 
   try {
     // Get sketch circles collection
-    Ptr<adsk::fusion::SketchCircles> circles =
-        sketch_->sketchCurves()->sketchCircles();
+    Ptr<adsk::fusion::SketchCircles> circles = sketch_->sketchCurves()->sketchCircles();
     if (!circles) {
       return false;
     }
 
     // Create center point (convert from mm to Fusion's database units - cm)
-    Ptr<Point3D> centerPoint = Point3D::create(
-        Utils::mmToFusionLength(centerX), Utils::mmToFusionLength(centerY), 0);
+    Ptr<Point3D> centerPoint = Point3D::create(Utils::mmToFusionLength(centerX), Utils::mmToFusionLength(centerY), 0);
 
     // Add circle to sketch (convert radius from mm to cm)
-    Ptr<adsk::fusion::SketchCircle> circle = circles->addByCenterRadius(
-        centerPoint, Utils::mmToFusionLength(radius));
+    Ptr<adsk::fusion::SketchCircle> circle = circles->addByCenterRadius(centerPoint, Utils::mmToFusionLength(radius));
     if (!circle) {
       return false;
     }
@@ -124,8 +114,7 @@ bool FusionSketch::addConstructionPoint(double x, double y) {
     }
 
     // Create point (convert from mm to Fusion's database units - cm)
-    Ptr<Point3D> point = Point3D::create(Utils::mmToFusionLength(x),
-                                         Utils::mmToFusionLength(y), 0);
+    Ptr<Point3D> point = Point3D::create(Utils::mmToFusionLength(x), Utils::mmToFusionLength(y), 0);
     Ptr<adsk::fusion::SketchPoint> sketchPoint = points->add(point);
     if (!sketchPoint) {
       return false;

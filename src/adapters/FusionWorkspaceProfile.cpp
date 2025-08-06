@@ -20,10 +20,9 @@ using namespace adsk::core;
 namespace ChipCarving {
 namespace Adapters {
 
-bool FusionWorkspace::extractProfileVertices(
-    const std::string& entityId,
-    std::vector<std::pair<double, double>>& vertices,
-    TransformParams& transform) {
+bool FusionWorkspace::extractProfileVertices(const std::string& entityId,
+                                             std::vector<std::pair<double, double>>& vertices,
+                                             TransformParams& transform) {
   // Enhanced UI Phase 5.2: Extract geometry from Fusion 360 sketch profiles
   // FIXED: This function now returns vertices in WORLD COORDINATES
   // for proper medial axis computation. Construction geometry is created
@@ -31,8 +30,7 @@ bool FusionWorkspace::extractProfileVertices(
   vertices.clear();
 
   // Use centralized debug logging
-  LOG_DEBUG("=== PROFILE EXTRACTION === extractProfileVertices called for: "
-            << entityId);
+  LOG_DEBUG("=== PROFILE EXTRACTION === extractProfileVertices called for: " << entityId);
   // TODO(developer): Remove indicator file creation
 
   try {
@@ -63,26 +61,25 @@ bool FusionWorkspace::extractProfileVertices(
     allCurves[0].used = true;
 
     Ptr<adsk::core::Point3D> currentEndPoint = allCurves[0].endPoint;
-    LOG_DEBUG("Starting chain with curve 0, end point: ("
-              << currentEndPoint->x() << ", " << currentEndPoint->y() << ")");
+    LOG_DEBUG("Starting chain with curve 0, end point: (" << currentEndPoint->x() << ", " << currentEndPoint->y()
+                                                          << ")");
 
     // Find the next connected curve
     for (size_t chainPos = 1; chainPos < allCurves.size(); ++chainPos) {
       bool foundNext = false;
 
       for (size_t i = 0; i < allCurves.size(); ++i) {
-        if (allCurves[i].used) continue;
+        if (allCurves[i].used)
+          continue;
 
         // Check if this curve's start connects to our current end
-        double distToStart = std::sqrt(
-            std::pow(allCurves[i].startPoint->x() - currentEndPoint->x(), 2) +
-            std::pow(allCurves[i].startPoint->y() - currentEndPoint->y(), 2));
+        double distToStart = std::sqrt(std::pow(allCurves[i].startPoint->x() - currentEndPoint->x(), 2) +
+                                       std::pow(allCurves[i].startPoint->y() - currentEndPoint->y(), 2));
 
         // Check if this curve's end connects to our current end (reverse
         // direction)
-        double distToEnd = std::sqrt(
-            std::pow(allCurves[i].endPoint->x() - currentEndPoint->x(), 2) +
-            std::pow(allCurves[i].endPoint->y() - currentEndPoint->y(), 2));
+        double distToEnd = std::sqrt(std::pow(allCurves[i].endPoint->x() - currentEndPoint->x(), 2) +
+                                     std::pow(allCurves[i].endPoint->y() - currentEndPoint->y(), 2));
 
         if (distToStart < tolerance) {
           // Normal direction connection
@@ -90,27 +87,23 @@ bool FusionWorkspace::extractProfileVertices(
           allCurves[i].used = true;
           currentEndPoint = allCurves[i].endPoint;
           foundNext = true;
-          LOG_DEBUG("Chained curve " << i << " (normal), end point: ("
-                                     << currentEndPoint->x() << ", "
+          LOG_DEBUG("Chained curve " << i << " (normal), end point: (" << currentEndPoint->x() << ", "
                                      << currentEndPoint->y() << ")");
           break;
         } else if (distToEnd < tolerance) {
           // Reverse direction connection - need to reverse the stroke points
-          chainOrder.push_back(i |
-                               0x80000000);  // Mark as reversed with high bit
+          chainOrder.push_back(i | 0x80000000);  // Mark as reversed with high bit
           allCurves[i].used = true;
           currentEndPoint = allCurves[i].startPoint;
           foundNext = true;
-          LOG_DEBUG("Chained curve " << i << " (REVERSED), end point: ("
-                                     << currentEndPoint->x() << ", "
+          LOG_DEBUG("Chained curve " << i << " (REVERSED), end point: (" << currentEndPoint->x() << ", "
                                      << currentEndPoint->y() << ")");
           break;
         }
       }
 
       if (!foundNext) {
-        LOG_WARNING("Could not find next curve to chain at position "
-                    << chainPos);
+        LOG_WARNING("Could not find next curve to chain at position " << chainPos);
         break;
       }
     }
@@ -131,8 +124,7 @@ bool FusionWorkspace::extractProfileVertices(
       const auto& curveData = allCurves[curveIdx];
       const auto& strokePoints = curveData.strokePoints;
 
-      LOG_DEBUG("Adding curve " << curveIdx << (reversed ? " (reversed)" : "")
-                                << " with " << strokePoints.size()
+      LOG_DEBUG("Adding curve " << curveIdx << (reversed ? " (reversed)" : "") << " with " << strokePoints.size()
                                 << " points");
 
       // Determine how many points to add (always skip last point to avoid
@@ -152,8 +144,7 @@ bool FusionWorkspace::extractProfileVertices(
             // NOTE: With world coordinates, Z can be non-zero (expected)
             // This is the correct behavior for medial axis computation
             if (std::abs(z) > 0.001) {
-              LOG_DEBUG("Point has Z value: " << z
-                                              << " cm (world coordinates)");
+              LOG_DEBUG("Point has Z value: " << z << " cm (world coordinates)");
             }
 
             vertices.push_back({x, y});
@@ -170,8 +161,7 @@ bool FusionWorkspace::extractProfileVertices(
             // NOTE: With world coordinates, Z can be non-zero (expected)
             // This is the correct behavior for medial axis computation
             if (std::abs(z) > 0.001) {
-              LOG_DEBUG("Point has Z value: " << z
-                                              << " cm (world coordinates)");
+              LOG_DEBUG("Point has Z value: " << z << " cm (world coordinates)");
             }
 
             vertices.push_back({x, y});
@@ -194,9 +184,7 @@ bool FusionWorkspace::extractProfileVertices(
     transform.centerY = 0.0;
     transform.scale = 1.0;
 
-    LOG_DEBUG("Extracted "
-              << vertices.size()
-              << " vertices from real profile (in world coordinates cm)");
+    LOG_DEBUG("Extracted " << vertices.size() << " vertices from real profile (in world coordinates cm)");
 
     return true;
   } catch (const std::exception& e) {
@@ -208,8 +196,7 @@ bool FusionWorkspace::extractProfileVertices(
   }
 }
 
-bool FusionWorkspace::extractProfileGeometry(Ptr<adsk::fusion::Profile> profile,
-                                             ProfileGeometry& geometry) {
+bool FusionWorkspace::extractProfileGeometry(Ptr<adsk::fusion::Profile> profile, ProfileGeometry& geometry) {
   try {
     if (!profile) {
       LOG_ERROR("Null profile provided to extractProfileGeometry");
@@ -238,23 +225,20 @@ bool FusionWorkspace::extractProfileGeometry(Ptr<adsk::fusion::Profile> profile,
       return false;
     }
 
-    Ptr<adsk::fusion::ProfileCurve> firstCurve =
-        firstLoop->profileCurves()->item(0);
+    Ptr<adsk::fusion::ProfileCurve> firstCurve = firstLoop->profileCurves()->item(0);
     if (!firstCurve || !firstCurve->sketchEntity()) {
       LOG_ERROR("Profile has no valid curves");
       return false;
     }
 
-    Ptr<adsk::fusion::Sketch> sketch =
-        firstCurve->sketchEntity()->parentSketch();
+    Ptr<adsk::fusion::Sketch> sketch = firstCurve->sketchEntity()->parentSketch();
     if (sketch) {
       geometry.sketchName = sketch->name();
 
       // Get plane entity ID
       Ptr<adsk::core::Base> referenceEntity = sketch->referencePlane();
       if (referenceEntity) {
-        Ptr<adsk::fusion::ConstructionPlane> constructionPlane =
-            referenceEntity;
+        Ptr<adsk::fusion::ConstructionPlane> constructionPlane = referenceEntity;
         if (constructionPlane) {
           geometry.planeEntityId = constructionPlane->entityToken();
         } else {
@@ -290,15 +274,14 @@ bool FusionWorkspace::extractProfileGeometry(Ptr<adsk::fusion::Profile> profile,
       bool foundNext = false;
 
       for (size_t i = 0; i < allCurves.size(); ++i) {
-        if (allCurves[i].used) continue;
+        if (allCurves[i].used)
+          continue;
 
-        double distToStart = std::sqrt(
-            std::pow(allCurves[i].startPoint->x() - currentEndPoint->x(), 2) +
-            std::pow(allCurves[i].startPoint->y() - currentEndPoint->y(), 2));
+        double distToStart = std::sqrt(std::pow(allCurves[i].startPoint->x() - currentEndPoint->x(), 2) +
+                                       std::pow(allCurves[i].startPoint->y() - currentEndPoint->y(), 2));
 
-        double distToEnd = std::sqrt(
-            std::pow(allCurves[i].endPoint->x() - currentEndPoint->x(), 2) +
-            std::pow(allCurves[i].endPoint->y() - currentEndPoint->y(), 2));
+        double distToEnd = std::sqrt(std::pow(allCurves[i].endPoint->x() - currentEndPoint->x(), 2) +
+                                     std::pow(allCurves[i].endPoint->y() - currentEndPoint->y(), 2));
 
         if (distToStart < tolerance) {
           chainOrder.push_back(i);
@@ -307,8 +290,7 @@ bool FusionWorkspace::extractProfileGeometry(Ptr<adsk::fusion::Profile> profile,
           foundNext = true;
           break;
         } else if (distToEnd < tolerance) {
-          chainOrder.push_back(i |
-                               0x80000000);  // Mark as reversed with high bit
+          chainOrder.push_back(i | 0x80000000);  // Mark as reversed with high bit
           allCurves[i].used = true;
           currentEndPoint = allCurves[i].startPoint;
           foundNext = true;
@@ -338,24 +320,21 @@ bool FusionWorkspace::extractProfileGeometry(Ptr<adsk::fusion::Profile> profile,
         // reverse)
         for (int j = strokePoints.size() - 1; j >= 1; --j) {
           if (strokePoints[j]) {
-            geometry.vertices.push_back(
-                {strokePoints[j]->x(), strokePoints[j]->y()});
+            geometry.vertices.push_back({strokePoints[j]->x(), strokePoints[j]->y()});
           }
         }
       } else {
         // Add points in normal order
         for (size_t j = 0; j < numPoints; ++j) {
           if (strokePoints[j]) {
-            geometry.vertices.push_back(
-                {strokePoints[j]->x(), strokePoints[j]->y()});
+            geometry.vertices.push_back({strokePoints[j]->x(), strokePoints[j]->y()});
           }
         }
       }
     }
 
-    LOG_DEBUG("Extracted ProfileGeometry with "
-              << geometry.vertices.size() << " vertices, area=" << geometry.area
-              << " sq cm");
+    LOG_DEBUG("Extracted ProfileGeometry with " << geometry.vertices.size() << " vertices, area=" << geometry.area
+                                                << " sq cm");
 
     return true;
   } catch (const std::exception& e) {
