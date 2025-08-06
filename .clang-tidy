@@ -1,0 +1,132 @@
+---
+# Comprehensive clang-tidy configuration for CNC Chip Carving Plugin
+# Focus on C++ best practices, modern C++17, and Fusion 360 API compatibility
+
+Checks: >
+  clang-diagnostic-*,
+  -clang-diagnostic-error,
+  clang-analyzer-*,
+  bugprone-*,
+  -bugprone-easily-swappable-parameters,
+  -bugprone-branch-clone,
+  -bugprone-macro-parentheses,
+  cert-*,
+  -cert-err58-cpp,
+  cppcoreguidelines-*,
+  -cppcoreguidelines-pro-type-vararg,
+  -cppcoreguidelines-pro-bounds-pointer-arithmetic,
+  -cppcoreguidelines-avoid-magic-numbers,
+  -cppcoreguidelines-pro-type-reinterpret-cast,
+  -cppcoreguidelines-pro-type-union-access,
+  -cppcoreguidelines-owning-memory,
+  -cppcoreguidelines-avoid-non-const-global-variables,
+  -cppcoreguidelines-macro-usage,
+  -cppcoreguidelines-avoid-do-while,
+  -cppcoreguidelines-init-variables,
+  google-*,
+  -google-runtime-references,
+  -google-readability-todo,
+  -google-readability-braces-around-statements,
+  misc-*,
+  -misc-non-private-member-variables-in-classes,
+  -misc-const-correctness,
+  -misc-include-cleaner,
+  modernize-*,
+  -modernize-use-trailing-return-type,
+  -modernize-avoid-c-arrays,
+  -modernize-use-nodiscard,
+  -modernize-concat-nested-namespaces,
+  -modernize-use-using,
+  -modernize-use-auto,
+  -modernize-return-braced-init-list,
+  performance-*,
+  -performance-enum-size,
+  readability-*,
+  -readability-magic-numbers,
+  -readability-identifier-length,
+  -readability-function-cognitive-complexity,
+  -readability-identifier-naming,
+  -readability-convert-member-functions-to-static,
+  -readability-braces-around-statements,
+  -readability-math-missing-parentheses,
+
+WarningsAsErrors: ''
+
+HeaderFileExtensions:
+  - h
+  - hpp
+  - hxx
+
+ImplementationFileExtensions:
+  - cpp
+  - cc
+  - cxx
+
+HeaderFilterRegex: '.*\/(include|src)\/.*\.h$'
+ExcludeHeaderFilterRegex: '.*\/tests\/.*'
+
+FormatStyle: file
+
+CheckOptions:
+  # Naming conventions
+  readability-identifier-naming.ClassCase: CamelCase
+  readability-identifier-naming.StructCase: CamelCase
+  readability-identifier-naming.FunctionCase: CamelCase
+  readability-identifier-naming.VariableCase: lower_case
+  readability-identifier-naming.ConstantCase: UPPER_CASE
+  readability-identifier-naming.EnumCase: CamelCase
+  readability-identifier-naming.EnumConstantCase: UPPER_CASE
+  readability-identifier-naming.NamespaceCase: lower_case
+  readability-identifier-naming.MemberCase: lower_case
+  readability-identifier-naming.PrivateMemberSuffix: '_'
+  readability-identifier-naming.ProtectedMemberSuffix: '_'
+  
+  # Function size limits (matching existing codebase)
+  readability-function-size.LineThreshold: '350'
+  readability-function-size.StatementThreshold: '300'
+  readability-function-size.BranchThreshold: '30'
+  readability-function-size.ParameterThreshold: '8'
+  
+  # Modern C++ preferences
+  modernize-use-nullptr.NullMacros: 'NULL'
+  modernize-use-override.IgnoreDestructors: 'true'
+  modernize-use-equals-default.IgnoreMacros: 'true'
+  modernize-use-equals-delete.IgnoreMacros: 'true'
+  modernize-loop-convert.MaxCopySize: '16'
+  modernize-loop-convert.MinConfidence: 'reasonable'
+  modernize-pass-by-value.IncludeStyle: 'google'
+  
+  # Performance
+  performance-move-const-arg.CheckTriviallyCopyableMove: 'true'
+  performance-unnecessary-value-param.IncludeStyle: 'google'
+  performance-for-range-copy.AllowedTypes: '::std::pair;::std::tuple'
+  
+  # Readability
+  readability-braces-around-statements.ShortStatementLines: '1'
+  readability-simplify-boolean-expr.ChainedConditionalReturn: 'true'
+  readability-simplify-boolean-expr.ChainedConditionalAssignment: 'true'
+  readability-implicit-bool-conversion.AllowIntegerConditions: 'true'
+  readability-implicit-bool-conversion.AllowPointerConditions: 'true'
+  
+  # Google style specific
+  google-readability-namespace-comments.ShortNamespaceLines: '10'
+  google-readability-namespace-comments.SpacesBeforeComments: '2'
+  google-build-using-namespace.HeaderFileExtensions: 'h,hpp'
+  
+  # Cert checks
+  cert-dcl16-c.NewSuffixes: 'L;LL;LU;LLU'
+  cert-oop54-cpp.WarnOnlyIfThisHasSuspiciousField: 'false'
+  cert-str34-c.DiagnoseSignedUnsignedCharComparisons: 'false'
+  
+  # Core guidelines
+  cppcoreguidelines-non-private-member-variables-in-classes.IgnoreClassesWithAllMemberVariablesBeingPublic: 'true'
+  cppcoreguidelines-special-member-functions.AllowSoleDefaultDtor: 'true'
+  cppcoreguidelines-pro-type-member-init.IgnoreArrays: 'true'
+  
+  # Misc
+  misc-unused-parameters.StrictMode: 'false'
+  misc-non-private-member-variables-in-classes.IgnoreClassesWithAllMemberVariablesBeingPublic: 'true'
+
+SystemHeaders: false
+...
+

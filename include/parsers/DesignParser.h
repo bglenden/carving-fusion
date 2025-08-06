@@ -8,7 +8,7 @@
 #include <memory>
 #include <string>
 #include <vector>
-#include <optional>
+#include "../utils/Optional.h"
 #include "../geometry/Point2D.h"
 #include "../geometry/Shape.h"
 
@@ -25,11 +25,11 @@ namespace Parsers {
  * Metadata about a design file
  */
 struct DesignMetadata {
-    std::optional<std::string> name;
-    std::optional<std::string> author;
-    std::optional<std::string> created;
-    std::optional<std::string> modified;
-    std::optional<std::string> description;
+    Optional<std::string> name;
+    Optional<std::string> author;
+    Optional<std::string> created;
+    Optional<std::string> modified;
+    Optional<std::string> description;
 };
 
 /**

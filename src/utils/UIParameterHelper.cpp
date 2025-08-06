@@ -118,28 +118,28 @@ int UIParameterHelper::getIntegerValue(const std::string& inputId) {
   return 0;
 }
 
-std::optional<std::string> UIParameterHelper::getDropdownValue(
+Optional<std::string> UIParameterHelper::getDropdownValue(
     const std::string& inputId) {
   auto dropdownInput = inputs_->itemById(inputId);
   if (!dropdownInput) {
     logParameterAccess(inputId, false);
-    return std::nullopt;
+    return Optional<std::string>();  // Return empty optional
   }
 
   auto dropdown = dropdownInput->cast<adsk::core::DropDownCommandInput>();
   if (!dropdown) {
     logParameterAccess(inputId, false);
-    return std::nullopt;
+    return Optional<std::string>();  // Return empty optional
   }
 
   auto selectedItem = dropdown->selectedItem();
   if (!selectedItem) {
     logParameterAccess(inputId, false);
-    return std::nullopt;
+    return Optional<std::string>();  // Return empty optional
   }
 
   logParameterAccess(inputId, true);
-  return selectedItem->name();
+  return Optional<std::string>(selectedItem->name());
 }
 
 }  // namespace Utils

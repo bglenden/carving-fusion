@@ -460,7 +460,9 @@ GeneratePathsCommandHandler::getSelectionFromInputs(
       // Check if curves from each sketch form a closed loop
       LOG_INFO("Processing curves from " << curvesBySketch.size()
                                          << " sketches");
-      for (const auto& [sketchId, curves] : curvesBySketch) {
+      for (const auto& sketchCurvePair : curvesBySketch) {
+        const auto& sketchId = sketchCurvePair.first;
+        const auto& curves = sketchCurvePair.second;
         if (curves.empty()) continue;
 
         // Get the parent sketch from the first curve

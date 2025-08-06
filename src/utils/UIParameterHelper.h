@@ -10,7 +10,7 @@
 #include <Core/CoreAll.h>
 #include <Fusion/FusionAll.h>
 
-#include <optional>
+#include "../../include/utils/Optional.h"
 #include <string>
 
 namespace ChipCarving {
@@ -77,7 +77,7 @@ class UIParameterHelper {
    * @param inputId The ID of the dropdown input
    * @return The selected item name, or empty optional if not found
    */
-  std::optional<std::string> getDropdownValue(const std::string& inputId);
+  Optional<std::string> getDropdownValue(const std::string& inputId);
 
  private:
   adsk::core::Ptr<adsk::core::CommandInputs> inputs_;

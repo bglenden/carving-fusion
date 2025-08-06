@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.20)
 project(ChipCarvingPathsCppSimple)
 
 # Set C++ standard
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Build type - default to Release if not specified
