@@ -43,12 +43,13 @@ message(STATUS "Using OpenVoronoi headers: ${OPENVORONOI_INCLUDE_DIR}")
 include_directories(${FUSION_SDK_PATH}/include)
 include_directories(SYSTEM ${OPENVORONOI_INCLUDE_DIR})
 
-# Auto-increment version before building
+# Manual version increment target (no longer automatic)
+# Use 'make increment_version' to manually increment version
 add_custom_target(increment_version
-    COMMAND ${CMAKE_COMMAND} -E echo "Auto-incrementing version..."
+    COMMAND ${CMAKE_COMMAND} -E echo "Manually incrementing version..."
     COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/increment_version.sh
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-    COMMENT "Incrementing version number"
+    COMMENT "Manually incrementing version number"
 )
 
 # Read version from VERSION file
@@ -76,14 +77,14 @@ endif()
 # Generate version header after incrementing version
 add_custom_command(
     OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/src/version.h
-    COMMAND ${CMAKE_COMMAND} 
+    COMMAND ${CMAKE_COMMAND}
         -DSOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}
         -DADDIN_VERSION_MAJOR=${ADDIN_VERSION_MAJOR}
         -DADDIN_VERSION_MINOR=${ADDIN_VERSION_MINOR}
         -DADDIN_VERSION_PATCH=${ADDIN_VERSION_PATCH}
         -DCMAKE_BUILD_TYPE_DEBUG=$<IF:$<CONFIG:Debug>,1,0>
         -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/GenerateVersion.cmake
-    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/VERSION ${CMAKE_CURRENT_SOURCE_DIR}/src/version.h.in increment_version
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/VERSION ${CMAKE_CURRENT_SOURCE_DIR}/src/version.h.in
     COMMENT "Generating version.h from template"
 )
 
@@ -122,8 +123,8 @@ add_library(chip_carving_paths_cpp SHARED
     src/utils/ErrorHandler.cpp
 )
 
-# Make sure version is incremented before building the main target
-add_dependencies(chip_carving_paths_cpp increment_version)
+# Version is no longer auto-incremented on build
+# Use 'make increment_version' to manually increment if needed
 
 # Debug version now uses the same main with environment variable control
 # Set CHIP_CARVING_PLUGIN_MODE=DEBUG to enable debug mode

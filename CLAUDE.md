@@ -4,7 +4,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-The Fusion 360 CNC Chip Carving Plugin is a mature C++ add-in (v0.9.87) that converts 2D chip carving design shapes into 3D CNC toolpaths using medial axis computation. The plugin generates V-carve toolpaths that preserve traditional chip carving aesthetics while enabling precision CNC fabrication.
+The Fusion 360 CNC Chip Carving Plugin is a mature C++ add-in that converts 2D chip carving design shapes into 3D CNC toolpaths using medial axis computation. The plugin generates V-carve toolpaths that preserve traditional chip carving aesthetics while enabling precision CNC fabrication.
+
+**Version**: Follows semantic versioning (MAJOR.MINOR.PATCH)
 
 ## Common Development Commands
 
@@ -69,6 +71,22 @@ make format-check      # Check if formatting is needed (dry run)
 make pre-commit        # Run quality checks before committing
 ```
 
+### Version Management
+```bash
+# Semantic versioning (MAJOR.MINOR.PATCH)
+# Version is stored in the VERSION file at project root
+
+# Manual version increment (for legacy patch bumps only)
+make increment_version # Increments patch version in VERSION file
+
+# Recommended: Edit VERSION file directly for semantic versioning
+# - MAJOR: Breaking changes or significant milestones
+# - MINOR: New features, backward compatible
+# - PATCH: Bug fixes, backward compatible
+```
+
+**Important**: Version is NO LONGER auto-incremented on build. Update VERSION file manually when making releases.
+
 ### Complete Make Targets Reference
 ```bash
 # Primary targets
@@ -91,8 +109,8 @@ make lint-verbose      # Detailed cpplint with explanations
 make quality-check     # Run comprehensive quality checks
 make pre-commit        # Format and lint before committing
 
-# Development targets
-make increment_version # Increment build version number
+# Version management
+make increment_version # Manually increment patch version (legacy)
 ```
 
 ## High-Level Architecture
@@ -128,7 +146,7 @@ The plugin uniquely handles complex Fusion 360 models where geometry exists acro
 
 ### OpenVoronoi Integration Pipeline
 ```
-Design JSON → Shape Objects → Unit Circle Transform → OpenVoronoi 
+Design JSON → Shape Objects → Unit Circle Transform → OpenVoronoi
     → Medial Axis → World Transform → 3D Sketch Paths → CAM Ready
 ```
 
@@ -148,7 +166,6 @@ Constants are synchronized across the carving ecosystem:
 - **Source**: `schema/constants.json` - master constants file
 - **C++ Header**: `include/core/SharedConstants.h` - auto-generated from constants.json
 - **Usage**: Geometry calculations, medial axis parameters, rendering settings
-- **Note**: Header comment says "Auto-generated from interface/constants.json" but actual source is `schema/constants.json`
 
 ### Schema Synchronization
 The design schema and constants should match the `@carving/schema` npm package:
@@ -182,7 +199,7 @@ final_z = surface_height - depth
 1. Write non-fragile unit tests first (TDD approach)
 2. Implement in appropriate layer (geometry/adapter/command)
 3. Run `make lint-quick` for fast validation
-4. Run `./run_tests.sh` to verify functionality
+4. Run `make test` to verify functionality
 5. Run `make pre-commit` before committing
 6. Update CLAUDE.md if architecture changes
 
@@ -206,13 +223,11 @@ When experiencing slow performance:
 **Test**: `test_CoordinateSystemRegression.cpp`
 - Prevents medial axis offset from shape boundaries
 - Detects world vs local coordinate confusion
-- Run: `./run_coordinate_regression_tests.sh`
 
-### Surface Z Detection  
+### Surface Z Detection
 **Test**: `test_SurfaceZDetectionRegression.cpp`
 - Ensures V-carve paths on correct surface
 - Validates surface height calculations
-- Run: `./run_surface_z_regression_tests.sh`
 
 ### Cross-Component Geometry
 **Implementation**: `FusionWorkspaceProfile.cpp`, `FusionWorkspaceCurve.cpp`
@@ -231,11 +246,11 @@ Control via `CHIP_CARVING_PLUGIN_MODE` environment variable:
 ## Quality Standards
 
 ### Before Committing
-1. Run `make lint-quick` (must pass)
-2. Run `./run_tests.sh` (all tests must pass)
-3. Check for compiler warnings
-4. Verify no hardcoded paths or debug code
-5. Update VERSION file if significant change
+1. Install the plugin with `make install` (catches build issues tests miss)
+2. Run `make format lint` (must pass)
+3. Run `make test` (all tests must pass)
+4. Check for compiler warnings
+5. Verify no hardcoded paths or debug code
 
 ### Testing Philosophy
 - **Non-fragile tests**: Test behavior, not implementation
@@ -257,12 +272,9 @@ Control via `CHIP_CARVING_PLUGIN_MODE` environment variable:
 3. **Cross-component support**: Must search all components for geometry
 4. **350 line file limit**: Refactor larger files
 5. **No Fusion API in tests**: Use mock adapters exclusively
+6. **C++14 standard**: Code must be compatible with C++14
 
-## Commit and Push Workflow
+## Development Tips
 
-### Development Preparation
-- Before doing a commit and push, install the plug-in since sometimes it shows compiler problems that don't show up with the test programs.
-
-## Development Tips and Memories
-
-- Typically when we want to "make lint" we would normally actually "make format lint"
+- When running lint, typically use `make format lint` to auto-format first
+- Before commit and push, install the plugin since it sometimes shows compiler problems that don't show up with test programs
