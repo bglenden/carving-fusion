@@ -257,23 +257,21 @@ bool FusionSketch::deleteSketchPoint(int pointIndex) {
 }
 
 void FusionSketch::finishSketch() {
-  if (!sketch_) {
-    return;
-  }
+  // NOTE: Fusion API sketches don't require explicit "finishing" - geometry is
+  // committed immediately when created. This method exists for interface
+  // compatibility and potential future use.
+  //
+  // HISTORICAL: Previously used executeTextCommand("Commands.Start3DSketch/Stop3DSketch")
+  // to "flush pending operations", but this pattern is:
+  // 1. Not documented as necessary for 2D sketches
+  // 2. Uses unstable text commands that can change between Fusion versions
+  // 3. Adds unnecessary overhead
+  //
+  // If sketch geometry issues arise, consider adding proper API calls here
+  // rather than text command workarounds.
 
-  try {
-    // Update the sketch to apply all changes
-    if (sketch_->parentComponent()) {
-      Ptr<adsk::fusion::Features> features = sketch_->parentComponent()->features();
-      if (features) {
-        // Flush any pending operations
-        app_->executeTextCommand("Commands.Start3DSketch");
-        app_->executeTextCommand("Commands.Stop3DSketch");
-      }
-    }
-  } catch (...) {
-    // Ignore errors during finish
-  }
+  // Currently a no-op - sketch geometry is committed on creation
+  (void)sketch_;  // Suppress unused warning
 }
 
 }  // namespace Adapters
