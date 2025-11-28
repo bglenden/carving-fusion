@@ -238,6 +238,15 @@ bool FusionSketch::deleteSketchPoint(int pointIndex) {
       return false;
     }
 
+    // IMPORTANT: Check isValid() before deleteMe()
+    // Objects can become invalid after undo operations or model changes.
+    // Calling deleteMe() on an invalid object can cause crashes.
+    if (!point->isValid()) {
+      // Already deleted or invalidated - just remove from our tracking
+      sketchPoints_.erase(sketchPoints_.begin() + pointIndex);
+      return true;
+    }
+
     // Delete the point from the sketch
     bool result = point->deleteMe();
 

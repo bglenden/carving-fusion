@@ -137,6 +137,10 @@ bool FusionSketch::addConstructionPoint(double x, double y) {
 }
 
 void FusionSketch::clearConstructionGeometry() {
+  // PATTERN: Always check isValid() before deleteMe()
+  // Fusion API objects can become invalid after undo operations, document
+  // changes, or if another operation deleted them. Calling deleteMe() on
+  // an invalid object can cause crashes or undefined behavior.
   try {
     // Clear construction lines
     for (auto& line : constructionLines_) {
