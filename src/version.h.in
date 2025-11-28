@@ -1,6 +1,9 @@
 /**
  * Version tracking for Chip Carving Paths C++ Plugin
- * Auto-increment minor version on each build
+ *
+ * Uses semantic versioning (semver.org):
+ * - Release builds: "1.0.1"
+ * - Pre-release builds: "1.0.1-dev+abc1234" (includes git hash)
  */
 
 #pragma once
@@ -9,13 +12,10 @@
 #define ADDIN_VERSION_MINOR @ADDIN_VERSION_MINOR@
 #define ADDIN_VERSION_PATCH @ADDIN_VERSION_PATCH@
 
-// Dynamic version string based on build type
-#cmakedefine01 CMAKE_BUILD_TYPE_DEBUG
-#if CMAKE_BUILD_TYPE_DEBUG
-#define ADDIN_VERSION_STRING "@ADDIN_VERSION_MAJOR@.@ADDIN_VERSION_MINOR@.@ADDIN_VERSION_PATCH@-debug"
-#else
-#define ADDIN_VERSION_STRING "@ADDIN_VERSION_MAJOR@.@ADDIN_VERSION_MINOR@.@ADDIN_VERSION_PATCH@-release"
-#endif
+// Full version string following semver convention
+// Pre-release: "1.0.1-dev+abc1234"
+// Release: "1.0.1"
+#define ADDIN_VERSION_STRING "@ADDIN_VERSION_STRING@"
 
 #define ADDIN_NAME "Chip Carving Paths C++"
 
@@ -23,10 +23,8 @@
 #define BUILD_DATE __DATE__
 #define BUILD_TIME __TIME__
 
-// Version history (cleaned up - removed repetitive auto-generated comments)
-// 0.1.0 - Initial C++ implementation with basic commands
-// 0.1.1 - Added debug mode and comprehensive logging
-// 0.1.2 - Added toolbar panel support
-// 0.1.3 - Added icons and version tracking
-// 0.1.6 - Added JSON parsing functionality for Import Design command
-// 0.3.115 - Current version with enhanced features and stability improvements
+// Version history
+// 0.1.x - Initial C++ implementation
+// 0.3.x - Enhanced features and stability
+// 1.0.0 - First stable release with semantic versioning
+// 1.0.1-dev - API improvements (findEntityByToken refactoring)
