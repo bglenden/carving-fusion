@@ -175,41 +175,63 @@ double FusionWorkspace::getSurfaceZAtXY(const std::string& /*surfaceId*/, double
               if (!v0 || !v1 || !v2)
                 continue;
 
-              // Simple ray-triangle intersection test
-              // Check if ray intersects this triangle's plane
-              double deltaX0 = v1->x() - v0->x();
-              double deltaY0 = v1->y() - v0->y();
-              double deltaZ0 = v1->z() - v0->z();
-              double deltaX1 = v2->x() - v0->x();
-              double deltaY1 = v2->y() - v0->y();
-              double deltaZ1 = v2->z() - v0->z();
+              // Möller–Trumbore ray-triangle intersection algorithm
+              // Ray: origin (x, y, rayStartZ), direction (0, 0, -1)
 
-              // Triangle normal (cross product)
-              double nx = deltaY0 * deltaZ1 - deltaZ0 * deltaY1;
-              double ny = deltaZ0 * deltaX1 - deltaX0 * deltaZ1;
-              double nz = deltaX0 * deltaY1 - deltaY0 * deltaX1;
+              // Edge vectors from v0 to v1 and v0 to v2
+              double edge1X = v1->x() - v0->x();
+              double edge1Y = v1->y() - v0->y();
+              double edge1Z = v1->z() - v0->z();
+              double edge2X = v2->x() - v0->x();
+              double edge2Y = v2->y() - v0->y();
+              double edge2Z = v2->z() - v0->z();
 
-              // Check if ray is parallel to triangle
-              double rayDotNormal = rayDirection->z() * nz;  // ray is (0,0,-1)
-              if (std::abs(rayDotNormal) < 1e-6)
+              // h = rayDir × edge2, where rayDir = (0, 0, -1)
+              double hX = edge2Y;   // 0*edge2Z - (-1)*edge2Y
+              double hY = -edge2X;  // (-1)*edge2X - 0*edge2Z
+              double hZ = 0.0;      // 0*edge2Y - 0*edge2X
+
+              // a = edge1 · h (determinant)
+              double a = edge1X * hX + edge1Y * hY + edge1Z * hZ;
+
+              // Ray parallel to triangle?
+              if (std::abs(a) < 1e-9)
                 continue;
 
-              // Find intersection point with triangle plane
-              double d = -(nx * v0->x() + ny * v0->y() + nz * v0->z());
-              double t = -(nx * x + ny * y + nz * rayStartZ + d) / rayDotNormal;
+              double f = 1.0 / a;
 
-              if (t < 0)
-                continue;  // Behind ray start
+              // s = rayOrigin - v0
+              double sX = x - v0->x();
+              double sY = y - v0->y();
+              double sZ = rayStartZ - v0->z();
 
-              double hitZ = rayStartZ + t * rayDirection->z();
+              // u = f * (s · h) - first barycentric coordinate
+              double u = f * (sX * hX + sY * hY + sZ * hZ);
+              if (u < 0.0 || u > 1.0)
+                continue;
 
-              // Simple inside-triangle test (could be more precise)
-              // For now, just check if intersection is reasonable
+              // q = s × edge1
+              double qX = sY * edge1Z - sZ * edge1Y;
+              double qY = sZ * edge1X - sX * edge1Z;
+              double qZ = sX * edge1Y - sY * edge1X;
+
+              // v = f * (rayDir · q) - second barycentric coordinate
+              double v = f * (-qZ);  // rayDir = (0, 0, -1), so dot = -qZ
+              if (v < 0.0 || u + v > 1.0)
+                continue;
+
+              // t = f * (edge2 · q) - ray parameter (distance)
+              double t = f * (edge2X * qX + edge2Y * qY + edge2Z * qZ);
+              if (t < 0.0)
+                continue;
+
+              // Hit point Z (ray goes down, so subtract)
+              double hitZ = rayStartZ - t;
+
               if (hitZ > bestZ && hitZ < rayStartZ) {
                 bestZ = hitZ;
                 foundValidPoint = true;
-                LOG_DEBUG("Mesh intersection found at Z = " << bestZ << " cm in component " << compIdx << ", mesh "
-                                                            << meshIdx);
+                LOG_DEBUG("Mesh hit at Z=" << bestZ << " (bary u=" << u << " v=" << v << ")");
               }
             }
           }
