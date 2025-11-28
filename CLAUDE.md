@@ -72,20 +72,24 @@ make pre-commit        # Run quality checks before committing
 ```
 
 ### Version Management
+
+Follows [semver.org](https://semver.org) with automatic git hash for dev builds:
+
+| VERSION file | Build outputs | Use case |
+|--------------|---------------|----------|
+| `1.0.1-dev` | `1.0.1-dev+abc1234` | Development (git hash auto-appended) |
+| `1.0.1-rc.1` | `1.0.1-rc.1+abc1234` | Release candidate |
+| `1.0.1` | `1.0.1` | Release (clean, no hash) |
+
+**Release workflow:**
+1. During development: `VERSION` = `X.Y.Z-dev`
+2. Ready to release: change to `X.Y.Z` (remove `-dev`)
+3. After release: bump to `X.Y.(Z+1)-dev`
+
 ```bash
-# Semantic versioning (MAJOR.MINOR.PATCH)
-# Version is stored in the VERSION file at project root
-
-# Manual version increment (for legacy patch bumps only)
-make increment_version # Increments patch version in VERSION file
-
-# Recommended: Edit VERSION file directly for semantic versioning
-# - MAJOR: Breaking changes or significant milestones
-# - MINOR: New features, backward compatible
-# - PATCH: Bug fixes, backward compatible
+# Edit VERSION file directly - no commands needed
+# The build system auto-generates version.h with git hash for pre-releases
 ```
-
-**Important**: Version is NO LONGER auto-incremented on build. Update VERSION file manually when making releases.
 
 ### Complete Make Targets Reference
 ```bash
