@@ -149,6 +149,20 @@ class FusionWorkspace : public IWorkspace {
   // Curve extraction operations (split for maintainability)
   bool extractCurvesFromProfile(adsk::core::Ptr<adsk::fusion::Profile> profile,
                                 std::vector<struct CurveData>& allCurves, TransformParams& transform);
+
+  // ============================================================================
+  // Direct entity lookup using Design.findEntityByToken()
+  // Added as part of API usage improvements - replaces manual iteration
+  // See commit message for details on this change
+  // ============================================================================
+
+  // Find any entity by its token using the official Fusion API method
+  // Returns empty vector if not found
+  std::vector<adsk::core::Ptr<adsk::core::Base>> findEntitiesByToken(const std::string& entityToken);
+
+  // Get the parent component from various entity types (BRepFace, BRepBody, Profile, etc.)
+  // Returns nullptr if component cannot be determined
+  adsk::core::Ptr<adsk::fusion::Component> getComponentFromEntity(adsk::core::Ptr<adsk::core::Base> entity);
 };
 
 /**
