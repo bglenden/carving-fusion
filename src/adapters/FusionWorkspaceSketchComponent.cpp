@@ -90,7 +90,7 @@ std::unique_ptr<ISketch> FusionWorkspace::createSketchInTargetComponent(const st
 
     Ptr<adsk::fusion::Sketch> sketch = sketches->add(xyPlane);
     if (!sketch) {
-      LOG_ERROR("Failed to create sketch on XY plane");
+      logApiError("sketches->add(xyPlane)");
       return nullptr;
     }
 

@@ -147,7 +147,7 @@ std::unique_ptr<ISketch> FusionWorkspace::createSketchOnPlane(const std::string&
     // Create the sketch on the plane
     Ptr<adsk::fusion::Sketch> sketch = sketches->add(planeEntity);
     if (!sketch) {
-      LOG_ERROR("Failed to create sketch on plane");
+      logApiError("sketches->add(planeEntity)");
       return nullptr;
     }
 

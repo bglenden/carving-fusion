@@ -163,6 +163,10 @@ class FusionWorkspace : public IWorkspace {
   // Get the parent component from various entity types (BRepFace, BRepBody, Profile, etc.)
   // Returns nullptr if component cannot be determined
   adsk::core::Ptr<adsk::fusion::Component> getComponentFromEntity(adsk::core::Ptr<adsk::core::Base> entity);
+
+  // Log detailed error information from Fusion API using getLastError()
+  // Call this after an API operation returns null/false for better diagnostics
+  void logApiError(const std::string& operation) const;
 };
 
 /**

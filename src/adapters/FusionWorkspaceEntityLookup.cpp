@@ -146,5 +146,24 @@ Ptr<adsk::fusion::Component> FusionWorkspace::getComponentFromEntity(Ptr<Base> e
   }
 }
 
+void FusionWorkspace::logApiError(const std::string& operation) const {
+  if (!app_) {
+    LOG_ERROR(operation << " failed: No Fusion application instance");
+    return;
+  }
+
+  // Use Fusion's getLastError() for detailed diagnostic information
+  // This is the recommended way to get error details per Fusion API docs
+  std::string errorDescription;
+  int errorCode = app_->getLastError(&errorDescription);
+
+  if (errorCode != 0) {
+    LOG_ERROR(operation << " failed - Fusion error " << errorCode << ": " << errorDescription);
+  } else {
+    // No specific error code - the operation just returned null/false
+    LOG_ERROR(operation << " failed (no Fusion error code available)");
+  }
+}
+
 }  // namespace Adapters
 }  // namespace ChipCarving
