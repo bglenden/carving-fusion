@@ -47,5 +47,6 @@ temp_output/
 *.swo
 *~
 
-# Version backup files
+# Version files (version.h is auto-generated from VERSION file)
 src/version.h.bak
+src/version.h
