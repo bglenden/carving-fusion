@@ -1,12 +1,14 @@
 /**
- * PluginCommandsGeometry.cpp
+ * PluginCommandsGeometryMain.cpp
  *
- * Immediate geometry extraction for PluginCommands
- * Extracts geometry as soon as profiles are selected to prevent stale token
- * issues
+ * Main geometry extraction for PluginCommands
+ * Part of PluginCommandsGeometry refactoring (Item #1a)
+ * Extracted from PluginCommandsGeometry.cpp
  */
 
 #include "../../include/utils/logging.h"
+#include "PluginCommandsGeometryChaining.h"
+
 #include "PluginCommands.h"
 
 namespace ChipCarving {
@@ -59,16 +61,6 @@ void GeneratePathsCommandHandler::extractAndCacheProfileGeometry(adsk::core::Ptr
 
     // CRITICAL: Extract all vertices immediately while profile is valid
     // We need to chain curves properly to avoid self-intersections
-    std::vector<std::pair<double, double>> vertices;
-
-    // First, collect all curves with their tessellated points and endpoints
-    struct CurveData {
-      std::vector<adsk::core::Ptr<adsk::core::Point3D>> strokePoints;
-      adsk::core::Ptr<adsk::core::Point3D> startPoint;
-      adsk::core::Ptr<adsk::core::Point3D> endPoint;
-      size_t originalIndex;
-      bool used = false;
-    };
 
     std::vector<CurveData> allCurves;
 
@@ -204,129 +196,12 @@ void GeneratePathsCommandHandler::extractAndCacheProfileGeometry(adsk::core::Ptr
       }
     }
 
-    // Now chain the curves properly to create a connected polygon
-    LOG_INFO("  Chaining " << allCurves.size() << " curves...");
-    if (!allCurves.empty()) {
-      // Adaptive tolerance based on tessellation - use coarser tolerance if we
-      // had issues
-      double baseTolerance = 0.001;  // 0.01mm default tolerance
-
-      // Check if we had any tessellation issues that might require looser
-      // tolerance
-      bool hadTessellationIssues = false;
-      for (const auto& curve : allCurves) {
-        if (curve.strokePoints.size() <= 2) {
-          hadTessellationIssues = true;
-          break;
-        }
-      }
-
-      const double tolerance = hadTessellationIssues ? baseTolerance * 10 : baseTolerance;
-      if (hadTessellationIssues) {
-        LOG_WARNING("  Using relaxed chaining tolerance " + std::to_string(tolerance) +
-                    " cm due to tessellation issues");
-      }
-
-      // Start with first curve
-      std::vector<size_t> chainOrder;
-      chainOrder.push_back(0);
-      allCurves[0].used = true;
-      auto currentEndPoint = allCurves[0].endPoint;
-
-      // Chain remaining curves
-      for (size_t chainPos = 1; chainPos < allCurves.size(); ++chainPos) {
-        bool foundNext = false;
-
-        for (size_t i = 0; i < allCurves.size(); ++i) {
-          if (allCurves[i].used)
-            continue;
-
-          // Check if this curve's start connects to current end
-          double distStart = std::sqrt(std::pow(currentEndPoint->x() - allCurves[i].startPoint->x(), 2) +
-                                       std::pow(currentEndPoint->y() - allCurves[i].startPoint->y(), 2) +
-                                       std::pow(currentEndPoint->z() - allCurves[i].startPoint->z(), 2));
-
-          // Check if this curve's end connects to current end (needs reversal)
-          double distEnd = std::sqrt(std::pow(currentEndPoint->x() - allCurves[i].endPoint->x(), 2) +
-                                     std::pow(currentEndPoint->y() - allCurves[i].endPoint->y(), 2) +
-                                     std::pow(currentEndPoint->z() - allCurves[i].endPoint->z(), 2));
-
-          if (distStart < tolerance) {
-            // Normal orientation
-            chainOrder.push_back(i);
-            allCurves[i].used = true;
-            currentEndPoint = allCurves[i].endPoint;
-            foundNext = true;
-            LOG_INFO("    Chained curve " << i << " (normal)");
-            break;
-          } else if (distEnd < tolerance) {
-            // Reversed orientation - mark with high bit
-            chainOrder.push_back(i | 0x80000000);
-            allCurves[i].used = true;
-            currentEndPoint = allCurves[i].startPoint;
-            foundNext = true;
-            LOG_INFO("    Chained curve " << i << " (reversed)");
-            break;
-          }
-        }
-
-        if (!foundNext) {
-          LOG_ERROR("    Could not find connecting curve at position " << chainPos << " of " << allCurves.size());
-          LOG_ERROR("    Current endpoint: (" << currentEndPoint->x() << ", " << currentEndPoint->y() << ", "
-                                              << currentEndPoint->z() << ")");
-
-          // Log remaining unconnected curves for debugging
-          int unconnectedCount = 0;
-          for (size_t i = 0; i < allCurves.size(); ++i) {
-            if (!allCurves[i].used) {
-              LOG_ERROR("    Unconnected curve "
-                        << i << ": start(" << allCurves[i].startPoint->x() << ", " << allCurves[i].startPoint->y()
-                        << ") end(" << allCurves[i].endPoint->x() << ", " << allCurves[i].endPoint->y() << ")");
-              unconnectedCount++;
-            }
-          }
-          LOG_ERROR("    Total unconnected curves: " << unconnectedCount << " - profile will be incomplete");
-          break;
-        }
-      }
-
-      // Extract vertices from chained curves
-      for (size_t i = 0; i < chainOrder.size(); ++i) {
-        bool reversed = (chainOrder[i] & 0x80000000) != 0;
-        size_t curveIdx = chainOrder[i] & 0x7FFFFFFF;
-
-        const CurveData& curve = allCurves[curveIdx];
-        const auto& strokePoints = curve.strokePoints;
-
-        // Determine how many points to add (skip last to avoid duplicates)
-        size_t numPoints = strokePoints.size() - 1;
-
-        if (reversed) {
-          // Add points in reverse order, skip first point (which is last in
-          // reverse)
-          for (int j = static_cast<int>(strokePoints.size()) - 1; j >= 1; --j) {
-            if (strokePoints[j]) {
-              vertices.push_back({strokePoints[j]->x(), strokePoints[j]->y()});
-            }
-          }
-        } else {
-          // Add points in normal order
-          for (size_t j = 0; j < numPoints; ++j) {
-            if (strokePoints[j]) {
-              vertices.push_back({strokePoints[j]->x(), strokePoints[j]->y()});
-            }
-          }
-        }
-      }
-
-      LOG_INFO("  Successfully chained curves, extracted " << vertices.size() << " vertices");
-    }
-
-    profileGeom.vertices = vertices;
+    // Delegate to chaining logic in separate file
+    profileGeom.vertices = chainCurvesAndExtractVertices(allCurves);
 
     // Validate extraction results
-    if (vertices.size() < 3) {
-      LOG_ERROR("Extracted polygon has insufficient vertices (" << vertices.size()
+    if (profileGeom.vertices.size() < 3) {
+      LOG_ERROR("Extracted polygon has insufficient vertices (" << profileGeom.vertices.size()
                                                                 << ") - minimum 3 required for valid polygon");
     }
 
@@ -337,21 +212,21 @@ void GeneratePathsCommandHandler::extractAndCacheProfileGeometry(adsk::core::Ptr
     profileGeom.transform.scale = 1.0;
 
     // Log detailed geometry information for debugging
-    LOG_INFO("Extracted " << vertices.size() << " vertices from profile " << index);
-    if (!vertices.empty()) {
+    LOG_INFO("Extracted " << profileGeom.vertices.size() << " vertices from profile " << index);
+    if (!profileGeom.vertices.empty()) {
       // Log first few vertices for debugging
-      size_t numToLog = std::min(size_t(6), vertices.size());
+      size_t numToLog = std::min(size_t(6), profileGeom.vertices.size());
       for (size_t i = 0; i < numToLog; ++i) {
-        LOG_INFO("  Vertex " << i << ": (" << vertices[i].first << ", " << vertices[i].second << ")");
+        LOG_INFO("  Vertex " << i << ": (" << profileGeom.vertices[i].first << ", " << profileGeom.vertices[i].second << ")");
       }
-      if (vertices.size() > 6) {
-        LOG_INFO("  ... and " << (vertices.size() - 6) << " more vertices");
+      if (profileGeom.vertices.size() > 6) {
+        LOG_INFO("  ... and " << (profileGeom.vertices.size() - 6) << " more vertices");
       }
 
       // Calculate and log bounding box
-      double minX = vertices[0].first, maxX = vertices[0].first;
-      double minY = vertices[0].second, maxY = vertices[0].second;
-      for (const auto& v : vertices) {
+      double minX = profileGeom.vertices[0].first, maxX = profileGeom.vertices[0].first;
+      double minY = profileGeom.vertices[0].second, maxY = profileGeom.vertices[0].second;
+      for (const auto& v : profileGeom.vertices) {
         minX = std::min(minX, v.first);
         maxX = std::max(maxX, v.first);
         minY = std::min(minY, v.second);
@@ -368,7 +243,7 @@ void GeneratePathsCommandHandler::extractAndCacheProfileGeometry(adsk::core::Ptr
     cachedProfiles_[index] = profileGeom;
 
     LOG_INFO("Successfully cached geometry for profile " << index << " from sketch '" << profileGeom.sketchName
-                                                         << "' with " << vertices.size() << " vertices and area "
+                                                         << "' with " << profileGeom.vertices.size() << " vertices and area "
                                                          << profileGeom.area << " sq cm");
   } catch (const std::exception& e) {
     LOG_INFO("Exception during geometry extraction for profile " << index << ": " << e.what());
