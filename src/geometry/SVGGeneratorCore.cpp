@@ -11,7 +11,7 @@
 #include <iomanip>
 #include <regex>
 
-#include "../../include/geometry/SVGGenerator.h"
+#include "geometry/SVGGenerator.h"
 
 using namespace ChipCarving::Geometry;
 

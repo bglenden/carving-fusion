@@ -8,7 +8,7 @@
 #include <cmath>
 #include <string>
 
-#include "../../include/geometry/MedialAxisProcessor.h"
+#include "geometry/MedialAxisProcessor.h"
 
 namespace ChipCarving {
 namespace Geometry {

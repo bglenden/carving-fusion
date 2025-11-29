@@ -5,7 +5,7 @@
 
 #include <gtest/gtest.h>
 
-#include "../../include/geometry/Leaf.h"
+#include "geometry/Leaf.h"
 
 using namespace ChipCarving::Geometry;
 

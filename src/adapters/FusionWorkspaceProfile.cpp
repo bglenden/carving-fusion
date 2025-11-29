@@ -11,7 +11,7 @@
 #include <iostream>
 #include <sstream>
 
-#include "../../include/utils/logging.h"
+#include "utils/logging.h"
 #include "FusionAPIAdapter.h"
 #include "FusionWorkspaceProfileTypes.h"
 

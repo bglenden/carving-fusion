@@ -1,3 +1,46 @@
+# Carving Fusion - Refactoring Roadmap
+
+## CRITICAL INFRASTRUCTURE - HIGHEST PRIORITY
+
+### 🚨 Anti-Pattern: CPP Files Including CPP Files
+**Status: CRITICAL BUG - Causing Hidden Build Issues**
+
+**Problem**: Multiple aggregator files use `#include "OtherFile.cpp"` instead of proper compilation units
+
+**Files with this anti-pattern**:
+- `src/geometry/SVGGenerator.cpp` includes 3 .cpp files
+- `src/geometry/VCarveCalculator.cpp` includes 3 .cpp files  
+- `src/geometry/MedialAxisProcessor.cpp` includes 3 .cpp files
+- `src/core/PluginManager.cpp` includes 5 .cpp files
+- `src/core/PluginManagerPaths.cpp` includes 3 .cpp files
+- `src/geometry/TriArc.cpp` includes 3 .cpp files
+- `src/adapters/FusionSketch.cpp` includes 3 .cpp files
+- `src/adapters/FusionWorkspaceCurve.cpp` includes 3 .cpp files
+- `src/adapters/FusionWorkspaceSketch.cpp` includes 3 .cpp files
+- `src/adapters/FusionWorkspace.cpp` includes 5 .cpp files
+
+**Why this is a critical bug**:
+- ❌ Breaks C++ compilation model (ODR violations)
+- ❌ Destroys incremental builds (change 1 line → rebuild everything)
+- ❌ Hides real dependencies from build system
+- ❌ Makes debugging painful (stack traces point to aggregators)
+- ❌ Slower compilation (same code parsed multiple times)
+- ❌ Hides CMakeLists.txt from the actual implementation files
+
+**Fix Required**:
+1. Remove all aggregator files that `#include "*.cpp"`
+2. Add individual implementation files to CMakeLists.txt
+3. Use proper header/implementation separation
+4. Each `.cpp` should compile to its own object file
+
+**Impact**: This will significantly improve:
+- Build times (incremental compilation will actually work)
+- Debug symbol quality
+- Code navigation and understanding
+- Build system dependency tracking
+
+---
+
 # Carving Fusion - Code Refactoring Plan
 
 **Document Version**: 1.0  

@@ -5,10 +5,10 @@
  * Split from PluginCommands.cpp for maintainability
  */
 
-#include "../../include/utils/logging.h"
+#include "utils/logging.h"
 #include "PluginCommands.h"
-#include "../utils/ErrorHandler.h"
-#include "../utils/logging.h"
+#include "utils/ErrorHandler.h"
+#include "utils/logging.h"
 
 namespace ChipCarving {
 namespace Commands {
@@ -231,16 +231,12 @@ void GeneratePathsCommandHandler::notify(const adsk::core::Ptr<adsk::core::Comma
     cmd->destroy()->add(onDestroy);
   } catch (const std::exception& e) {
     // Handle known exceptions
-    Utils::ErrorHandler::executeWithLogging("CreateGeneratePathsCommand", [&]() {
-      LOG_ERROR("Exception in GeneratePathsCommand creation: " << e.what());
-      throw;
-    });
+    std::cerr << "Exception in GeneratePathsCommand creation: " << e.what() << std::endl;
+    throw;
   } catch (...) {
     // Handle unknown exceptions
-    Utils::ErrorHandler::executeWithLogging("CreateGeneratePathsCommand", [&]() {
-      LOG_ERROR("Unknown exception in GeneratePathsCommand creation");
-      throw;
-    });
+    std::cerr << "Unknown exception in GeneratePathsCommand creation" << std::endl;
+    throw;
   }
 }
 

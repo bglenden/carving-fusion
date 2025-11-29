@@ -4,7 +4,7 @@
 
 #include <gtest/gtest.h>
 #include <cmath>
-#include "../../src/utils/UnitConversion.h"
+#include "utils/UnitConversion.h"
 
 using namespace ChipCarving::Utils;
 

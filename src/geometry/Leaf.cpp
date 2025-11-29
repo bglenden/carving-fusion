@@ -3,13 +3,13 @@
  * Ported from TypeScript design_program/src/shapes/Leaf.ts
  */
 
-#include "../../include/geometry/Leaf.h"
+#include "geometry/Leaf.h"
 
 #include <algorithm>
 #include <cmath>
 #include <functional>
 
-#include "../../src/adapters/IFusionInterface.h"
+#include "adapters/IFusionInterface.h"
 
 using namespace ChipCarving::Geometry;
 

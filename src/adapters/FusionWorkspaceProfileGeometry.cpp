@@ -7,7 +7,7 @@
 
 #include <cmath>
 
-#include "../../include/utils/logging.h"
+#include "utils/logging.h"
 #include "FusionAPIAdapter.h"
 #include "FusionWorkspaceProfileTypes.h"
 

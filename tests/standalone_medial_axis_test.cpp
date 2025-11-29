@@ -26,11 +26,11 @@
 #include <voronoidiagram.hpp>
 
 // Our shape classes
-#include "../include/geometry/Leaf.h"
-#include "../include/geometry/MedialAxisUtilities.h"
-#include "../include/geometry/SVGGenerator.h"
-#include "../include/geometry/Shape.h"
-#include "../include/geometry/TriArc.h"
+#include "geometry/Leaf.h"
+#include "geometry/MedialAxisUtilities.h"
+#include "geometry/SVGGenerator.h"
+#include "geometry/Shape.h"
+#include "geometry/TriArc.h"
 
 using namespace ChipCarving::Geometry;
 

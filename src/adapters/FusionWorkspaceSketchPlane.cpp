@@ -13,7 +13,7 @@
 #include <cmath>
 #include <iostream>
 
-#include "../../include/utils/logging.h"
+#include "utils/logging.h"
 #include "FusionAPIAdapter.h"
 
 using namespace adsk::core;

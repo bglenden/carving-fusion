@@ -17,7 +17,7 @@
  * See the commit that introduced this file for the old implementation.
  */
 
-#include "../../include/utils/logging.h"
+#include "utils/logging.h"
 #include "FusionAPIAdapter.h"
 
 using namespace adsk::core;

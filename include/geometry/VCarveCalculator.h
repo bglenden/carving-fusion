@@ -9,7 +9,7 @@
 
 #include <functional>
 
-#include "../../src/adapters/IFusionInterface.h"
+#include "adapters/IFusionInterface.h"
 #include "MedialAxisProcessor.h"
 #include "MedialAxisUtilities.h"
 #include "VCarvePath.h"

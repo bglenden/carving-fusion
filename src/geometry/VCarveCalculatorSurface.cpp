@@ -9,8 +9,8 @@
 #include <cmath>
 #include <set>
 
-#include "../../include/geometry/VCarveCalculator.h"
-#include "../../include/utils/logging.h"
+#include "geometry/VCarveCalculator.h"
+#include "utils/logging.h"
 
 namespace ChipCarving {
 namespace Geometry {

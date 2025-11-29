@@ -7,8 +7,8 @@
 
 #include <filesystem>
 
-#include "../../include/geometry/Leaf.h"
-#include "../../include/geometry/SVGGenerator.h"
+#include "geometry/Leaf.h"
+#include "geometry/SVGGenerator.h"
 
 using namespace ChipCarving::Geometry;
 

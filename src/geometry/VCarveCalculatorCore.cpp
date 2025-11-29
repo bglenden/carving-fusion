@@ -9,7 +9,7 @@
 #include <cmath>
 #include <set>
 
-#include "../../include/geometry/VCarveCalculator.h"
+#include "geometry/VCarveCalculator.h"
 
 namespace ChipCarving {
 namespace Geometry {

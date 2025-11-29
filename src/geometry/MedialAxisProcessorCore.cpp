@@ -15,9 +15,9 @@
 #include <memory>
 #include <streambuf>
 
-#include "../../include/geometry/MedialAxisProcessor.h"
-#include "../../include/geometry/Shape.h"
-#include "../../include/utils/logging.h"
+#include "geometry/MedialAxisProcessor.h"
+#include "geometry/Shape.h"
+#include "utils/logging.h"
 
 namespace ChipCarving {
 namespace Geometry {

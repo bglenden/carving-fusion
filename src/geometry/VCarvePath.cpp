@@ -4,7 +4,7 @@
  * Implementation of V-carve toolpath data structures.
  */
 
-#include "../../include/geometry/VCarvePath.h"
+#include "geometry/VCarvePath.h"
 
 #include <algorithm>
 #include <cmath>

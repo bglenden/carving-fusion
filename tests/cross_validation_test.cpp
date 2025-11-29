@@ -12,10 +12,10 @@
 #include <sstream>
 #include <regex>
 
-#include "../include/core/SharedConstants.h"
-#include "../include/geometry/Leaf.h"
-#include "../include/geometry/TriArc.h"
-#include "../include/geometry/Point2D.h"
+#include "core/SharedConstants.h"
+#include "geometry/Leaf.h"
+#include "geometry/TriArc.h"
+#include "geometry/Point2D.h"
 
 using namespace ChipCarving;
 using namespace ChipCarving::Geometry;

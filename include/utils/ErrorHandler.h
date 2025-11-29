@@ -80,6 +80,18 @@ class ErrorHandler {
   }
 
   /**
+   * Execute a function with Fusion 360-specific error handling
+   * Shows user-facing messages and logs appropriately
+   *
+   * @param operation Name of the operation for logging
+   * @param func Function to execute (must return bool)
+   * @param showMessageToUser Whether to show error messages to the user
+   * @return Result of the function execution
+   */
+  static bool executeFusionOperation(const std::string& operation, std::function<bool()> func,
+                                     bool showMessageToUser = false);
+
+  /**
    * Execute optional metadata parsing with graceful failure
    * Used for parsing optional JSON fields that may be missing
    *

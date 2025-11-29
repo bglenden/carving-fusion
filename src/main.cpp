@@ -7,7 +7,7 @@
  * REFACTORED
  */
 
-#include "../include/utils/logging.h"
+#include "utils/logging.h"
 #include "core/PluginInitializer.h"
 
 extern "C" bool XPluginStart(const char* context) {

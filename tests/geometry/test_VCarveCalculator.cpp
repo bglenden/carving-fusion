@@ -5,9 +5,9 @@
 
 #include <gtest/gtest.h>
 #include <cmath>
-#include "../../include/geometry/VCarveCalculator.h"
-#include "../../include/geometry/MedialAxisProcessor.h"
-#include "../../include/geometry/MedialAxisUtilities.h"
+#include "geometry/VCarveCalculator.h"
+#include "geometry/MedialAxisProcessor.h"
+#include "geometry/MedialAxisUtilities.h"
 
 using namespace ChipCarving::Geometry;
 using namespace ChipCarving::Adapters;

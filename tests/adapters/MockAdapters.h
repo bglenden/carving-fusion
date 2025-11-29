@@ -10,9 +10,9 @@
 #include <string>
 #include <vector>
 
-#include "../../include/geometry/Shape.h"
-#include "../../include/geometry/Point3D.h"
-#include "../../src/adapters/IFusionInterface.h"
+#include "geometry/Shape.h"
+#include "geometry/Point3D.h"
+#include "adapters/IFusionInterface.h"
 
 using namespace ChipCarving::Adapters;
 

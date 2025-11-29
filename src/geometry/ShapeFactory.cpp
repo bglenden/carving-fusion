@@ -2,15 +2,15 @@
  * ShapeFactory implementation
  */
 
-#include "../../include/geometry/ShapeFactory.h"
+#include "geometry/ShapeFactory.h"
 
 #include <regex>
 #include <sstream>
 #include <stdexcept>
 
-#include "../../include/geometry/Leaf.h"
-#include "../../include/geometry/TriArc.h"
-#include "../../src/adapters/IFusionInterface.h"
+#include "geometry/Leaf.h"
+#include "geometry/TriArc.h"
+#include "adapters/IFusionInterface.h"
 
 using namespace ChipCarving::Geometry;
 

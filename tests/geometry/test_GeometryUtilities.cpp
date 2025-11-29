@@ -9,7 +9,7 @@
 #include <limits>
 #include <vector>
 
-#include "../../include/geometry/Shape.h"
+#include "geometry/Shape.h"
 
 using namespace ChipCarving::Geometry;
 

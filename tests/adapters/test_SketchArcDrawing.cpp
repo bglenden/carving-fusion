@@ -14,8 +14,8 @@
 #include <gtest/gtest.h>
 #include <memory>
 
-#include "../../include/geometry/TriArc.h"
-#include "../../include/geometry/Point2D.h"
+#include "geometry/TriArc.h"
+#include "geometry/Point2D.h"
 #include "MockAdapters.h"
 
 using namespace ChipCarving::Geometry;

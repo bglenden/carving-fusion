@@ -10,9 +10,9 @@
 #include <fstream>
 #include <sstream>
 
-#include "../include/geometry/Leaf.h"
-#include "../include/geometry/SVGGenerator.h"
-#include "../include/geometry/TriArc.h"
+#include "geometry/Leaf.h"
+#include "geometry/SVGGenerator.h"
+#include "geometry/TriArc.h"
 
 using namespace ChipCarving::Geometry;
 

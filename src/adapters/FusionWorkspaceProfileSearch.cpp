@@ -10,7 +10,7 @@
  * for details on reverting if issues arise.
  */
 
-#include "../../include/utils/logging.h"
+#include "utils/logging.h"
 #include "FusionAPIAdapter.h"
 
 using namespace adsk::core;

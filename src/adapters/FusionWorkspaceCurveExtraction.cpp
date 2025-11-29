@@ -5,7 +5,7 @@
  * Split from FusionWorkspaceProfile.cpp for maintainability
  */
 
-#include "../../include/utils/logging.h"
+#include "utils/logging.h"
 #include "FusionAPIAdapter.h"
 #include "FusionWorkspaceProfileTypes.h"
 

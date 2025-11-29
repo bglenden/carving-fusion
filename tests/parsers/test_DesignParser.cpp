@@ -4,9 +4,9 @@
 
 #include <gtest/gtest.h>
 
-#include "../../include/geometry/Leaf.h"
-#include "../../include/geometry/TriArc.h"
-#include "../../include/parsers/DesignParser.h"
+#include "geometry/Leaf.h"
+#include "geometry/TriArc.h"
+#include "parsers/DesignParser.h"
 
 using namespace ChipCarving::Parsers;
 using namespace ChipCarving::Geometry;

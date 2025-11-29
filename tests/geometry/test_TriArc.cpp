@@ -5,7 +5,7 @@
 
 #include <gtest/gtest.h>
 
-#include "../../include/geometry/TriArc.h"
+#include "geometry/TriArc.h"
 
 using namespace ChipCarving::Geometry;
 

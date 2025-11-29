@@ -9,9 +9,9 @@
 #include <string>
 #include <vector>
 
-#include "../geometry/Point2D.h"
-#include "../geometry/Shape.h"
-#include "../utils/Optional.h"
+#include "geometry/Point2D.h"
+#include "geometry/Shape.h"
+#include "utils/Optional.h"
 
 namespace ChipCarving {
 

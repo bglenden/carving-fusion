@@ -12,8 +12,8 @@
 #include <cmath>
 #include <vector>
 
-#include "../../include/geometry/MedialAxisProcessor.h"
-#include "../../include/geometry/Point2D.h"
+#include "geometry/MedialAxisProcessor.h"
+#include "geometry/Point2D.h"
 
 using namespace ChipCarving::Geometry;
 

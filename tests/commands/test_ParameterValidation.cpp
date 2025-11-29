@@ -5,7 +5,7 @@
 
 #include <gtest/gtest.h>
 
-#include "../../src/adapters/IFusionInterface.h"
+#include "adapters/IFusionInterface.h"
 
 namespace ChipCarving {
 namespace Commands {

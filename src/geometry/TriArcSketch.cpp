@@ -11,8 +11,8 @@
 #include <limits>
 #include <stdexcept>
 
-#include "../../include/geometry/TriArc.h"
-#include "../../src/adapters/IFusionInterface.h"
+#include "geometry/TriArc.h"
+#include "adapters/IFusionInterface.h"
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846

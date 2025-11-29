@@ -4,7 +4,7 @@
  */
 
 #include <gtest/gtest.h>
-#include "../../include/geometry/VCarvePath.h"
+#include "geometry/VCarvePath.h"
 
 using namespace ChipCarving::Geometry;
 

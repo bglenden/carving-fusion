@@ -8,7 +8,7 @@
 #include <gtest/gtest.h>
 #include <stdexcept>
 #include <sstream>
-#include "../../include/utils/ErrorHandler.h"
+#include "utils/ErrorHandler.h"
 
 namespace ChipCarving {
 namespace Utils {

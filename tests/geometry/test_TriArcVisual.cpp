@@ -7,8 +7,8 @@
 
 #include <filesystem>
 
-#include "../../include/geometry/SVGGenerator.h"
-#include "../../include/geometry/TriArc.h"
+#include "geometry/SVGGenerator.h"
+#include "geometry/TriArc.h"
 
 using namespace ChipCarving::Geometry;
 

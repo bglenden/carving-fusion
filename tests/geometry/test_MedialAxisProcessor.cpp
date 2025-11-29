@@ -15,9 +15,9 @@
 #include <memory>
 #include <vector>
 
-#include "../../include/geometry/Leaf.h"
-#include "../../include/geometry/MedialAxisProcessor.h"
-#include "../../include/geometry/TriArc.h"
+#include "geometry/Leaf.h"
+#include "geometry/MedialAxisProcessor.h"
+#include "geometry/TriArc.h"
 
 using namespace ChipCarving::Geometry;
 

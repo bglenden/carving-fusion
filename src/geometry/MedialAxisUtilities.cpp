@@ -4,7 +4,7 @@
  * Implementation of medial axis sampling utilities for CNC toolpath generation.
  */
 
-#include "../../include/geometry/MedialAxisUtilities.h"
+#include "geometry/MedialAxisUtilities.h"
 
 #include <algorithm>
 #include <cmath>

@@ -8,9 +8,9 @@
 #include <cmath>
 #include <iostream>
 
-#include "../../include/geometry/Point3D.h"
-#include "../../include/geometry/Shape.h"
-#include "../utils/UnitConversion.h"
+#include "geometry/Point3D.h"
+#include "geometry/Shape.h"
+#include "utils/UnitConversion.h"
 #include "FusionAPIAdapter.h"
 
 using namespace adsk::core;

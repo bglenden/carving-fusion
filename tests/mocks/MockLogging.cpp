@@ -5,7 +5,7 @@
  * Avoids dependency on Fusion 360 SDK in test environment
  */
 
-#include "../../include/utils/logging.h"
+#include "utils/logging.h"
 #include <iostream>
 
 // Global minimum log level for tests

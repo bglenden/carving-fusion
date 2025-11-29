@@ -9,8 +9,8 @@
 
 #include "../adapters/MockAdapters.h"
 #include "core/PluginManager.h"
-#include "../../include/geometry/MedialAxisProcessor.h"
-#include "../../include/geometry/Point2D.h"
+#include "geometry/MedialAxisProcessor.h"
+#include "geometry/Point2D.h"
 
 using namespace ChipCarving::Core;
 using namespace ChipCarving::Adapters;

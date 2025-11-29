@@ -14,7 +14,7 @@
 #include <random>
 #include <vector>
 
-#include "../../include/geometry/Point2D.h"
+#include "geometry/Point2D.h"
 
 using namespace ChipCarving::Geometry;
 

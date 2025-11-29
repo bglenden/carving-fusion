@@ -2,15 +2,15 @@
  * DesignParser implementation
  */
 
-#include "../../include/parsers/DesignParser.h"
+#include "parsers/DesignParser.h"
 
 #include <fstream>
 #include <regex>
 #include <sstream>
 #include <stdexcept>
 
-#include "../../include/geometry/ShapeFactory.h"
-#include "../adapters/IFusionInterface.h"
+#include "geometry/ShapeFactory.h"
+#include "adapters/IFusionInterface.h"
 
 using namespace ChipCarving::Parsers;
 using namespace ChipCarving::Geometry;

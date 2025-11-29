@@ -9,10 +9,10 @@
 #include <memory>
 #include <stdexcept>
 
-#include "../include/geometry/Leaf.h"
-#include "../include/geometry/ShapeFactory.h"
-#include "../include/geometry/TriArc.h"
-#include "../tests/adapters/MockAdapters.h"
+#include "geometry/Leaf.h"
+#include "geometry/ShapeFactory.h"
+#include "geometry/TriArc.h"
+#include "adapters/MockAdapters.h"
 
 using namespace ChipCarving::Geometry;
 using namespace ChipCarving::Adapters;
