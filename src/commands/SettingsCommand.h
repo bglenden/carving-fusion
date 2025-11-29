@@ -5,8 +5,7 @@
  * Provides UI for configuring logging levels and other settings
  */
 
-#ifndef SRC_COMMANDS_SETTINGSCOMMAND_H_
-#define SRC_COMMANDS_SETTINGSCOMMAND_H_
+#pragma once
 
 #include <Core/CoreAll.h>
 #include <Fusion/FusionAll.h>
@@ -46,5 +45,3 @@ class SettingsCommandHandler : public adsk::core::CommandCreatedEventHandler {
 
 }  // namespace Commands
 }  // namespace ChipCarving
-
-#endif  // SRC_COMMANDS_SETTINGSCOMMAND_H_

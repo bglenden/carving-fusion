@@ -1,5 +1,4 @@
-#ifndef INCLUDE_UTILS_LOGGING_H_
-#define INCLUDE_UTILS_LOGGING_H_
+#pragma once
 
 #include <sstream>
 #include <string>
@@ -88,4 +87,3 @@ LogLevel GetMinLogLevel();
     }                                                                              \
   } while (0)
 
-#endif  // INCLUDE_UTILS_LOGGING_H_
