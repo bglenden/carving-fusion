@@ -70,6 +70,13 @@ else()
     set(ADDIN_VERSION_PATCH 220)
 endif()
 
+# Generate manifest with version from VERSION file
+configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/chip_carving_paths_cpp.manifest.in
+    ${CMAKE_CURRENT_BINARY_DIR}/chip_carving_paths_cpp.manifest
+    @ONLY
+)
+
 # Set build type flag for template
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(CMAKE_BUILD_TYPE_DEBUG 1)
@@ -216,7 +223,7 @@ install(TARGETS chip_carving_paths_cpp
     LIBRARY DESTINATION "${FUSION_ADDINS_DIR}"
 )
 
-install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/chip_carving_paths_cpp.manifest
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/chip_carving_paths_cpp.manifest
     DESTINATION "${FUSION_ADDINS_DIR}"
 )
 

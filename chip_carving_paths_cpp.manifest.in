@@ -5,7 +5,7 @@
   "author": "CNC Chip Carving Project",
   "description": "C++ implementation of chip carving toolpath generation",
   "supportedOS": "windows|mac",
-  "version": "1.0.3",
+  "version": "@ADDIN_VERSION_MAJOR@.@ADDIN_VERSION_MINOR@.@ADDIN_VERSION_PATCH@",
   "runOnStartup": false,
   "editEnabled": true,
   "libraryFileNames": ["chip_carving_paths_cpp.dylib", "chip_carving_paths_cpp.dll"]
