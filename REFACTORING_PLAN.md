@@ -24,6 +24,7 @@
 | clang-tidy Phase 3 | Fixed empty catch blocks, added virtual destructor defaults | 2025-11-29 |
 | clang-tidy Phase 4 | Added `noexcept` to move operations in `Optional.h` | 2025-11-29 |
 | try/catch Cleanup | Removed unnecessary try/catch around Fusion API calls (48 files, -361 lines) | 2025-11-29 |
+| Compiler Warning Cleanup | Zero warnings with `-Wall -Wextra` (was 1 unused parameter) | 2025-11-29 |
 
 ---
 
@@ -47,7 +48,6 @@ src/adapters/mock/
 
 | Item | Description |
 |------|-------------|
-| Compiler Warning Cleanup | Enable `-Wall -Wextra -Wpedantic -Werror` and fix all warnings |
 | Logging System Refinement | Replace macros with template functions for type safety |
 | Const-Correctness Audit | Add `const` to accessor methods, review `mutable` usage |
 | Include Guard Modernization | Migrate remaining `#ifndef` guards to `#pragma once` |

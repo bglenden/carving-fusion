@@ -17,7 +17,9 @@ namespace Geometry {
 
 VCarveResults VCarveCalculator::generateVCarvePathsWithSurface(const std::vector<SampledMedialPath>& sampledPaths,
                                                                const Adapters::MedialAxisParameters& params,
-                                                               double sketchPlaneZ, SurfaceQueryFunction surfaceQuery) {
+                                                               double sketchPlaneZ,
+                                                               SurfaceQueryFunction surfaceQuery) {
+  (void)sketchPlaneZ;  // Used only in LOG_DEBUG which may be compiled out
   VCarveResults results;
 
   // Validate inputs
