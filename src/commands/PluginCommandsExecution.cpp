@@ -5,9 +5,9 @@
  * Split from PluginCommands.cpp for maintainability
  */
 
-#include "core/PluginManager.h"
+#include "../core/PluginManager.h"
 #include "PluginCommands.h"
-#include "utils/ErrorHandler.h"
+#include "../utils/ErrorHandler.h"
 
 namespace ChipCarving {
 namespace Commands {

@@ -21,9 +21,9 @@ This refactoring plan addresses technical debt and brings the codebase into full
 |---|------|----------|--------|-------------------|
 | 1 | File Size Compliance | **P0** | ✅ **COMPLETE** | Split 5 oversized files into 13 compliant files (all ≤ 350 lines) |
 | 2 | Resolve High-Priority TODOs | **P0** | ✅ **COMPLETE** | ErrorHandler UI integration complete, 6 actionable TODOs resolved |
+| 4 | Header Include Cleanup | **P0** | ✅ **COMPLETE** | CMake + 27 files updated to use clean relative paths |
 | 5 | Error Handling Consolidation | **P1** | ✅ **COMPLETE** | ErrorHandler now shows Fusion 360 dialogs |
-| 3 | Mock Reorganization | **P1** | Planned | Centralize mock implementations from tests/ to src/adapters/mock/ |
-| 4 | Header Include Cleanup | **P1** | Planned | Standardize include paths to use clean paths (not ../../ prefixes) |
+| 3 | Mock Reorganization | **P1** | 📋 Planned | Centralize mock implementations from tests/ to src/adapters/mock/ |
 | 5 | Error Handling Consolidation | **P1** | Planned | Expand ErrorHandler, add error codes, UI integration |
 | 6 | Compiler Warning Cleanup | **P2** | Planned | Fix all warnings with -Wall -Wextra -Wpedantic -Werror |
 | 7 | Logging System Refinement | **P2** | Planned | Replace macros with template functions, add structured logging |
