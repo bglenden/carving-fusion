@@ -167,8 +167,10 @@ void FusionSketch::clearConstructionGeometry() {
     }
     constructionPoints_.clear();
   } catch (const std::exception& e) {
+    (void)e;  // Clear construction geometry error
     std::cout << "Clear construction geometry error: " << e.what() << std::endl;
   } catch (...) {
+    (void)0;  // Unknown clear construction geometry error
     std::cout << "Unknown clear construction geometry error" << std::endl;
   }
 }

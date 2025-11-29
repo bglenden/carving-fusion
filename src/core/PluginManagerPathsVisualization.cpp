@@ -162,7 +162,9 @@ void PluginManager::addConstructionGeometryVisualization(Adapters::ISketch* sket
       }
     }
   } catch (const std::exception& e) {
+    (void)e;  // Ignore visualization errors
   } catch (...) {
+    (void)0;  // Ignore visualization errors
   }
 }
 

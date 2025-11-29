@@ -49,7 +49,7 @@ bool PluginManager::executeImportDesign() {
         // Move shape to our storage (transfer ownership)
         importedShapes_.push_back(std::move(shape));
       } catch (const std::exception& e) {
-        // Continue with other shapes
+        (void)e;  // Continue with other shapes
       }
     }
 
@@ -74,7 +74,7 @@ bool PluginManager::executeImportDesign() {
         logger_->logInfo("⏱️ Shape " + std::to_string(i) + " drawing took: " + std::to_string(shapeDuration.count()) +
                          "ms");
       } catch (const std::exception& e) {
-        // Continue with other shapes
+        (void)e;  // Continue with other shapes
       }
     }
 
@@ -121,7 +121,7 @@ bool PluginManager::executeImportDesign(const std::string& filePath, const std::
         // Move shape to our storage (transfer ownership)
         importedShapes_.push_back(std::move(shape));
       } catch (const std::exception& e) {
-        // Continue with other shapes
+        (void)e;  // Continue with other shapes
       }
     }
 
@@ -151,7 +151,7 @@ bool PluginManager::executeImportDesign(const std::string& filePath, const std::
       try {
         sketch->addShape(shape.get(), logger_.get());
       } catch (const std::exception& e) {
-        // Continue with other shapes
+        (void)e;  // Continue with other shapes
       }
     }
 

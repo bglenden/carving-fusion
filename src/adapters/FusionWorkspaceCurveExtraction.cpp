@@ -56,7 +56,7 @@ bool FusionWorkspace::extractCurvesFromProfile(adsk::core::Ptr<adsk::fusion::Pro
                 LOG_WARNING("Found 3D curve at index " << i);
               }
             } catch (...) {
-              // Ignore property access errors
+              (void)0;  // Ignore property access errors
             }
           }
         }

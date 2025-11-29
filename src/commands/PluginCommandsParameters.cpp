@@ -143,7 +143,7 @@ void GeneratePathsCommandHandler::createParameterInputs(adsk::core::Ptr<adsk::co
     samplingDistance->tooltip("Distance between V-carve points for surface following (smaller = more "
                               "accurate, default: 2.0mm)");
   } catch (...) {
-    // Ignore input creation errors for now
+    (void)0;  // Ignore input creation errors for now
   }
 }
 
@@ -247,7 +247,7 @@ ChipCarving::Adapters::MedialAxisParameters GeneratePathsCommandHandler::getPara
       }
     }
   } catch (...) {
-    // Return default parameters on error
+    (void)0;  // Return default parameters on error
   }
 
   return params;

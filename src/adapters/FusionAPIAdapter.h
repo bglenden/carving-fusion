@@ -72,7 +72,7 @@ class FusionSketch : public ISketch {
                         adsk::core::Ptr<adsk::fusion::Sketch> sketch);
   ~FusionSketch() override = default;
 
-  void addShape(const Geometry::Shape* shape, ILogger* logger = nullptr) override;
+  void addShape(const Geometry::Shape* shape, ILogger* logger) override;
   std::string getName() const override;
   bool addLineToSketch(double x1, double y1, double x2, double y2) override;
   bool addArcToSketch(double centerX, double centerY, double radius, double startAngle, double endAngle) override;

@@ -43,8 +43,8 @@ std::vector<double> SVGComparator::extractNumbers(const std::string& svgContent)
     try {
       double value = std::stod(iter->str());
       numbers.push_back(value);
-    } catch (const std::exception&) {
-      // Skip invalid numbers
+    } catch (const std::exception& e) {
+      (void)e;  // Skip invalid numbers
     }
   }
 

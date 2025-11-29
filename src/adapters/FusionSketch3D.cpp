@@ -204,8 +204,10 @@ std::vector<std::string> FusionSketch::getSketchCurveEntityIds() {
       }
     }
   } catch (const std::exception& e) {
+    (void)e;  // Error getting sketch curve entity IDs
     std::cout << "Error getting sketch curve entity IDs: " << e.what() << std::endl;
   } catch (...) {
+    (void)0;  // Unknown error getting sketch curve entity IDs
     std::cout << "Unknown error getting sketch curve entity IDs" << std::endl;
   }
 

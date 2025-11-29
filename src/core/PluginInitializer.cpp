@@ -109,7 +109,7 @@ void PluginInitializer::LogMessage(const std::string& message) {
       }
     }
   } catch (...) {
-    // Ignore logging errors
+    (void)0;  // Ignore logging errors
   }
 }
 

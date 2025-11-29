@@ -71,7 +71,7 @@ void PluginInitializer::CreateImportDesignCommand() {
       }
     }
   } catch (std::exception& e) {
-    // Ignore errors
+    (void)e;  // Ignore errors
   }
 }
 
@@ -118,7 +118,7 @@ void PluginInitializer::CreateGeneratePathsCommand() {
       }
     }
   } catch (std::exception& e) {
-    // Ignore errors
+    (void)e;  // Ignore errors
   }
 }
 
@@ -165,7 +165,7 @@ void PluginInitializer::CreateSettingsCommand() {
       }
     }
   } catch (std::exception& e) {
-    // Ignore errors
+    (void)e;  // Ignore errors
   }
 }
 

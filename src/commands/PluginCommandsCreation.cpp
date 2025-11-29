@@ -223,7 +223,7 @@ void GeneratePathsCommandHandler::notify(const adsk::core::Ptr<adsk::core::Comma
             LOG_INFO("Restored original selection filters on dialog close");
           }
         } catch (...) {
-          // Ignore errors during cleanup
+          (void)0;  // Ignore errors during cleanup
         }
       }
     };

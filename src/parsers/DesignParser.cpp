@@ -51,8 +51,8 @@ DesignFile DesignParser::parseFromString(const std::string& jsonContent, const A
   // Parse metadata (optional)
   try {
     design.metadata = parseMetadata(jsonContent);
-  } catch (const std::exception&) {
-    // Metadata is optional, continue if not found
+  } catch (const std::exception& e) {
+    (void)e;  // Metadata is optional, continue if not found
   }
 
   // Parse shapes (required)
@@ -64,8 +64,8 @@ DesignFile DesignParser::parseFromString(const std::string& jsonContent, const A
   // Parse background images (optional)
   try {
     design.backgroundImages = parseBackgroundImages(jsonContent);
-  } catch (const std::exception&) {
-    // Background images are optional, continue if not found
+  } catch (const std::exception& e) {
+    (void)e;  // Background images are optional, continue if not found
   }
 
   return design;
@@ -100,30 +100,30 @@ DesignMetadata DesignParser::parseMetadata(const std::string& jsonContent) {
     try {
       metadata.name = extractString(metadataJson, "name");
     } catch (const std::exception& e) {
-      // Optional field - continue without logging
+      (void)e;  // Optional field - continue without logging
     }
     try {
       metadata.author = extractString(metadataJson, "author");
     } catch (const std::exception& e) {
-      // Optional field - continue without logging
+      (void)e;  // Optional field - continue without logging
     }
     try {
       metadata.created = extractString(metadataJson, "created");
     } catch (const std::exception& e) {
-      // Optional field - continue without logging
+      (void)e;  // Optional field - continue without logging
     }
     try {
       metadata.modified = extractString(metadataJson, "modified");
     } catch (const std::exception& e) {
-      // Optional field - continue without logging
+      (void)e;  // Optional field - continue without logging
     }
     try {
       metadata.description = extractString(metadataJson, "description");
     } catch (const std::exception& e) {
-      // Optional field - continue without logging
+      (void)e;  // Optional field - continue without logging
     }
-  } catch (const std::exception&) {
-    // Metadata section not found or invalid
+  } catch (const std::exception& e) {
+    (void)e;  // Metadata section not found or invalid
   }
 
   return metadata;
@@ -182,8 +182,8 @@ std::vector<BackgroundImage> DesignParser::parseBackgroundImages(const std::stri
 
       images.push_back(image);
     }
-  } catch (const std::exception&) {
-    // Background images are optional
+  } catch (const std::exception& e) {
+    (void)e;  // Background images are optional
   }
 
   return images;

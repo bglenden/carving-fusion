@@ -193,9 +193,10 @@ std::string FusionUserInterface::showFileDialog(const std::string& title, const 
       }
     }
   } catch (const std::exception& e) {
-    // Log error but don't crash
+    (void)e;  // Log error but don't crash
     std::cout << "File dialog error: " << e.what() << std::endl;
   } catch (...) {
+    (void)0;  // Unknown file dialog error
     std::cout << "Unknown file dialog error" << std::endl;
   }
 

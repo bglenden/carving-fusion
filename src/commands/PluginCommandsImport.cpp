@@ -92,8 +92,10 @@ void ImportDesignCommandHandler::notify(const adsk::core::Ptr<adsk::core::Comman
     auto onInputChanged = new InputChangedHandler(this);
     command->inputChanged()->add(onInputChanged);
   } catch (const std::exception& e) {
+    (void)e;  // Import design command setup error
     std::cerr << "Import design command setup error: " << e.what() << std::endl;
   } catch (...) {
+    (void)0;  // Unknown error in import design command setup
     std::cerr << "Unknown error in import design command setup" << std::endl;
   }
 }
@@ -194,6 +196,7 @@ void ImportDesignCommandHandler::executeImportDesign(const adsk::core::Ptr<adsk:
     // Execute the import with the selected file and optional plane
     pluginManager_->executeImportDesign(selectedFilePath_, planeEntityId);
   } catch (const std::exception& e) {
+    (void)e;  // Error executing import design
     std::cerr << "Error executing import design: " << e.what() << std::endl;
   }
 }

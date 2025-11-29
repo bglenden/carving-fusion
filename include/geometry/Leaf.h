@@ -94,7 +94,7 @@ class Leaf : public Shape {
 
   // NOTE: getPolygonVertices() removed - polygonization now handled by Fusion strokes
 
-  void drawToSketch(Adapters::ISketch* sketch, Adapters::ILogger* logger = nullptr) const override;
+  void drawToSketch(Adapters::ISketch* sketch, Adapters::ILogger* logger) const override;
   bool contains(const Point2D& point) const override;
   Point2D getCentroid() const override;
 

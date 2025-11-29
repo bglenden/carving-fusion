@@ -158,9 +158,9 @@ std::vector<std::string> FusionWorkspace::getAllSketchNames() {
       }
     }
   } catch (const std::exception& e) {
-    // Return empty vector on error
+    (void)e;  // Return empty vector on error
   } catch (...) {
-    // Return empty vector on unknown error
+    (void)0;  // Return empty vector on unknown error
   }
 
   return sketchNames;

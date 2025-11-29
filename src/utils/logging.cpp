@@ -70,7 +70,7 @@ void LogToConsole(LogLevel level, const std::string& message) {
       textCommandPalette->writeText(logMessage);
     }
   } catch (...) {
-    // Silently fail if logging doesn't work
+    (void)0;  // Silently fail if logging doesn't work
   }
 }
 
