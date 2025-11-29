@@ -769,3 +769,33 @@ $ wc -l src/**/*.cpp | sort -n | tail -10
 ---
 
 **End of Refactoring Plan**
+
+---
+
+## Status Update - Critical Anti-Pattern Fix Attempt (2025-11-28)
+
+**Attempted Solution**: Removed all CPP-includes-CPP aggregator files and added individual implementation files to CMakeLists.txt
+
+**Files Successfully Deleted**:
+- src/geometry/SVGGenerator.cpp ✓
+- src/geometry/VCarveCalculator.cpp ✓
+- src/geometry/MedialAxisProcessor.cpp ✓
+- src/geometry/TriArc.cpp ✓
+- src/core/PluginManagerPaths.cpp ✓
+
+**Files Reverted Due to Linker Errors**:
+- src/core/PluginManager.cpp (caused vtable errors)
+- src/adapters/FusionWorkspace.cpp (caused vtable errors)
+
+**Root Cause**: FusionWorkspace and PluginManager classes rely on the CPP-includes-CPP pattern to ensure complete vtable generation. When split into separate compilation units, the vtable becomes incomplete because the virtual functions are defined across multiple .cpp files.
+
+**Impact**: Could not complete the anti-pattern fix for all files. The build system still has 2 aggregator files remaining.
+
+**Recommendation**: This requires a more sophisticated refactoring approach:
+1. Move all virtual function definitions into .h files as inline
+2. Or create dedicated .cpp files that explicitly instantiate all virtual functions
+3. Or restructure the class hierarchy to avoid the need for complete vtables
+
+**Remaining Work**: 2 out of 10 aggregator files still use the anti-pattern pattern. These are the most complex ones due to their extensive virtual function tables.
+
+---
