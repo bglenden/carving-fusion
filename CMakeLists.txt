@@ -45,6 +45,7 @@ include_directories(SYSTEM ${OPENVORONOI_INCLUDE_DIR})
 # Add project include directories for clean includes
 include_directories(${CMAKE_SOURCE_DIR}/include)
 include_directories(${CMAKE_SOURCE_DIR}/src)
+include_directories(${CMAKE_SOURCE_DIR}/src)
 
 # Use 'make increment_version' to manually increment version
 add_custom_target(increment_version
