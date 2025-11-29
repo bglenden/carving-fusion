@@ -59,7 +59,15 @@ std::shared_ptr<Commands::GeneratePathsCommandHandler> generateHandler;
 std::shared_ptr<Commands::SettingsCommandHandler> settingsHandler;
 }  // namespace Internal
 
-using namespace Internal;
+using Internal::app;
+using Internal::commandControls;
+using Internal::commandDefinitions;
+using Internal::generateHandler;
+using Internal::importHandler;
+using Internal::panel;
+using Internal::pluginManager;
+using Internal::settingsHandler;
+using Internal::ui;
 
 PluginMode PluginInitializer::GetModeFromEnv() {
   const char* mode = std::getenv("CHIP_CARVING_PLUGIN_MODE");

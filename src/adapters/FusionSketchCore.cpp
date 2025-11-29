@@ -17,7 +17,9 @@
 #define M_PI 3.14159265358979323846
 #endif
 
-using namespace adsk::core;
+using adsk::core::Application;
+using adsk::core::Point3D;
+using adsk::core::Ptr;
 
 namespace ChipCarving {
 namespace Adapters {

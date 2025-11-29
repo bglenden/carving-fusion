@@ -15,7 +15,9 @@
 #include "FusionAPIAdapter.h"
 #include "FusionWorkspaceProfileTypes.h"
 
-using namespace adsk::core;
+using adsk::core::Base;
+using adsk::core::Point3D;
+using adsk::core::Ptr;
 
 namespace ChipCarving {
 namespace Adapters {

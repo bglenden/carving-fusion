@@ -5,7 +5,8 @@
  * Split from PluginCommands.cpp for maintainability
  */
 
-#include "utils/logging.h"
+#include <iostream>
+
 #include "PluginCommands.h"
 #include "utils/ErrorHandler.h"
 #include "utils/logging.h"

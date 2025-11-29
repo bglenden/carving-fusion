@@ -14,7 +14,11 @@
 #include "utils/logging.h"
 #include "FusionAPIAdapter.h"
 
-using namespace adsk::core;
+using adsk::core::Base;
+using adsk::core::ObjectCollection;
+using adsk::core::Point3D;
+using adsk::core::Ptr;
+using adsk::core::Vector3D;
 
 namespace ChipCarving {
 namespace Adapters {

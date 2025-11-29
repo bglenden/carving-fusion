@@ -11,7 +11,7 @@
 #include "utils/UnitConversion.h"
 #include "PluginCommands.h"
 
-using namespace ChipCarving::Utils;
+using ChipCarving::Utils::fusionLengthToMm;
 
 namespace ChipCarving {
 namespace Commands {

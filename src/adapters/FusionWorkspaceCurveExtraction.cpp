@@ -9,7 +9,13 @@
 #include "FusionAPIAdapter.h"
 #include "FusionWorkspaceProfileTypes.h"
 
-using namespace adsk::core;
+using adsk::core::Base;
+using adsk::core::Curve3D;
+using adsk::core::CurveEvaluator3D;
+using adsk::core::Plane;
+using adsk::core::Point3D;
+using adsk::core::Ptr;
+using adsk::core::Vector3D;
 
 namespace ChipCarving {
 namespace Adapters {

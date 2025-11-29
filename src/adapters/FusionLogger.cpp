@@ -12,12 +12,14 @@
 
 #include "FusionAPIAdapter.h"
 
-using namespace adsk::core;
+using adsk::core::DialogOK;
+using adsk::core::DialogResults;
+using adsk::core::FileDialog;
+using adsk::core::Ptr;
+using adsk::core::UserInterface;
 
 namespace ChipCarving {
 namespace Adapters {
-
-using namespace ChipCarving::Adapters;
 
 // FusionLogger Implementation
 FusionLogger::FusionLogger(const std::string& logFilePath) : logFilePath_(logFilePath) {

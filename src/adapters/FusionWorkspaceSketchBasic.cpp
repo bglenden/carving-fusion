@@ -13,7 +13,8 @@
 
 #include "FusionAPIAdapter.h"
 
-using namespace adsk::core;
+using adsk::core::Application;
+using adsk::core::Ptr;
 
 namespace ChipCarving {
 namespace Adapters {

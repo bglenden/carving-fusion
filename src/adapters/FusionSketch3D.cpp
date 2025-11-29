@@ -13,7 +13,9 @@
 #include "utils/UnitConversion.h"
 #include "FusionAPIAdapter.h"
 
-using namespace adsk::core;
+using adsk::core::ObjectCollection;
+using adsk::core::Point3D;
+using adsk::core::Ptr;
 
 namespace ChipCarving {
 namespace Adapters {
