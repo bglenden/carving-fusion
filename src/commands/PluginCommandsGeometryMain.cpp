@@ -7,9 +7,8 @@
  */
 
 #include "../../include/utils/logging.h"
-#include "PluginCommandsGeometryChaining.h"
-
 #include "PluginCommands.h"
+#include "PluginCommandsGeometryChaining.h"
 
 namespace ChipCarving {
 namespace Commands {
@@ -217,7 +216,8 @@ void GeneratePathsCommandHandler::extractAndCacheProfileGeometry(adsk::core::Ptr
       // Log first few vertices for debugging
       size_t numToLog = std::min(size_t(6), profileGeom.vertices.size());
       for (size_t i = 0; i < numToLog; ++i) {
-        LOG_INFO("  Vertex " << i << ": (" << profileGeom.vertices[i].first << ", " << profileGeom.vertices[i].second << ")");
+        LOG_INFO("  Vertex " << i << ": (" << profileGeom.vertices[i].first << ", " << profileGeom.vertices[i].second
+                             << ")");
       }
       if (profileGeom.vertices.size() > 6) {
         LOG_INFO("  ... and " << (profileGeom.vertices.size() - 6) << " more vertices");
@@ -243,8 +243,8 @@ void GeneratePathsCommandHandler::extractAndCacheProfileGeometry(adsk::core::Ptr
     cachedProfiles_[index] = profileGeom;
 
     LOG_INFO("Successfully cached geometry for profile " << index << " from sketch '" << profileGeom.sketchName
-                                                         << "' with " << profileGeom.vertices.size() << " vertices and area "
-                                                         << profileGeom.area << " sq cm");
+                                                         << "' with " << profileGeom.vertices.size()
+                                                         << " vertices and area " << profileGeom.area << " sq cm");
   } catch (const std::exception& e) {
     LOG_INFO("Exception during geometry extraction for profile " << index << ": " << e.what());
   } catch (...) {

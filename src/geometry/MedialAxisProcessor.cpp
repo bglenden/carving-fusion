@@ -8,6 +8,7 @@
 
 // Include all split implementation files
 #include "MedialAxisProcessorCore.cpp"
+#include "MedialAxisProcessorValidation.cpp"
 #include "MedialAxisProcessorVoronoi.cpp"
 
 // All implementations are now in the included files above

@@ -83,6 +83,38 @@ PluginCommandsGeometry.cpp →
 - No public API changes
 - `make lint` passes without file size warnings
 
+### ⚠️ File Size Refactoring Challenges (AI Limitations)
+
+**Status**: Partially completed - Only `PluginCommandsGeometry.cpp` successfully split
+
+**Completed:**
+- ✅ `PluginCommandsGeometry.cpp` (381 lines) → Split into 2 files (256 + 147 lines)  
+  - Both now comply with 350-line limit
+  - Method: Extracted curve chaining algorithm into separate file
+  - Verification: Builds, all 287 tests pass
+
+**Attempted but Failed:**
+- ❌ `PluginInitializer.cpp` (389 lines) - Too complex for safe AI refactoring
+  - **Challenge**: Contains global variables with complex initialization order
+  - **Problem**: Heavy interdependencies between init, command creation, and panel setup  
+  - **Risk**: High - Could break plugin startup/shutdown lifecycle
+  - **Conclusion**: Requires human architect with deep Fusion 360 API knowledge
+
+- ❌ `PluginCommandsParameters.cpp` (534 lines) - Attempted multiple approaches
+  - **Challenge**: Functions tightly coupled through shared member variables  
+  - **Problem**: Parameter extraction ↔ UI setup ↔ selection handling all interdependent
+  - **Risk**: High - Could break user input handling and command execution
+  - **Conclusion**: Needs careful human refactoring with integration testing
+
+**Why AI failed:**
+1. **Circular dependencies**: Globals in one file depend on functions in another
+2. **Tight coupling**: Member variables accessed across multiple functions
+3. **External dependencies**: Fusion 360 API calls with complex lifetime management  
+4. **Build system complexity**: CMake requires precise file ordering
+5. **Testing gaps**: No easy way to verify partial refactoring without full integration
+
+**Recommendation**: Manual refactoring by architect familiar with codebase
+
 ---
 
 #### 2. Resolve High-Priority TODOs

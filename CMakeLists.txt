@@ -94,6 +94,7 @@ add_library(chip_carving_paths_cpp SHARED
     ${CMAKE_CURRENT_SOURCE_DIR}/src/version.h
     src/core/PluginManager.cpp
     src/core/PluginInitializer.cpp
+    src/core/PluginInitializerCommands.cpp
     src/adapters/FusionAPIAdapter.cpp
     src/adapters/FusionLogger.cpp
     src/adapters/FusionWorkspace.cpp
@@ -108,6 +109,7 @@ add_library(chip_carving_paths_cpp SHARED
     src/commands/PluginCommandsGeometryChaining.cpp
     src/commands/PluginCommandsImport.cpp
     src/commands/PluginCommandsParameters.cpp
+    src/commands/PluginCommandsParametersSelection.cpp
     src/commands/PluginCommandsValidation.cpp
     src/commands/SettingsCommand.cpp
     src/parsers/DesignParser.cpp

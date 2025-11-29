@@ -9,6 +9,7 @@
 #include "FusionWorkspaceCurve.cpp"
 #include "FusionWorkspaceEntityLookup.cpp"
 #include "FusionWorkspaceProfile.cpp"
+#include "FusionWorkspaceProfileGeometry.cpp"
 #include "FusionWorkspaceSketch.cpp"
 
 // All implementations are now in the included files above

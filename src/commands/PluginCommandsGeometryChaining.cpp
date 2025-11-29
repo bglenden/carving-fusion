@@ -6,8 +6,9 @@
  * Extracted from PluginCommandsGeometry.cpp
  */
 
-#include "../../include/utils/logging.h"
 #include "PluginCommandsGeometryChaining.h"
+
+#include "../../include/utils/logging.h"
 
 namespace ChipCarving {
 namespace Commands {
@@ -15,13 +16,11 @@ namespace Commands {
 void logChainingInfo(size_t curveCount, bool hadTessellationIssues, double tolerance) {
   LOG_INFO("  Chaining " << curveCount << " curves...");
   if (hadTessellationIssues) {
-    LOG_WARNING("  Using relaxed chaining tolerance " + std::to_string(tolerance) +
-                " cm due to tessellation issues");
+    LOG_WARNING("  Using relaxed chaining tolerance " + std::to_string(tolerance) + " cm due to tessellation issues");
   }
 }
 
-std::vector<std::pair<double, double>> chainCurvesAndExtractVertices(
-    const std::vector<CurveData>& allCurves) {
+std::vector<std::pair<double, double>> chainCurvesAndExtractVertices(const std::vector<CurveData>& allCurves) {
   std::vector<std::pair<double, double>> vertices;
 
   if (allCurves.empty()) {
@@ -98,9 +97,9 @@ std::vector<std::pair<double, double>> chainCurvesAndExtractVertices(
       int unconnectedCount = 0;
       for (size_t i = 0; i < tempCurves.size(); ++i) {
         if (!tempCurves[i].used) {
-          LOG_ERROR("    Unconnected curve "
-                    << i << ": start(" << tempCurves[i].startPoint->x() << ", " << tempCurves[i].startPoint->y()
-                    << ") end(" << tempCurves[i].endPoint->x() << ", " << tempCurves[i].endPoint->y() << ")");
+          LOG_ERROR("    Unconnected curve " << i << ": start(" << tempCurves[i].startPoint->x() << ", "
+                                             << tempCurves[i].startPoint->y() << ") end(" << tempCurves[i].endPoint->x()
+                                             << ", " << tempCurves[i].endPoint->y() << ")");
           unconnectedCount++;
         }
       }
@@ -118,8 +117,7 @@ std::vector<std::pair<double, double>> chainCurvesAndExtractVertices(
     size_t numPoints = strokePoints.size() - 1;
 
     // Check if reversed by comparing endpoints
-    if (i < tempCurves.size() &&
-        std::abs(curve.endPoint->x() - currentEndPoint->x()) < tolerance / 2 &&
+    if (i < tempCurves.size() && std::abs(curve.endPoint->x() - currentEndPoint->x()) < tolerance / 2 &&
         std::abs(curve.endPoint->y() - currentEndPoint->y()) < tolerance / 2 &&
         std::abs(curve.endPoint->z() - currentEndPoint->z()) < tolerance / 2) {
       // Add points in reverse order
