@@ -102,13 +102,6 @@ void ChipCarving::Core::PluginManager::setupErrorHandling() {
   }
 
   // Setup error handler with UI integration for user-facing messages
-  Utils::ErrorHandler::enableUserMessages(true);
-  Utils::ErrorHandler::setUserInterface(ui_.get());
-
-  // Set a global callback for more detailed error logging
-  Utils::ErrorHandler::setGlobalErrorCallback([this](const std::string& errorMsg, const std::string& context) {
-    LOG_ERROR("Error in " << context << ": " << errorMsg);
-  });
 }
 
 
