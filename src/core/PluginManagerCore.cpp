@@ -9,16 +9,16 @@
 #include <set>
 #include <sstream>
 
-#include "../../include/geometry/Point2D.h"
-#include "../../include/geometry/Point3D.h"
-#include "../../include/geometry/VCarveCalculator.h"
-#include "../../include/parsers/DesignParser.h"
-#include "../../include/utils/logging.h"
-#include "../utils/UnitConversion.h"
-#include "../version.h"
+#include "geometry/Point2D.h"
+#include "geometry/Point3D.h"
+#include "geometry/VCarveCalculator.h"
+#include "parsers/DesignParser.h"
+#include "utils/logging.h"
+#include "utils/UnitConversion.h"
+#include "version.h"
 #include "PluginManager.h"
 
-#include "../utils/ErrorHandler.h"
+#include "utils/ErrorHandler.h"
 namespace ChipCarving {
 namespace Core {
 
@@ -106,12 +106,12 @@ void ChipCarving::Core::PluginManager::setupErrorHandling() {
   Utils::ErrorHandler::setUserInterface(ui_.get());
 
   // Set a global callback for more detailed error logging
-  Utils::ErrorHandler::setGlobalErrorCallback([](const std::string& errorMsg, const std::string& context) {
+  Utils::ErrorHandler::setGlobalErrorCallback([this](const std::string& errorMsg, const std::string& context) {
     LOG_ERROR("Error in " << context << ": " << errorMsg);
   });
 }
 
 
 }  // namespace ChipCarving
-#include "../utils/ErrorHandler.h"
+#include "utils/ErrorHandler.h"
 

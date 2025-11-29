@@ -5,12 +5,12 @@
  */
 
 #include "ErrorHandler.h"
-#include "../adapters/IFusionInterface.h"
+#include "adapters/IFusionInterface.h"
 
 
 #include <iostream>
 
-#include "../../include/utils/logging.h"
+#include "utils/logging.h"
 
 namespace ChipCarving {
 namespace Utils {

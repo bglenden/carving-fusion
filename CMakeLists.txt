@@ -42,8 +42,9 @@ message(STATUS "Using OpenVoronoi headers: ${OPENVORONOI_INCLUDE_DIR}")
 # Include directories
 include_directories(${FUSION_SDK_PATH}/include)
 include_directories(SYSTEM ${OPENVORONOI_INCLUDE_DIR})
+# Add project include directories for clean includes
+include_directories(${CMAKE_SOURCE_DIR}/include)
 
-# Manual version increment target (no longer automatic)
 # Use 'make increment_version' to manually increment version
 add_custom_target(increment_version
     COMMAND ${CMAKE_COMMAND} -E echo "Manually incrementing version..."
