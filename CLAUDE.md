@@ -98,16 +98,43 @@ Follows [semver.org](https://semver.org) with automatic git hash for dev builds:
 | `1.0.1-rc.1` | `1.0.1-rc.1+abc1234` | Release candidate                    |
 | `1.0.1`      | `1.0.1`              | Release (clean, no hash)             |
 
-**Release workflow:**
+The manifest file (`chip_carving_paths_cpp.manifest`) is auto-generated from VERSION via CMake.
 
-1. During development: `VERSION` = `X.Y.Z-dev`
-2. Ready to release: change to `X.Y.Z` (remove `-dev`)
-3. After release: bump to `X.Y.(Z+1)-dev`
+### Branching Strategy
+
+Uses Git Flow with two worktrees:
+
+| Worktree | Branch | Purpose |
+|----------|--------|---------|
+| `carving-fusion` | main | 1.0.x patch releases (bug fixes) |
+| `carving-fusion-dev` | develop | 1.1.0+ feature development |
+
+**Keeping branches in sync:**
+
+Periodically merge main into develop to incorporate bug fixes:
 
 ```bash
-# Edit VERSION file directly - no commands needed
-# The build system auto-generates version.h with git hash for pre-releases
+# In carving-fusion-dev worktree
+git fetch origin
+git merge main
 ```
+
+This prevents large merge conflicts when releasing feature versions.
+
+**Release workflow (patch release on main):**
+
+1. In `carving-fusion` worktree: change VERSION to `1.0.X` (remove `-dev`)
+2. Commit, tag (`git tag v1.0.X`), push with tags
+3. Bump VERSION to `1.0.(X+1)-dev`
+4. Merge main into develop to sync the fix
+
+**Release workflow (feature release from develop):**
+
+1. Merge main into develop (get any pending fixes)
+2. Change VERSION to `1.1.0` (remove `-dev`)
+3. Merge develop into main
+4. Tag (`git tag v1.1.0`), push main with tags
+5. Bump develop VERSION to `1.2.0-dev`
 
 ### Complete Make Targets Reference
 
