@@ -17,7 +17,7 @@
 #include "utils/UnitConversion.h"
 #include "PluginManager.h"
 
-using namespace ChipCarving::Utils;
+// No types from ChipCarving::Utils are used in this file
 
 namespace ChipCarving {
 namespace Core {

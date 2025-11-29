@@ -30,8 +30,19 @@
 #include "version.h"
 #include "PluginInitializerGlobals.h"
 
-using namespace adsk::core;
-using namespace adsk::fusion;
+using adsk::core::Application;
+using adsk::core::CommandControl;
+using adsk::core::CommandDefinition;
+using adsk::core::CommandDefinitions;
+using adsk::core::Document;
+using adsk::core::Palettes;
+using adsk::core::Ptr;
+using adsk::core::TextCommandPalette;
+using adsk::core::ToolbarPanel;
+using adsk::core::ToolbarPanels;
+using adsk::core::UserInterface;
+using adsk::core::Workspace;
+using adsk::core::Workspaces;
 
 namespace ChipCarving {
 

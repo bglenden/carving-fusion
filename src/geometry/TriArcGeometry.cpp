@@ -18,7 +18,11 @@
 #define M_PI 3.14159265358979323846
 #endif
 
-using namespace ChipCarving::Geometry;
+using ChipCarving::Geometry::Point2D;
+using ChipCarving::Geometry::ArcParams;
+using ChipCarving::Geometry::TriArc;
+using ChipCarving::Geometry::distance;
+using ChipCarving::Geometry::midpoint;
 
 std::array<ArcParams, 3> TriArc::getArcParameters() const {
   std::array<ArcParams, 3> arcs;

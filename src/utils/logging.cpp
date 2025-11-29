@@ -6,7 +6,11 @@
 #include <iomanip>
 #include <sstream>
 
-using namespace adsk::core;
+using adsk::core::Application;
+using adsk::core::Palette;
+using adsk::core::Ptr;
+using adsk::core::TextCommandPalette;
+using adsk::core::UserInterface;
 
 // Global minimum log level (default to WARNING for cleaner output)
 static LogLevel g_minLogLevel = LogLevel::WARNING;

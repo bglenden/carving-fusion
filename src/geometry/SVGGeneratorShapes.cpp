@@ -13,7 +13,11 @@
 
 #include "geometry/SVGGenerator.h"
 
-using namespace ChipCarving::Geometry;
+using ChipCarving::Geometry::SVGGenerator;
+using ChipCarving::Geometry::Point2D;
+using ChipCarving::Geometry::Leaf;
+using ChipCarving::Geometry::TriArc;
+using ChipCarving::Geometry::ArcParams;
 
 void SVGGenerator::addLeaf(const Leaf& leaf, const std::string& color, double strokeWidth) {
   if (!leaf.isValidGeometry()) {

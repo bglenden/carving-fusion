@@ -11,8 +11,20 @@
 #include "PluginInitializer.h"
 #include "PluginInitializerGlobals.h"
 
-using namespace adsk::core;
-using namespace ChipCarving::Internal;
+using adsk::core::CommandControl;
+using adsk::core::CommandDefinition;
+using adsk::core::CommandDefinitions;
+using adsk::core::Ptr;
+using adsk::core::ToolbarControls;
+
+using ChipCarving::Internal::commandControls;
+using ChipCarving::Internal::commandDefinitions;
+using ChipCarving::Internal::generateHandler;
+using ChipCarving::Internal::importHandler;
+using ChipCarving::Internal::panel;
+using ChipCarving::Internal::pluginManager;
+using ChipCarving::Internal::settingsHandler;
+using ChipCarving::Internal::ui;
 
 namespace ChipCarving {
 

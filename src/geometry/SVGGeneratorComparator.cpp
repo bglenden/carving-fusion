@@ -13,7 +13,7 @@
 
 #include "geometry/SVGGenerator.h"
 
-using namespace ChipCarving::Geometry;
+using ChipCarving::Geometry::SVGComparator;
 
 // SVGComparator implementation
 bool SVGComparator::compare(const std::string& file1, const std::string& file2, double tolerance) {

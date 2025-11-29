@@ -18,7 +18,8 @@
 #define M_PI 3.14159265358979323846
 #endif
 
-using namespace ChipCarving::Geometry;
+using ChipCarving::Geometry::Point2D;
+using ChipCarving::Geometry::TriArc;
 
 // Definition for static constexpr members (required for C++14)
 constexpr double TriArc::MAX_BULGE;

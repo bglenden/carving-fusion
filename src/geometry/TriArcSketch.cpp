@@ -18,7 +18,9 @@
 #define M_PI 3.14159265358979323846
 #endif
 
-using namespace ChipCarving::Geometry;
+using ChipCarving::Geometry::Point2D;
+using ChipCarving::Geometry::TriArc;
+using ChipCarving::Geometry::distance;
 
 void TriArc::drawToSketch(Adapters::ISketch* sketch, Adapters::ILogger* logger) const {
   (void)logger;  // Suppress unused parameter warning
