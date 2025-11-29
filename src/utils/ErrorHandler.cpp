@@ -5,6 +5,8 @@
  */
 
 #include "ErrorHandler.h"
+#include "../adapters/IFusionInterface.h"
+
 
 #include <iostream>
 
@@ -17,6 +19,7 @@ namespace Utils {
 ErrorCallback ErrorHandler::globalErrorCallback_ = nullptr;
 bool ErrorHandler::consoleLoggingEnabled_ = true;
 bool ErrorHandler::userMessagesEnabled_ = false;
+Adapters::IUserInterface* ErrorHandler::userInterface_ = nullptr;
 
 bool ErrorHandler::executeFusionOperation(const std::string& operation, std::function<bool()> func,
                                           bool showMessageToUser) {
@@ -34,10 +37,8 @@ bool ErrorHandler::executeFusionOperation(const std::string& operation, std::fun
     std::string errorMsg = "Exception in " + operation + ": " + e.what();
     LOG_ERROR(errorMsg);
 
-    if (showMessageToUser && userMessagesEnabled_) {
-      // TODO(dev): Show message to user via UI
-      // For now, just log as error
-      LOG_ERROR("User should be notified: " << errorMsg);
+    if (showMessageToUser && userMessagesEnabled_ && userInterface_) {
+      userInterface_->showMessageBox("Error", errorMsg);
     }
 
     if (globalErrorCallback_) {
@@ -49,9 +50,8 @@ bool ErrorHandler::executeFusionOperation(const std::string& operation, std::fun
     std::string errorMsg = "Unknown exception in " + operation;
     LOG_ERROR(errorMsg);
 
-    if (showMessageToUser && userMessagesEnabled_) {
-      // TODO(dev): Show generic error message to user
-      LOG_ERROR("User should be notified: " << errorMsg);
+    if (showMessageToUser && userMessagesEnabled_ && userInterface_) {
+      userInterface_->showMessageBox("Error", errorMsg);
     }
 
     if (globalErrorCallback_) {
@@ -121,6 +121,11 @@ void ErrorHandler::logError(const std::string& operation, const std::string& err
   if (consoleLoggingEnabled_) {
     LOG_ERROR("[ErrorHandler] " << operation << ": " << error);
   }
+}
+
+void ErrorHandler::setUserInterface(Adapters::IUserInterface* ui) {
+  userInterface_ = ui;
+  LOG_DEBUG("User interface " << (ui ? "set" : "cleared"));
 }
 
 }  // namespace Utils

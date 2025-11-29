@@ -12,6 +12,9 @@
 #include <string>
 
 namespace ChipCarving {
+namespace Adapters {
+class IUserInterface;
+}
 namespace Utils {
 
 /**
@@ -93,11 +96,13 @@ class ErrorHandler {
   static void setGlobalErrorCallback(ErrorCallback callback);
   static void enableConsoleLogging(bool enabled);
   static void enableUserMessages(bool enabled);
+  static void setUserInterface(Adapters::IUserInterface* ui);
 
  private:
   static ErrorCallback globalErrorCallback_;
   static bool consoleLoggingEnabled_;
   static bool userMessagesEnabled_;
+  static Adapters::IUserInterface* userInterface_;
 
   static void handleStandardException(const std::string& operation, const std::exception& e);
   static void handleUnknownException(const std::string& operation);

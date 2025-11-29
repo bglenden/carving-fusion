@@ -7,13 +7,16 @@
 
 #include "../core/PluginManager.h"
 #include "PluginCommands.h"
+#include "../utils/ErrorHandler.h"
 
 namespace ChipCarving {
 namespace Commands {
 
 // Enhanced UI Phase 4: Command execution implementation
 void GeneratePathsCommandHandler::executeMedialAxisProcessing(adsk::core::Ptr<adsk::core::CommandInputs> inputs) {
-  try {
+  // Use ErrorHandler to wrap the entire operation with user-facing error messages
+  Utils::ErrorHandler::executeFusionOperation("ExecuteMedialAxisGeneration", [&]() {
+    try {
     // LOG: Start of method execution
     if (pluginManager_) {
       // Use the PluginManager's logger to write to file
@@ -67,15 +70,17 @@ void GeneratePathsCommandHandler::executeMedialAxisProcessing(adsk::core::Ptr<ad
         return;
       }
     }
-  } catch (const std::exception& e) {
-    // TODO(dev): Show error message to user via IUserInterface
-    // For now, just handle silently
-  } catch (...) {
-    // TODO(dev): Show generic error message to user
-  }
+    return true;
+  }, true);  // true = show errors to user
 }
 
-// BaseCommandHandler implementation is in PluginCommandsImport.cpp
+void GeneratePathsCommandHandler::executeWithFallbackHandler(adsk::core::Ptr<adsk::core::CommandInputs> inputs) {
+  if (!inputs || !pluginManager_) {
+    return;
+  }
 
+  // Fallback: Direct try/catch with ErrorHandler integration
+  try {
+// BaseCommandHandler implementation is in PluginCommandsImport.cpp
 }  // namespace Commands
 }  // namespace ChipCarving

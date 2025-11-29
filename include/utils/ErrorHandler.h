@@ -13,6 +13,13 @@ namespace ChipCarving {
 namespace Utils {
 
 /**
+ * Callback type for UI notification of errors
+ * @param errorMessage The error message to display
+ * @param operation Context of where the error occurred
+ */
+using UINotificationCallback = std::function<void(const std::string& errorMessage, const std::string& operation)>;
+
+/**
  * Utility class for standardized error handling patterns
  * Reduces duplication in try-catch blocks throughout the codebase
  */
@@ -88,6 +95,30 @@ class ErrorHandler {
       // Could add debug logging here if needed
     }
   }
+
+  /**
+   * Set the UI notification callback for user-facing error messages
+   * @param callback Function to call when user notification needed
+   */
+  static void setUINotificationCallback(UINotificationCallback callback) {
+    uiNotificationCallback_ = callback;
+  }
+
+  /**
+   * Enable or disable UI notifications
+   * @param enabled Whether to show UI notifications
+   */
+  static void enableUINotifications(bool enabled) { uiNotificationsEnabled_ = enabled; }
+
+  /**
+   * Check if UI notifications are enabled
+   * @return true if UI notifications enabled
+   */
+  static bool uiNotificationsEnabled() { return uiNotificationsEnabled_; }
+
+ private:
+  static UINotificationCallback uiNotificationCallback_;
+  static bool uiNotificationsEnabled_;
 };
 
 }  // namespace Utils

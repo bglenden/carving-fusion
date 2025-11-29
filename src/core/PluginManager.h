@@ -22,6 +22,12 @@ namespace Core {
  * Handles command execution without direct Fusion API dependencies
  */
 class PluginManager {
+  ///
+  /// Setup error handler UI integration
+  void setupErrorHandling();
+
+  ///
+  /// Setup error handler UI integration
  public:
   explicit PluginManager(std::unique_ptr<Adapters::IFusionFactory> factory);
   ~PluginManager() = default;

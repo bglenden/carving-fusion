@@ -44,41 +44,41 @@
   <line x1="0" y1="380.000" x2="400.000" y2="380.000" stroke="#f0f0f0" stroke-width="0.5"/>
   <line x1="0" y1="400.000" x2="400.000" y2="400.000" stroke="#f0f0f0" stroke-width="0.5"/>
   <!-- Content -->
-  <path d="M 178.500,188.145 A 87.342,87.342 0 0,1 221.500,188.145 A 87.340,87.340 0 0,1 200.000,150.908 A 87.340,87.340 0 0,1 178.500,188.145 Z" stroke="black" stroke-width="2.000" fill="none"/>
-  <circle cx="178.500" cy="188.145" r="3.000" fill="red"/>
-  <text x="178.500" y="192.445" font-family="Arial, sans-serif" font-size="10.000" fill="red" text-anchor="middle">V0</text>
-  <circle cx="221.500" cy="188.145" r="3.000" fill="red"/>
-  <text x="221.500" y="192.445" font-family="Arial, sans-serif" font-size="10.000" fill="red" text-anchor="middle">V1</text>
-  <circle cx="200.000" cy="150.908" r="3.000" fill="red"/>
-  <text x="200.000" y="155.208" font-family="Arial, sans-serif" font-size="10.000" fill="red" text-anchor="middle">V2</text>
-  <circle cx="200.000" cy="175.732" r="2.000" fill="green"/>
-  <text x="200.000" y="180.032" font-family="Arial, sans-serif" font-size="10.000" fill="green" text-anchor="middle">Center</text>
-  <circle cx="200.000" cy="272.799" r="2.000" fill="blue"/>
-  <text x="200.000" y="277.099" font-family="Arial, sans-serif" font-size="10.000" fill="blue" text-anchor="middle">C0</text>
-  <line x1="200.000" y1="272.799" x2="178.500" y2="188.145" stroke="lightblue" stroke-width="0.500" stroke-dasharray="1,1"/>
-  <line x1="200.000" y1="272.799" x2="221.500" y2="188.145" stroke="lightblue" stroke-width="0.500" stroke-dasharray="1,1"/>
-  <line x1="178.500" y1="188.145" x2="221.500" y2="188.145" stroke="gray" stroke-width="0.500" stroke-dasharray="2,2"/>
-  <line x1="200.000" y1="188.145" x2="200.000" y2="196.745" stroke="orange" stroke-width="1.000"/>
-  <circle cx="200.000" cy="188.145" r="1.500" fill="orange"/>
-  <text x="200.000" y="192.445" font-family="Arial, sans-serif" font-size="10.000" fill="orange" text-anchor="middle">M0</text>
-  <circle cx="284.060" cy="127.199" r="2.000" fill="blue"/>
-  <text x="284.060" y="131.499" font-family="Arial, sans-serif" font-size="10.000" fill="blue" text-anchor="middle">C1</text>
-  <line x1="284.060" y1="127.199" x2="221.500" y2="188.145" stroke="lightblue" stroke-width="0.500" stroke-dasharray="1,1"/>
-  <line x1="284.060" y1="127.199" x2="200.000" y2="150.908" stroke="lightblue" stroke-width="0.500" stroke-dasharray="1,1"/>
-  <line x1="221.500" y1="188.145" x2="200.000" y2="150.908" stroke="gray" stroke-width="0.500" stroke-dasharray="2,2"/>
-  <line x1="210.750" y1="169.526" x2="218.197" y2="165.226" stroke="orange" stroke-width="1.000"/>
-  <circle cx="210.750" cy="169.526" r="1.500" fill="orange"/>
-  <text x="210.750" y="173.826" font-family="Arial, sans-serif" font-size="10.000" fill="orange" text-anchor="middle">M1</text>
-  <circle cx="115.940" cy="127.199" r="2.000" fill="blue"/>
-  <text x="115.940" y="131.499" font-family="Arial, sans-serif" font-size="10.000" fill="blue" text-anchor="middle">C2</text>
-  <line x1="115.940" y1="127.199" x2="200.000" y2="150.908" stroke="lightblue" stroke-width="0.500" stroke-dasharray="1,1"/>
-  <line x1="115.940" y1="127.199" x2="178.500" y2="188.145" stroke="lightblue" stroke-width="0.500" stroke-dasharray="1,1"/>
-  <line x1="200.000" y1="150.908" x2="178.500" y2="188.145" stroke="gray" stroke-width="0.500" stroke-dasharray="2,2"/>
-  <line x1="189.250" y1="169.526" x2="181.803" y2="165.226" stroke="orange" stroke-width="1.000"/>
-  <circle cx="189.250" cy="169.526" r="1.500" fill="orange"/>
-  <text x="189.250" y="173.826" font-family="Arial, sans-serif" font-size="10.000" fill="orange" text-anchor="middle">M2</text>
-  <text x="200.000" y="194.595" font-family="Arial, sans-serif" font-size="8.000" fill="purple" text-anchor="middle">b0=-0.12</text>
-  <text x="210.750" y="175.976" font-family="Arial, sans-serif" font-size="8.000" fill="purple" text-anchor="middle">b1=-0.12</text>
-  <text x="189.250" y="175.976" font-family="Arial, sans-serif" font-size="8.000" fill="purple" text-anchor="middle">b2=-0.12</text>
-  <text x="28.600" y="35.559" font-family="Arial, sans-serif" font-size="14.000" fill="black" text-anchor="middle">triarc_point_up</text>
+  <path d="M 159.091,223.618 A 166.193,166.193 0 0,1 240.909,223.618 A 166.190,166.190 0 0,1 200.000,152.764 A 166.190,166.190 0 0,1 159.091,223.618 Z" stroke="black" stroke-width="2.000" fill="none"/>
+  <circle cx="159.091" cy="223.618" r="3.000" fill="red"/>
+  <text x="159.091" y="231.800" font-family="Arial, sans-serif" font-size="10.000" fill="red" text-anchor="middle">V0</text>
+  <circle cx="240.909" cy="223.618" r="3.000" fill="red"/>
+  <text x="240.909" y="231.800" font-family="Arial, sans-serif" font-size="10.000" fill="red" text-anchor="middle">V1</text>
+  <circle cx="200.000" cy="152.764" r="3.000" fill="red"/>
+  <text x="200.000" y="160.945" font-family="Arial, sans-serif" font-size="10.000" fill="red" text-anchor="middle">V2</text>
+  <circle cx="200.000" cy="200.000" r="2.000" fill="green"/>
+  <text x="200.000" y="208.182" font-family="Arial, sans-serif" font-size="10.000" fill="green" text-anchor="middle">Center</text>
+  <circle cx="200.000" cy="384.698" r="2.000" fill="blue"/>
+  <text x="200.000" y="392.880" font-family="Arial, sans-serif" font-size="10.000" fill="blue" text-anchor="middle">C0</text>
+  <line x1="200.000" y1="384.698" x2="159.091" y2="223.618" stroke="lightblue" stroke-width="0.500" stroke-dasharray="1,1"/>
+  <line x1="200.000" y1="384.698" x2="240.909" y2="223.618" stroke="lightblue" stroke-width="0.500" stroke-dasharray="1,1"/>
+  <line x1="159.091" y1="223.618" x2="240.909" y2="223.618" stroke="gray" stroke-width="0.500" stroke-dasharray="2,2"/>
+  <line x1="200.000" y1="223.618" x2="200.000" y2="239.982" stroke="orange" stroke-width="1.000"/>
+  <circle cx="200.000" cy="223.618" r="1.500" fill="orange"/>
+  <text x="200.000" y="231.800" font-family="Arial, sans-serif" font-size="10.000" fill="orange" text-anchor="middle">M0</text>
+  <circle cx="359.949" cy="107.651" r="2.000" fill="blue"/>
+  <text x="359.949" y="115.833" font-family="Arial, sans-serif" font-size="10.000" fill="blue" text-anchor="middle">C1</text>
+  <line x1="359.949" y1="107.651" x2="240.909" y2="223.618" stroke="lightblue" stroke-width="0.500" stroke-dasharray="1,1"/>
+  <line x1="359.949" y1="107.651" x2="200.000" y2="152.764" stroke="lightblue" stroke-width="0.500" stroke-dasharray="1,1"/>
+  <line x1="240.909" y1="223.618" x2="200.000" y2="152.764" stroke="gray" stroke-width="0.500" stroke-dasharray="2,2"/>
+  <line x1="220.455" y1="188.191" x2="234.626" y2="180.009" stroke="orange" stroke-width="1.000"/>
+  <circle cx="220.455" cy="188.191" r="1.500" fill="orange"/>
+  <text x="220.455" y="196.373" font-family="Arial, sans-serif" font-size="10.000" fill="orange" text-anchor="middle">M1</text>
+  <circle cx="40.051" cy="107.651" r="2.000" fill="blue"/>
+  <text x="40.051" y="115.833" font-family="Arial, sans-serif" font-size="10.000" fill="blue" text-anchor="middle">C2</text>
+  <line x1="40.051" y1="107.651" x2="200.000" y2="152.764" stroke="lightblue" stroke-width="0.500" stroke-dasharray="1,1"/>
+  <line x1="40.051" y1="107.651" x2="159.091" y2="223.618" stroke="lightblue" stroke-width="0.500" stroke-dasharray="1,1"/>
+  <line x1="200.000" y1="152.764" x2="159.091" y2="223.618" stroke="gray" stroke-width="0.500" stroke-dasharray="2,2"/>
+  <line x1="179.545" y1="188.191" x2="165.374" y2="180.009" stroke="orange" stroke-width="1.000"/>
+  <circle cx="179.545" cy="188.191" r="1.500" fill="orange"/>
+  <text x="179.545" y="196.373" font-family="Arial, sans-serif" font-size="10.000" fill="orange" text-anchor="middle">M2</text>
+  <text x="200.000" y="235.891" font-family="Arial, sans-serif" font-size="8.000" fill="purple" text-anchor="middle">b0=-0.12</text>
+  <text x="220.455" y="200.464" font-family="Arial, sans-serif" font-size="8.000" fill="purple" text-anchor="middle">b1=-0.12</text>
+  <text x="179.545" y="200.464" font-family="Arial, sans-serif" font-size="8.000" fill="purple" text-anchor="middle">b2=-0.12</text>
+  <text x="36.364" y="28.182" font-family="Arial, sans-serif" font-size="14.000" fill="black" text-anchor="middle">triarc_point_up</text>
 </svg>

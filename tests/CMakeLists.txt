@@ -111,6 +111,8 @@ target_sources(chip_carving_tests PRIVATE
     ../src/geometry/MedialAxisProcessor.cpp
     ../src/parsers/DesignParser.cpp
     ../src/geometry/VCarvePath.cpp
+    ../src/utils/ErrorHandler.cpp
+
     ../src/geometry/VCarveCalculator.cpp
     mocks/MockLogging.cpp
 )

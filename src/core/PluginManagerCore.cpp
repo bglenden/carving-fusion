@@ -18,6 +18,7 @@
 #include "../version.h"
 #include "PluginManager.h"
 
+#include "../utils/ErrorHandler.h"
 namespace ChipCarving {
 namespace Core {
 
@@ -95,4 +96,22 @@ std::string PluginManager::getName() const {
 }
 
 }  // namespace Core
+void ChipCarving::Core::PluginManager::setupErrorHandling() {
+  if (!ui_) {
+    return;
+  }
+
+  // Setup error handler with UI integration for user-facing messages
+  Utils::ErrorHandler::enableUserMessages(true);
+  Utils::ErrorHandler::setUserInterface(ui_.get());
+
+  // Set a global callback for more detailed error logging
+  Utils::ErrorHandler::setGlobalErrorCallback([](const std::string& errorMsg, const std::string& context) {
+    LOG_ERROR("Error in " << context << ": " << errorMsg);
+  });
+}
+
+
 }  // namespace ChipCarving
+#include "../utils/ErrorHandler.h"
+

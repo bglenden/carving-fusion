@@ -44,21 +44,21 @@
   <line x1="0" y1="380.000" x2="400.000" y2="380.000" stroke="#f0f0f0" stroke-width="0.5"/>
   <line x1="0" y1="400.000" x2="400.000" y2="400.000" stroke="#f0f0f0" stroke-width="0.5"/>
   <!-- Content -->
-  <path d="M 191.155,200.000 A 88.453,88.453 0 0,1 208.845,200.000 A 88.453,88.453 0 0,1 191.155,200.000" stroke="black" stroke-width="2.000" fill="none"/>
-  <circle cx="191.155" cy="200.000" r="3.000" fill="red"/>
-  <text x="191.155" y="201.769" font-family="Arial, sans-serif" font-size="10.000" fill="red" text-anchor="middle">F1</text>
-  <circle cx="208.845" cy="200.000" r="3.000" fill="red"/>
-  <text x="208.845" y="201.769" font-family="Arial, sans-serif" font-size="10.000" fill="red" text-anchor="middle">F2</text>
-  <circle cx="200.000" cy="111.991" r="2.000" fill="blue"/>
-  <text x="200.000" y="113.760" font-family="Arial, sans-serif" font-size="10.000" fill="blue" text-anchor="middle">C1</text>
-  <circle cx="200.000" cy="288.009" r="2.000" fill="blue"/>
-  <text x="200.000" y="289.778" font-family="Arial, sans-serif" font-size="10.000" fill="blue" text-anchor="middle">C2</text>
+  <path d="M 159.091,200.000 A 409.091,409.091 0 0,1 240.909,200.000 A 409.091,409.091 0 0,1 159.091,200.000" stroke="black" stroke-width="2.000" fill="none"/>
+  <circle cx="159.091" cy="200.000" r="3.000" fill="red"/>
+  <text x="159.091" y="208.182" font-family="Arial, sans-serif" font-size="10.000" fill="red" text-anchor="middle">F1</text>
+  <circle cx="240.909" cy="200.000" r="3.000" fill="red"/>
+  <text x="240.909" y="208.182" font-family="Arial, sans-serif" font-size="10.000" fill="red" text-anchor="middle">F2</text>
+  <circle cx="200.000" cy="-207.040" r="2.000" fill="blue"/>
+  <text x="200.000" y="-198.858" font-family="Arial, sans-serif" font-size="10.000" fill="blue" text-anchor="middle">C1</text>
+  <circle cx="200.000" cy="607.040" r="2.000" fill="blue"/>
+  <text x="200.000" y="615.222" font-family="Arial, sans-serif" font-size="10.000" fill="blue" text-anchor="middle">C2</text>
   <circle cx="200.000" cy="200.000" r="2.000" fill="green"/>
-  <text x="200.000" y="201.769" font-family="Arial, sans-serif" font-size="10.000" fill="green" text-anchor="middle">Mid</text>
-  <line x1="191.155" y1="200.000" x2="208.845" y2="200.000" stroke="gray" stroke-width="0.500" stroke-dasharray="2,2"/>
-  <line x1="200.000" y1="111.991" x2="191.155" y2="200.000" stroke="lightblue" stroke-width="0.500" stroke-dasharray="1,1"/>
-  <line x1="200.000" y1="111.991" x2="208.845" y2="200.000" stroke="lightblue" stroke-width="0.500" stroke-dasharray="1,1"/>
-  <line x1="200.000" y1="288.009" x2="191.155" y2="200.000" stroke="lightblue" stroke-width="0.500" stroke-dasharray="1,1"/>
-  <line x1="200.000" y1="288.009" x2="208.845" y2="200.000" stroke="lightblue" stroke-width="0.500" stroke-dasharray="1,1"/>
-  <text x="111.547" y="21.769" font-family="Arial, sans-serif" font-size="14.000" fill="black" text-anchor="middle">leaf_nearly_flat</text>
+  <text x="200.000" y="208.182" font-family="Arial, sans-serif" font-size="10.000" fill="green" text-anchor="middle">Mid</text>
+  <line x1="159.091" y1="200.000" x2="240.909" y2="200.000" stroke="gray" stroke-width="0.500" stroke-dasharray="2,2"/>
+  <line x1="200.000" y1="-207.040" x2="159.091" y2="200.000" stroke="lightblue" stroke-width="0.500" stroke-dasharray="1,1"/>
+  <line x1="200.000" y1="-207.040" x2="240.909" y2="200.000" stroke="lightblue" stroke-width="0.500" stroke-dasharray="1,1"/>
+  <line x1="200.000" y1="607.040" x2="159.091" y2="200.000" stroke="lightblue" stroke-width="0.500" stroke-dasharray="1,1"/>
+  <line x1="200.000" y1="607.040" x2="240.909" y2="200.000" stroke="lightblue" stroke-width="0.500" stroke-dasharray="1,1"/>
+  <text x="36.364" y="28.182" font-family="Arial, sans-serif" font-size="14.000" fill="black" text-anchor="middle">leaf_nearly_flat</text>
 </svg>
