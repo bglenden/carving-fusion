@@ -11,16 +11,16 @@
 #include <limits>
 #include <stdexcept>
 
-#include "geometry/TriArc.h"
 #include "adapters/IFusionInterface.h"
+#include "geometry/TriArc.h"
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
 #endif
 
+using ChipCarving::Geometry::distance;
 using ChipCarving::Geometry::Point2D;
 using ChipCarving::Geometry::TriArc;
-using ChipCarving::Geometry::distance;
 
 void TriArc::drawToSketch(Adapters::ISketch* sketch, Adapters::ILogger* logger) const {
   (void)logger;  // Suppress unused parameter warning

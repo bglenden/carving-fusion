@@ -9,8 +9,8 @@
 #include <map>
 #include <vector>
 
-#include "utils/logging.h"
 #include "PluginCommands.h"
+#include "utils/logging.h"
 
 namespace ChipCarving {
 namespace Commands {
@@ -20,66 +20,58 @@ bool GeneratePathsCommandHandler::isPartOfClosedProfile(adsk::core::Ptr<adsk::fu
     return false;
   }
 
-  try {
-    // Get the parent sketch
-    auto sketch = curve->parentSketch();
-    auto profiles = sketch->profiles();
+  // Get the parent sketch
+  auto sketch = curve->parentSketch();
+  auto profiles = sketch->profiles();
 
-    LOG_INFO("    Checking curve in sketch with " << (profiles ? profiles->count() : 0) << " profiles");
+  LOG_INFO("    Checking curve in sketch with " << (profiles ? profiles->count() : 0) << " profiles");
 
-    if (!profiles || profiles->count() == 0) {
-      return false;
+  if (!profiles || profiles->count() == 0) {
+    return false;
+  }
+
+  // Check each profile in the sketch
+  for (int p = 0; p < static_cast<int>(profiles->count()); ++p) {
+    auto profile = profiles->item(p);
+    if (!profile)
+      continue;
+
+    // Check if this profile is closed (has area)
+    auto areaProps = profile->areaProperties();
+    if (!areaProps || areaProps->area() <= 0) {
+      LOG_INFO("      Profile " << p << " is not closed (no area)");
+      continue;  // Not a closed profile
     }
 
-    // Check each profile in the sketch
-    for (int p = 0; p < static_cast<int>(profiles->count()); ++p) {
-      auto profile = profiles->item(p);
-      if (!profile)
+    LOG_INFO("      Profile " << p << " has area: " << areaProps->area());
+
+    // Check if the curve is part of this profile
+    auto profileLoops = profile->profileLoops();
+    if (!profileLoops)
+      continue;
+
+    for (size_t l = 0; l < profileLoops->count(); ++l) {
+      auto loop = profileLoops->item(l);
+      if (!loop)
         continue;
 
-      // Check if this profile is closed (has area)
-      auto areaProps = profile->areaProperties();
-      if (!areaProps || areaProps->area() <= 0) {
-        LOG_INFO("      Profile " << p << " is not closed (no area)");
-        continue;  // Not a closed profile
-      }
-
-      LOG_INFO("      Profile " << p << " has area: " << areaProps->area());
-
-      // Check if the curve is part of this profile
-      auto profileLoops = profile->profileLoops();
-      if (!profileLoops)
+      auto loopCurves = loop->profileCurves();
+      if (!loopCurves)
         continue;
 
-      for (size_t l = 0; l < profileLoops->count(); ++l) {
-        auto loop = profileLoops->item(l);
-        if (!loop)
-          continue;
-
-        auto loopCurves = loop->profileCurves();
-        if (!loopCurves)
-          continue;
-
-        for (size_t c = 0; c < loopCurves->count(); ++c) {
-          auto profileCurve = loopCurves->item(c);
-          if (profileCurve && profileCurve->sketchEntity()) {
-            // Check if this is our curve
-            if (profileCurve->sketchEntity()->entityToken() == curve->entityToken()) {
-              return true;  // Found it in a closed profile
-            }
+      for (size_t c = 0; c < loopCurves->count(); ++c) {
+        auto profileCurve = loopCurves->item(c);
+        if (profileCurve && profileCurve->sketchEntity()) {
+          // Check if this is our curve
+          if (profileCurve->sketchEntity()->entityToken() == curve->entityToken()) {
+            return true;  // Found it in a closed profile
           }
         }
       }
     }
-
-    return false;  // Curve not found in any closed profile
-  } catch (const std::exception& e) {
-    LOG_ERROR("Error checking if curve is part of closed profile: " << e.what());
-    return false;
-  } catch (...) {
-    LOG_ERROR("Unknown error checking if curve is part of closed profile");
-    return false;
   }
+
+  return false;  // Curve not found in any closed profile
 }
 
 void GeneratePathsCommandHandler::validateAndCleanSelection(
@@ -236,18 +228,14 @@ void GeneratePathsCommandHandler::validateAndCleanSelection(
     }
 
     // Clear all selections and re-add only valid ones
-    try {
-      selectionInput->clearSelection();
+    selectionInput->clearSelection();
 
-      for (auto& validEntity : validSelections) {
-        selectionInput->addSelection(validEntity);
-      }
-
-      LOG_INFO("Removed " << indicesToRemove.size() << " invalid selections. " << validSelections.size()
-                          << " valid selections remain.");
-    } catch (...) {
-      LOG_ERROR("Failed to update selection after validation");
+    for (auto& validEntity : validSelections) {
+      selectionInput->addSelection(validEntity);
     }
+
+    LOG_INFO("Removed " << indicesToRemove.size() << " invalid selections. " << validSelections.size()
+                        << " valid selections remain.");
   }
 
   // Optional: Log a warning if user selected curves that don't form complete

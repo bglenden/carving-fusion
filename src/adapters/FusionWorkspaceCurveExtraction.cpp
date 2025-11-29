@@ -5,9 +5,9 @@
  * Split from FusionWorkspaceProfile.cpp for maintainability
  */
 
-#include "utils/logging.h"
 #include "FusionAPIAdapter.h"
 #include "FusionWorkspaceProfileTypes.h"
+#include "utils/logging.h"
 
 using adsk::core::Base;
 using adsk::core::Curve3D;
@@ -30,87 +30,77 @@ bool FusionWorkspace::extractCurvesFromProfile(adsk::core::Ptr<adsk::fusion::Pro
   }
 
   // Verify sketch plane orientation (should be parallel to XY plane)
-  try {
-    // Get the parent sketch from the profile
-    Ptr<adsk::fusion::Sketch> profileSketch = profile->parentSketch();
-    if (profileSketch) {
-      LOG_DEBUG("Got parent sketch for profile");
+  // Get the parent sketch from the profile
+  Ptr<adsk::fusion::Sketch> profileSketch = profile->parentSketch();
+  if (profileSketch) {
+    LOG_DEBUG("Got parent sketch for profile");
 
-      // Check if the sketch curves are planar
-      // Fusion 360 sketches are always on a plane, but we can verify the curves
-      // are 2D
-      Ptr<adsk::fusion::SketchCurves> allSketchCurves = profileSketch->sketchCurves();
-      if (allSketchCurves) {
-        LOG_DEBUG("Sketch has " << allSketchCurves->count() << " curves");
+    // Check if the sketch curves are planar
+    // Fusion 360 sketches are always on a plane, but we can verify the curves
+    // are 2D
+    Ptr<adsk::fusion::SketchCurves> allSketchCurves = profileSketch->sketchCurves();
+    if (allSketchCurves) {
+      LOG_DEBUG("Sketch has " << allSketchCurves->count() << " curves");
 
-        // Check if any curve is explicitly 3D (not supported for our use case)
-        bool has3DCurves = false;
-        for (size_t i = 0; i < allSketchCurves->count() && i < 5; ++i) {  // Check first 5 curves
-          Ptr<adsk::fusion::SketchCurve> curve = allSketchCurves->item(i);
-          if (curve) {
-            // Get the curve's is2D property if it exists
-            // For now, just log the curve type
-            try {
-              if (curve->objectType() && std::string(curve->objectType()).find("3D") != std::string::npos) {
-                has3DCurves = true;
-                LOG_WARNING("Found 3D curve at index " << i);
-              }
-            } catch (...) {
-              (void)0;  // Ignore property access errors
-            }
+      // Check if any curve is explicitly 3D (not supported for our use case)
+      bool has3DCurves = false;
+      for (size_t i = 0; i < allSketchCurves->count() && i < 5; ++i) {  // Check first 5 curves
+        Ptr<adsk::fusion::SketchCurve> curve = allSketchCurves->item(i);
+        if (curve) {
+          // Get the curve's is2D property if it exists
+          // For now, just log the curve type
+          if (curve->objectType() && std::string(curve->objectType()).find("3D") != std::string::npos) {
+            has3DCurves = true;
+            LOG_WARNING("Found 3D curve at index " << i);
           }
-        }
-
-        if (has3DCurves) {
-          LOG_WARNING("Sketch contains 3D curves. Results may be unexpected.");
-        } else {
-          LOG_DEBUG("All checked curves appear to be 2D (planar)");
         }
       }
 
-      // Get the sketch plane to verify orientation
-      Ptr<adsk::core::Base> refPlane = profileSketch->referencePlane();
-      if (refPlane) {
-        LOG_DEBUG("Got reference plane for sketch");
-
-        // Try to get the geometry of the plane
-        // The reference plane could be a construction plane, datum plane, etc.
-        Ptr<adsk::fusion::ConstructionPlane> constructionPlane = refPlane;
-        if (constructionPlane) {
-          Ptr<adsk::core::Plane> plane = constructionPlane->geometry();
-          if (plane) {
-            Ptr<adsk::core::Vector3D> normal = plane->normal();
-            if (normal) {
-              LOG_DEBUG("Sketch plane normal: (" << normal->x() << ", " << normal->y() << ", " << normal->z() << ")");
-
-              // Check if the sketch plane is parallel to XY plane (normal close
-              // to Z-axis)
-              if (std::abs(normal->z()) > 0.99) {
-                if (normal->z() > 0) {
-                  LOG_DEBUG("Sketch plane is correctly oriented (parallel to XY "
-                            "plane)");
-                } else {
-                  LOG_DEBUG("Sketch plane is parallel to XY plane but pointing down");
-                }
-
-                // Get the sketch plane Z position
-                Ptr<adsk::core::Point3D> origin = plane->origin();
-                if (origin) {
-                  transform.sketchPlaneZ = origin->z();
-                  LOG_DEBUG("Sketch plane Z position: " << transform.sketchPlaneZ << " cm");
-                }
-              }
-            }
-          }
-        } else {
-          LOG_DEBUG("Reference plane is not a construction plane");
-        }
+      if (has3DCurves) {
+        LOG_WARNING("Sketch contains 3D curves. Results may be unexpected.");
+      } else {
+        LOG_DEBUG("All checked curves appear to be 2D (planar)");
       }
     }
-  } catch (const std::exception& e) {
-    LOG_WARNING("Exception checking sketch plane: " << e.what());
-  } catch (...) {
-    LOG_WARNING("Unknown exception checking sketch plane");
+
+    // Get the sketch plane to verify orientation
+    Ptr<adsk::core::Base> refPlane = profileSketch->referencePlane();
+    if (refPlane) {
+      LOG_DEBUG("Got reference plane for sketch");
+
+      // Try to get the geometry of the plane
+      // The reference plane could be a construction plane, datum plane, etc.
+      Ptr<adsk::fusion::ConstructionPlane> constructionPlane = refPlane;
+      if (constructionPlane) {
+        Ptr<adsk::core::Plane> plane = constructionPlane->geometry();
+        if (plane) {
+          Ptr<adsk::core::Vector3D> normal = plane->normal();
+          if (normal) {
+            LOG_DEBUG("Sketch plane normal: (" << normal->x() << ", " << normal->y() << ", " << normal->z() << ")");
+
+            // Check if the sketch plane is parallel to XY plane (normal close
+            // to Z-axis)
+            if (std::abs(normal->z()) > 0.99) {
+              if (normal->z() > 0) {
+                LOG_DEBUG("Sketch plane is correctly oriented (parallel to XY "
+                          "plane)");
+              } else {
+                LOG_DEBUG("Sketch plane is parallel to XY plane but pointing down");
+              }
+
+              // Get the sketch plane Z position
+              Ptr<adsk::core::Point3D> origin = plane->origin();
+              if (origin) {
+                transform.sketchPlaneZ = origin->z();
+                LOG_DEBUG("Sketch plane Z position: " << transform.sketchPlaneZ << " cm");
+              }
+            }
+          }
+        }
+      } else {
+        LOG_DEBUG("Reference plane is not a construction plane");
+      }
+    }
   }
 
   // Get the loops from the profile (usually just one outer loop)
@@ -182,14 +172,10 @@ bool FusionWorkspace::extractCurvesFromProfile(adsk::core::Ptr<adsk::fusion::Pro
     if (Ptr<adsk::fusion::SketchLine> line = sketchCurve) {
       LOG_DEBUG("Curve " << i << " IS a SketchLine");
       // Try to get basic properties
-      try {
-        auto geom = line->geometry();
-        LOG_DEBUG("SketchLine.geometry() returned: " << (geom ? "valid pointer" : "NULL"));
-        if (geom) {
-          LOG_DEBUG("Line geometry type: " << geom->objectType());
-        }
-      } catch (...) {
-        LOG_ERROR("Exception calling SketchLine.geometry()");
+      auto geom = line->geometry();
+      LOG_DEBUG("SketchLine.geometry() returned: " << (geom ? "valid pointer" : "NULL"));
+      if (geom) {
+        LOG_DEBUG("Line geometry type: " << geom->objectType());
       }
     } else {
       LOG_DEBUG("Curve " << i << " is NOT a SketchLine (casting failed)");
@@ -207,21 +193,12 @@ bool FusionWorkspace::extractCurvesFromProfile(adsk::core::Ptr<adsk::fusion::Pro
     // Get curve evaluator for tessellation
     LOG_DEBUG("About to get curve evaluator for curve " << i);
 
-    Ptr<adsk::core::CurveEvaluator3D> evaluator;
-    try {
-      evaluator = curve3D->evaluator();
-      if (!evaluator) {
-        LOG_WARNING("Could not get 3D curve evaluator for curve " << i);
-        continue;
-      }
-      LOG_DEBUG("Got 3D curve evaluator for curve " << i);
-    } catch (const std::exception& e) {
-      LOG_ERROR("Exception getting 3D curve evaluator for curve " << i << ": " << e.what());
-      continue;
-    } catch (...) {
-      LOG_ERROR("Unknown exception getting 3D curve evaluator for curve " << i);
+    Ptr<adsk::core::CurveEvaluator3D> evaluator = curve3D->evaluator();
+    if (!evaluator) {
+      LOG_WARNING("Could not get 3D curve evaluator for curve " << i);
       continue;
     }
+    LOG_DEBUG("Got 3D curve evaluator for curve " << i);
 
     // Get parameter extents
     double startParam, endParam;

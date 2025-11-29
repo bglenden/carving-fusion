@@ -31,9 +31,9 @@ struct TransformParams {
  * Complete medial axis computation results
  */
 struct MedialAxisResults {
-  std::vector<std::vector<Point2D>> chains{};       // Medial axis chains in world coordinates
+  std::vector<std::vector<Point2D>> chains{};         // Medial axis chains in world coordinates
   std::vector<std::vector<double>> clearanceRadii{};  // Clearance radii for each chain point
-  TransformParams transform{};                      // Transform parameters used
+  TransformParams transform{};                        // Transform parameters used
 
   // Statistics
   int numChains = 0;

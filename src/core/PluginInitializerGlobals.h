@@ -14,9 +14,9 @@
 #include <memory>
 #include <vector>
 
+#include "PluginManager.h"
 #include "commands/PluginCommands.h"
 #include "commands/SettingsCommand.h"
-#include "PluginManager.h"
 
 namespace ChipCarving {
 namespace Internal {

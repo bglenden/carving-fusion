@@ -10,12 +10,12 @@
 #include <set>
 #include <sstream>
 
+#include "PluginManager.h"
 #include "geometry/Point2D.h"
 #include "geometry/Point3D.h"
 #include "geometry/VCarveCalculator.h"
-#include "utils/logging.h"
 #include "utils/UnitConversion.h"
-#include "PluginManager.h"
+#include "utils/logging.h"
 
 namespace ChipCarving {
 namespace Core {

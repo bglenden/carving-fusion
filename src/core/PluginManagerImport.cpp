@@ -10,10 +10,10 @@
 #include <set>
 #include <sstream>
 
+#include "PluginManager.h"
 #include "geometry/Point2D.h"
 #include "parsers/DesignParser.h"
 #include "utils/logging.h"
-#include "PluginManager.h"
 
 namespace ChipCarving {
 namespace Core {

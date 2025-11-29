@@ -71,12 +71,12 @@ struct ProfileGeometry;
  * Structure for sketch selection results
  */
 struct SketchSelection {
-  std::vector<std::string> selectedEntityIds{};   // Fusion entity IDs of selected paths (DEPRECATED -
-                                                  // use selectedProfiles)
+  std::vector<std::string> selectedEntityIds{};     // Fusion entity IDs of selected paths (DEPRECATED -
+                                                    // use selectedProfiles)
   std::vector<ProfileGeometry> selectedProfiles{};  // NEW: Extracted profile geometry
-  int closedPathCount = 0;                        // Number of valid closed paths
-  bool isValid = false;                           // Whether selection is valid for processing
-  std::string errorMessage{};                     // Error message if invalid
+  int closedPathCount = 0;                          // Number of valid closed paths
+  bool isValid = false;                             // Whether selection is valid for processing
+  std::string errorMessage{};                       // Error message if invalid
 };
 
 /**

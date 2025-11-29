@@ -11,11 +11,11 @@
 
 #include "adapters/IFusionInterface.h"
 
-using ChipCarving::Geometry::Point2D;
-using ChipCarving::Geometry::Leaf;
 using ChipCarving::Geometry::distance;
+using ChipCarving::Geometry::Leaf;
 using ChipCarving::Geometry::midpoint;
 using ChipCarving::Geometry::perpendicular;
+using ChipCarving::Geometry::Point2D;
 
 std::pair<Point2D, Point2D> Leaf::getArcCenters() const {
   const Point2D mid = midpoint(focus1_, focus2_);

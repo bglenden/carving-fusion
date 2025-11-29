@@ -10,6 +10,7 @@
 
 #include "PluginInitializer.h"
 #include "PluginInitializerGlobals.h"
+#include "utils/logging.h"
 
 using adsk::core::CommandControl;
 using adsk::core::CommandDefinition;
@@ -29,143 +30,146 @@ using ChipCarving::Internal::ui;
 namespace ChipCarving {
 
 void PluginInitializer::CreateImportDesignCommand() {
-  try {
-    std::string cmdId = "ChipCarvingImportDesignCpp";
+  std::string cmdId = "ChipCarvingImportDesignCpp";
 
-    Ptr<CommandDefinitions> cmdDefs = ui->commandDefinitions();
-    if (!cmdDefs) {
+  Ptr<CommandDefinitions> cmdDefs = ui->commandDefinitions();
+  if (!cmdDefs) {
+    return;
+  }
+
+  Ptr<CommandDefinition> cmdDef = cmdDefs->itemById(cmdId);
+
+  if (!cmdDef) {
+    std::string cmdName = "Import Design";
+    std::string cmdTooltip = "Import chip carving design from JSON file";
+    cmdDef = cmdDefs->addButtonDefinition(cmdId, cmdName, cmdTooltip, "./resources/import");
+    if (cmdDef) {
+      commandDefinitions.push_back(cmdDef);
+    } else {
       return;
     }
+  }
 
-    Ptr<CommandDefinition> cmdDef = cmdDefs->itemById(cmdId);
-
-    if (!cmdDef) {
-      std::string cmdName = "Import Design";
-      std::string cmdTooltip = "Import chip carving design from JSON file";
-      cmdDef = cmdDefs->addButtonDefinition(cmdId, cmdName, cmdTooltip, "./resources/import");
-      if (cmdDef) {
-        commandDefinitions.push_back(cmdDef);
-      } else {
-        return;
-      }
-    }
-
-    // Create and connect event handler
-    if (!importHandler && pluginManager) {
+  // Create and connect event handler
+  if (!importHandler && pluginManager) {
+    try {
       // Convert unique_ptr to shared_ptr for command handler
       std::shared_ptr<Core::PluginManager> sharedManager(pluginManager.get(), [](Core::PluginManager*) {});
       importHandler = std::make_shared<Commands::ImportDesignCommandHandler>(sharedManager);
       cmdDef->commandCreated()->add(importHandler.get());
+    } catch (const std::exception& e) {
+      LOG_ERROR("Failed to create import command handler: " << e.what());
+      return;
     }
+  }
 
-    if (panel) {
-      Ptr<ToolbarControls> controls = panel->controls();
-      if (controls) {
-        Ptr<CommandControl> cmdControl = controls->itemById(cmdId);
-        if (!cmdControl) {
-          cmdControl = controls->addCommand(cmdDef);
-          if (cmdControl) {
-            commandControls.push_back(cmdControl);
-          }
+  if (panel) {
+    Ptr<ToolbarControls> controls = panel->controls();
+    if (controls) {
+      Ptr<CommandControl> cmdControl = controls->itemById(cmdId);
+      if (!cmdControl) {
+        cmdControl = controls->addCommand(cmdDef);
+        if (cmdControl) {
+          commandControls.push_back(cmdControl);
         }
       }
     }
-  } catch (std::exception& e) {
-    (void)e;  // Ignore errors
   }
 }
 
 void PluginInitializer::CreateGeneratePathsCommand() {
-  try {
-    std::string cmdId = "ChipCarvingGeneratePathsCpp";
+  std::string cmdId = "ChipCarvingGeneratePathsCpp";
 
-    Ptr<CommandDefinitions> cmdDefs = ui->commandDefinitions();
-    if (!cmdDefs) {
+  Ptr<CommandDefinitions> cmdDefs = ui->commandDefinitions();
+  if (!cmdDefs) {
+    return;
+  }
+
+  Ptr<CommandDefinition> cmdDef = cmdDefs->itemById(cmdId);
+
+  if (!cmdDef) {
+    std::string cmdName = "Generate Paths";
+    std::string cmdTooltip = "Generate CNC toolpaths from imported design";
+    cmdDef = cmdDefs->addButtonDefinition(cmdId, cmdName, cmdTooltip, "./resources/generate");
+    if (cmdDef) {
+      commandDefinitions.push_back(cmdDef);
+    } else {
       return;
     }
+  }
 
-    Ptr<CommandDefinition> cmdDef = cmdDefs->itemById(cmdId);
-
-    if (!cmdDef) {
-      std::string cmdName = "Generate Paths";
-      std::string cmdTooltip = "Generate CNC toolpaths from imported design";
-      cmdDef = cmdDefs->addButtonDefinition(cmdId, cmdName, cmdTooltip, "./resources/generate");
-      if (cmdDef) {
-        commandDefinitions.push_back(cmdDef);
-      } else {
-        return;
-      }
-    }
-
-    // Create and connect event handler
-    if (!generateHandler && pluginManager) {
+  // Create and connect event handler
+  if (!generateHandler && pluginManager) {
+    try {
       // Convert unique_ptr to shared_ptr for command handler
       std::shared_ptr<Core::PluginManager> sharedManager(pluginManager.get(), [](Core::PluginManager*) {});
       generateHandler = std::make_shared<Commands::GeneratePathsCommandHandler>(sharedManager);
       cmdDef->commandCreated()->add(generateHandler.get());
+    } catch (const std::exception& e) {
+      LOG_ERROR("Failed to create generate paths command handler: " << e.what());
+      return;
     }
+  }
 
-    if (panel) {
-      Ptr<ToolbarControls> controls = panel->controls();
-      if (controls) {
-        Ptr<CommandControl> cmdControl = controls->itemById(cmdId);
-        if (!cmdControl) {
-          cmdControl = controls->addCommand(cmdDef);
-          if (cmdControl) {
-            commandControls.push_back(cmdControl);
-          }
+  if (panel) {
+    Ptr<ToolbarControls> controls = panel->controls();
+    if (controls) {
+      Ptr<CommandControl> cmdControl = controls->itemById(cmdId);
+      if (!cmdControl) {
+        cmdControl = controls->addCommand(cmdDef);
+        if (cmdControl) {
+          commandControls.push_back(cmdControl);
         }
       }
     }
-  } catch (std::exception& e) {
-    (void)e;  // Ignore errors
   }
 }
 
 void PluginInitializer::CreateSettingsCommand() {
-  try {
-    std::string cmdId = "ChipCarvingSettingsCpp";
+  std::string cmdId = "ChipCarvingSettingsCpp";
 
-    Ptr<CommandDefinitions> cmdDefs = ui->commandDefinitions();
-    if (!cmdDefs) {
+  Ptr<CommandDefinitions> cmdDefs = ui->commandDefinitions();
+  if (!cmdDefs) {
+    return;
+  }
+
+  Ptr<CommandDefinition> cmdDef = cmdDefs->itemById(cmdId);
+
+  if (!cmdDef) {
+    std::string cmdName = "Settings";
+    std::string cmdTooltip = "Configure plugin settings and preferences";
+    cmdDef = cmdDefs->addButtonDefinition(cmdId, cmdName, cmdTooltip, "./resources/settings");
+    if (cmdDef) {
+      commandDefinitions.push_back(cmdDef);
+    } else {
       return;
     }
+  }
 
-    Ptr<CommandDefinition> cmdDef = cmdDefs->itemById(cmdId);
-
-    if (!cmdDef) {
-      std::string cmdName = "Settings";
-      std::string cmdTooltip = "Configure plugin settings and preferences";
-      cmdDef = cmdDefs->addButtonDefinition(cmdId, cmdName, cmdTooltip, "./resources/settings");
-      if (cmdDef) {
-        commandDefinitions.push_back(cmdDef);
-      } else {
-        return;
-      }
-    }
-
-    // Create and connect event handler
-    if (!settingsHandler && pluginManager) {
+  // Create and connect event handler
+  if (!settingsHandler && pluginManager) {
+    try {
       // Convert unique_ptr to shared_ptr for command handler
       std::shared_ptr<Core::PluginManager> sharedManager(pluginManager.get(), [](Core::PluginManager*) {});
       settingsHandler = std::make_shared<Commands::SettingsCommandHandler>(sharedManager);
       cmdDef->commandCreated()->add(settingsHandler.get());
+    } catch (const std::exception& e) {
+      LOG_ERROR("Failed to create settings command handler: " << e.what());
+      return;
     }
+  }
 
-    if (panel) {
-      Ptr<ToolbarControls> controls = panel->controls();
-      if (controls) {
-        Ptr<CommandControl> cmdControl = controls->itemById(cmdId);
-        if (!cmdControl) {
-          cmdControl = controls->addCommand(cmdDef);
-          if (cmdControl) {
-            commandControls.push_back(cmdControl);
-          }
+  if (panel) {
+    Ptr<ToolbarControls> controls = panel->controls();
+    if (controls) {
+      Ptr<CommandControl> cmdControl = controls->itemById(cmdId);
+      if (!cmdControl) {
+        cmdControl = controls->addCommand(cmdDef);
+        if (cmdControl) {
+          commandControls.push_back(cmdControl);
         }
       }
     }
-  } catch (std::exception& e) {
-    (void)e;  // Ignore errors
   }
 }
 

@@ -4,8 +4,8 @@
  * Factory class for creating Fusion 360 API adapter instances
  */
 
-#include "utils/logging.h"
 #include "FusionAPIAdapter.h"
+#include "utils/logging.h"
 
 using adsk::core::Application;
 using adsk::core::Ptr;

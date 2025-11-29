@@ -7,9 +7,9 @@
  * Note: getSelectionFromInputs() is in PluginCommandsParametersSelection.cpp
  */
 
-#include "utils/logging.h"
-#include "utils/UnitConversion.h"
 #include "PluginCommands.h"
+#include "utils/UnitConversion.h"
+#include "utils/logging.h"
 
 using ChipCarving::Utils::fusionLengthToMm;
 
@@ -17,8 +17,7 @@ namespace ChipCarving {
 namespace Commands {
 
 void GeneratePathsCommandHandler::createParameterInputs(adsk::core::Ptr<adsk::core::CommandInputs> inputs) {
-  try {
-    // Add wide description to make dialog wider
+  // Add wide description to make dialog wider
     adsk::core::Ptr<adsk::core::TextBoxCommandInput> titleDesc =
         inputs->addTextBoxCommandInput("titleDescription", "",
                                        "<b>Generate V-Carve Toolpaths</b><br/>"
@@ -142,17 +141,13 @@ void GeneratePathsCommandHandler::createParameterInputs(adsk::core::Ptr<adsk::co
         "surfaceSamplingDistance", "Surface Sampling Distance", "mm", adsk::core::ValueInput::createByReal(0.2));
     samplingDistance->tooltip("Distance between V-carve points for surface following (smaller = more "
                               "accurate, default: 2.0mm)");
-  } catch (...) {
-    (void)0;  // Ignore input creation errors for now
-  }
 }
 
 ChipCarving::Adapters::MedialAxisParameters GeneratePathsCommandHandler::getParametersFromInputs(
     adsk::core::Ptr<adsk::core::CommandInputs> inputs) {
   ChipCarving::Adapters::MedialAxisParameters params;
 
-  try {
-    // Get tool selection
+  // Get tool selection
     adsk::core::Ptr<adsk::core::DropDownCommandInput> toolDropdown = inputs->itemById("toolSelection");
     if (toolDropdown && toolDropdown->selectedItem()) {
       params.toolName = toolDropdown->selectedItem()->name();
@@ -246,9 +241,6 @@ ChipCarving::Adapters::MedialAxisParameters GeneratePathsCommandHandler::getPara
         }
       }
     }
-  } catch (...) {
-    (void)0;  // Return default parameters on error
-  }
 
   return params;
 }

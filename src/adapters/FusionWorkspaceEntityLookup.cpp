@@ -17,8 +17,8 @@
  * See the commit that introduced this file for the old implementation.
  */
 
-#include "utils/logging.h"
 #include "FusionAPIAdapter.h"
+#include "utils/logging.h"
 
 using adsk::core::Base;
 using adsk::core::Ptr;
@@ -39,32 +39,24 @@ std::vector<Ptr<Base>> FusionWorkspace::findEntitiesByToken(const std::string& e
     return result;
   }
 
-  try {
-    // Get the active design
-    Ptr<adsk::fusion::Design> design = app_->activeProduct();
-    if (!design) {
-      LOG_ERROR("findEntitiesByToken: No active design");
-      return result;
-    }
-
-    // Use the official Fusion API method for direct lookup
-    // This is O(1) - Fusion maintains internal index of entity tokens
-    result = design->findEntityByToken(entityToken);
-
-    if (result.empty()) {
-      LOG_DEBUG("findEntitiesByToken: No entity found for token: " << entityToken);
-    } else {
-      LOG_DEBUG("findEntitiesByToken: Found " << result.size() << " entity(ies) for token");
-    }
-
-    return result;
-  } catch (const std::exception& e) {
-    LOG_ERROR("findEntitiesByToken exception: " << e.what());
-    return result;
-  } catch (...) {
-    LOG_ERROR("findEntitiesByToken: Unknown exception");
+  // Get the active design
+  Ptr<adsk::fusion::Design> design = app_->activeProduct();
+  if (!design) {
+    LOG_ERROR("findEntitiesByToken: No active design");
     return result;
   }
+
+  // Use the official Fusion API method for direct lookup
+  // This is O(1) - Fusion maintains internal index of entity tokens
+  result = design->findEntityByToken(entityToken);
+
+  if (result.empty()) {
+    LOG_DEBUG("findEntitiesByToken: No entity found for token: " << entityToken);
+  } else {
+    LOG_DEBUG("findEntitiesByToken: Found " << result.size() << " entity(ies) for token");
+  }
+
+  return result;
 }
 
 Ptr<adsk::fusion::Component> FusionWorkspace::getComponentFromEntity(Ptr<Base> entity) {
@@ -72,79 +64,71 @@ Ptr<adsk::fusion::Component> FusionWorkspace::getComponentFromEntity(Ptr<Base> e
     return nullptr;
   }
 
-  try {
-    std::string entityType = entity->objectType();
-    LOG_DEBUG("getComponentFromEntity: Entity type is " << entityType);
+  std::string entityType = entity->objectType();
+  LOG_DEBUG("getComponentFromEntity: Entity type is " << entityType);
 
-    // Handle BRepFace -> body -> parentComponent
-    if (Ptr<adsk::fusion::BRepFace> face = entity) {
-      Ptr<adsk::fusion::BRepBody> body = face->body();
-      if (body) {
-        Ptr<adsk::fusion::Component> comp = body->parentComponent();
-        if (comp) {
-          LOG_DEBUG("getComponentFromEntity: Found component from BRepFace: " << comp->name());
-          return comp;
-        }
-      }
-    }
-
-    // Handle BRepBody -> parentComponent
-    if (Ptr<adsk::fusion::BRepBody> body = entity) {
+  // Handle BRepFace -> body -> parentComponent
+  if (Ptr<adsk::fusion::BRepFace> face = entity) {
+    Ptr<adsk::fusion::BRepBody> body = face->body();
+    if (body) {
       Ptr<adsk::fusion::Component> comp = body->parentComponent();
       if (comp) {
-        LOG_DEBUG("getComponentFromEntity: Found component from BRepBody: " << comp->name());
+        LOG_DEBUG("getComponentFromEntity: Found component from BRepFace: " << comp->name());
         return comp;
       }
     }
+  }
 
-    // Handle MeshBody -> parentComponent
-    if (Ptr<adsk::fusion::MeshBody> meshBody = entity) {
-      Ptr<adsk::fusion::Component> comp = meshBody->parentComponent();
-      if (comp) {
-        LOG_DEBUG("getComponentFromEntity: Found component from MeshBody: " << comp->name());
-        return comp;
-      }
+  // Handle BRepBody -> parentComponent
+  if (Ptr<adsk::fusion::BRepBody> body = entity) {
+    Ptr<adsk::fusion::Component> comp = body->parentComponent();
+    if (comp) {
+      LOG_DEBUG("getComponentFromEntity: Found component from BRepBody: " << comp->name());
+      return comp;
     }
+  }
 
-    // Handle Profile -> parentSketch -> parentComponent
-    if (Ptr<adsk::fusion::Profile> profile = entity) {
-      Ptr<adsk::fusion::Sketch> sketch = profile->parentSketch();
-      if (sketch) {
-        Ptr<adsk::fusion::Component> comp = sketch->parentComponent();
-        if (comp) {
-          LOG_DEBUG("getComponentFromEntity: Found component from Profile: " << comp->name());
-          return comp;
-        }
-      }
+  // Handle MeshBody -> parentComponent
+  if (Ptr<adsk::fusion::MeshBody> meshBody = entity) {
+    Ptr<adsk::fusion::Component> comp = meshBody->parentComponent();
+    if (comp) {
+      LOG_DEBUG("getComponentFromEntity: Found component from MeshBody: " << comp->name());
+      return comp;
     }
+  }
 
-    // Handle Sketch -> parentComponent
-    if (Ptr<adsk::fusion::Sketch> sketch = entity) {
+  // Handle Profile -> parentSketch -> parentComponent
+  if (Ptr<adsk::fusion::Profile> profile = entity) {
+    Ptr<adsk::fusion::Sketch> sketch = profile->parentSketch();
+    if (sketch) {
       Ptr<adsk::fusion::Component> comp = sketch->parentComponent();
       if (comp) {
-        LOG_DEBUG("getComponentFromEntity: Found component from Sketch: " << comp->name());
+        LOG_DEBUG("getComponentFromEntity: Found component from Profile: " << comp->name());
         return comp;
       }
     }
-
-    // Handle ConstructionPlane -> component (note: uses .component() not .parentComponent())
-    if (Ptr<adsk::fusion::ConstructionPlane> plane = entity) {
-      Ptr<adsk::fusion::Component> comp = plane->component();
-      if (comp) {
-        LOG_DEBUG("getComponentFromEntity: Found component from ConstructionPlane: " << comp->name());
-        return comp;
-      }
-    }
-
-    LOG_WARNING("getComponentFromEntity: Could not determine component for entity type: " << entityType);
-    return nullptr;
-  } catch (const std::exception& e) {
-    LOG_ERROR("getComponentFromEntity exception: " << e.what());
-    return nullptr;
-  } catch (...) {
-    LOG_ERROR("getComponentFromEntity: Unknown exception");
-    return nullptr;
   }
+
+  // Handle Sketch -> parentComponent
+  if (Ptr<adsk::fusion::Sketch> sketch = entity) {
+    Ptr<adsk::fusion::Component> comp = sketch->parentComponent();
+    if (comp) {
+      LOG_DEBUG("getComponentFromEntity: Found component from Sketch: " << comp->name());
+      return comp;
+    }
+  }
+
+  // Handle ConstructionPlane -> component (note: uses .component() not .parentComponent())
+  if (Ptr<adsk::fusion::ConstructionPlane> plane = entity) {
+    Ptr<adsk::fusion::Component> comp = plane->component();
+    if (comp) {
+      LOG_DEBUG("getComponentFromEntity: Found component from ConstructionPlane: " << comp->name());
+      return comp;
+    }
+  }
+
+  LOG_WARNING("getComponentFromEntity: Could not determine component for entity type: " << entityType);
+  return nullptr;
 }
 
 void FusionWorkspace::logApiError(const std::string& operation) const {

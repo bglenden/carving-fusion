@@ -9,16 +9,16 @@
 #include <sstream>
 #include <stdexcept>
 
-#include "geometry/ShapeFactory.h"
 #include "adapters/IFusionInterface.h"
+#include "geometry/ShapeFactory.h"
 
+using ChipCarving::Geometry::Point2D;
+using ChipCarving::Geometry::Shape;
+using ChipCarving::Geometry::ShapeFactory;
 using ChipCarving::Parsers::BackgroundImage;
 using ChipCarving::Parsers::DesignFile;
 using ChipCarving::Parsers::DesignMetadata;
 using ChipCarving::Parsers::DesignParser;
-using ChipCarving::Geometry::Point2D;
-using ChipCarving::Geometry::Shape;
-using ChipCarving::Geometry::ShapeFactory;
 
 DesignFile DesignParser::parseFromFile(const std::string& filePath, const Adapters::ILogger* logger) {
   std::ifstream file(filePath);

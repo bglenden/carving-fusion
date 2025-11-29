@@ -9,10 +9,10 @@
 
 #include <functional>
 
-#include "adapters/IFusionInterface.h"
 #include "MedialAxisProcessor.h"
 #include "MedialAxisUtilities.h"
 #include "VCarvePath.h"
+#include "adapters/IFusionInterface.h"
 
 namespace ChipCarving {
 namespace Geometry {

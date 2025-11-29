@@ -25,10 +25,10 @@
 #include <iomanip>
 #include <sstream>
 
-#include "utils/logging.h"
-#include "adapters/FusionAPIAdapter.h"
-#include "version.h"
 #include "PluginInitializerGlobals.h"
+#include "adapters/FusionAPIAdapter.h"
+#include "utils/logging.h"
+#include "version.h"
 
 using adsk::core::Application;
 using adsk::core::CommandControl;
@@ -90,133 +90,117 @@ PluginMode PluginInitializer::GetModeFromEnv() {
 }
 
 void PluginInitializer::LogMessage(const std::string& message) {
-  try {
-    if (!ui)
-      return;
+  if (!ui)
+    return;
 
-    auto now = std::chrono::system_clock::now();
-    auto time_t = std::chrono::system_clock::to_time_t(now);
+  auto now = std::chrono::system_clock::now();
+  auto time_t = std::chrono::system_clock::to_time_t(now);
 
-    std::stringstream ss;
-    ss << "[" << std::put_time(std::localtime(&time_t), "%Y-%m-%d %H:%M:%S") << "] ";
-    ss << "ChipCarvingCpp: " << message;
+  std::stringstream ss;
+  ss << "[" << std::put_time(std::localtime(&time_t), "%Y-%m-%d %H:%M:%S") << "] ";
+  ss << "ChipCarvingCpp: " << message;
 
-    Ptr<Palettes> palettes = ui->palettes();
-    if (palettes) {
-      Ptr<TextCommandPalette> textPalette = palettes->itemById("TextCommands");
-      if (textPalette) {
-        textPalette->writeText(ss.str());
-      }
+  Ptr<Palettes> palettes = ui->palettes();
+  if (palettes) {
+    Ptr<TextCommandPalette> textPalette = palettes->itemById("TextCommands");
+    if (textPalette) {
+      textPalette->writeText(ss.str());
     }
-  } catch (...) {
-    (void)0;  // Ignore logging errors
   }
 }
 
 bool PluginInitializer::CreateToolbarPanel() {
-  try {
-    if (!ui) {
-      return false;
-    }
-    Ptr<Workspaces> workspaces = ui->workspaces();
-    if (!workspaces) {
-      return false;
-    }
-    Ptr<Workspace> designWorkspace = workspaces->itemById("FusionSolidEnvironment");
-    if (!designWorkspace) {
-      return false;
-    }
-
-    // Check for active document first
-    Ptr<Document> activeDoc = app->activeDocument();
-    Ptr<ToolbarPanels> panels;
-    try {
-      panels = designWorkspace->toolbarPanels();
-      if (!panels) {
-        // Try using an existing panel instead of creating a new one
-        Ptr<ToolbarPanel> addInsPanel = nullptr;
-
-        // Try to get the workspace's toolbar panels through a different method
-        if (designWorkspace->activate()) {
-          panels = designWorkspace->toolbarPanels();
-          if (panels) {
-            // Try to find ADD-INS panel
-            addInsPanel = panels->itemById("SolidScriptsAddinsPanel");
-            if (addInsPanel) {
-              panel = addInsPanel;
-            }
-          }
-        }
-
-        if (!panel) {
-          return false;
-        }
-      }
-    } catch (const std::exception& e) {
-      return false;
-    } catch (...) {
-      return false;
-    }
-
-    // Create or get the Chip Carving panel (if not already created through tab)
-    if (!panel) {
-      std::string panelId = "ChipCarvingPanelCpp";
-      panel = panels->itemById(panelId);
-
-      if (!panel) {
-        panel = panels->add(panelId, "Carving", "SelectPanel", false);
-        if (!panel) {
-          return false;
-        }
-      }
-    }
-
-    // Create commands
-    CreateImportDesignCommand();
-    CreateGeneratePathsCommand();
-    CreateSettingsCommand();
-
-    return true;
-  } catch (const std::exception& e) {
-    return false;
-  } catch (...) {
+  if (!ui) {
     return false;
   }
+  Ptr<Workspaces> workspaces = ui->workspaces();
+  if (!workspaces) {
+    return false;
+  }
+  Ptr<Workspace> designWorkspace = workspaces->itemById("FusionSolidEnvironment");
+  if (!designWorkspace) {
+    return false;
+  }
+
+  // Check for active document first
+  Ptr<Document> activeDoc = app->activeDocument();
+  Ptr<ToolbarPanels> panels;
+  panels = designWorkspace->toolbarPanels();
+  if (!panels) {
+    // Try using an existing panel instead of creating a new one
+    Ptr<ToolbarPanel> addInsPanel = nullptr;
+
+    // Try to get the workspace's toolbar panels through a different method
+    if (designWorkspace->activate()) {
+      panels = designWorkspace->toolbarPanels();
+      if (panels) {
+        // Try to find ADD-INS panel
+        addInsPanel = panels->itemById("SolidScriptsAddinsPanel");
+        if (addInsPanel) {
+          panel = addInsPanel;
+        }
+      }
+    }
+
+    if (!panel) {
+      return false;
+    }
+  }
+
+  // Create or get the Chip Carving panel (if not already created through tab)
+  if (!panel) {
+    std::string panelId = "ChipCarvingPanelCpp";
+    panel = panels->itemById(panelId);
+
+    if (!panel) {
+      panel = panels->add(panelId, "Carving", "SelectPanel", false);
+      if (!panel) {
+        return false;
+      }
+    }
+  }
+
+  // Create commands
+  CreateImportDesignCommand();
+  CreateGeneratePathsCommand();
+  CreateSettingsCommand();
+
+  return true;
 }
 
 bool PluginInitializer::InitializePlugin(const char* /* context */, PluginMode mode) {
+  app = Application::get();
+  if (!app) {
+    return false;
+  }
+
+  ui = app->userInterface();
+  if (!ui) {
+    return false;
+  }
+
+  LOG_WARNING("Starting Chip Carving Paths C++ Add-in v" << ADDIN_VERSION_STRING);
+
+  // Create plugin manager based on mode
+  switch (mode) {
+    case PluginMode::DEBUG_MODE:
+      // Add debug-specific initialization
+      break;
+    case PluginMode::COMMANDS_ONLY:
+      // Minimal command setup
+      break;
+    case PluginMode::UI_SIMPLE:
+      // Simple UI setup
+      break;
+    case PluginMode::REFACTORED:
+      // Use refactored plugin manager
+      break;
+    case PluginMode::STANDARD:
+    default:
+      break;
+  }
+
   try {
-    app = Application::get();
-    if (!app) {
-      return false;
-    }
-
-    ui = app->userInterface();
-    if (!ui) {
-      return false;
-    }
-
-    LOG_WARNING("Starting Chip Carving Paths C++ Add-in v" << ADDIN_VERSION_STRING);
-
-    // Create plugin manager based on mode
-    switch (mode) {
-      case PluginMode::DEBUG_MODE:
-        // Add debug-specific initialization
-        break;
-      case PluginMode::COMMANDS_ONLY:
-        // Minimal command setup
-        break;
-      case PluginMode::UI_SIMPLE:
-        // Simple UI setup
-        break;
-      case PluginMode::REFACTORED:
-        // Use refactored plugin manager
-        break;
-      case PluginMode::STANDARD:
-      default:
-        break;
-    }
-
     // Initialize plugin manager with factory
     std::string logPath = "/tmp/chip_carving_cpp.log";
     auto factory = std::make_unique<Adapters::FusionAPIFactory>(app, ui, logPath);
@@ -244,31 +228,27 @@ bool PluginInitializer::InitializePlugin(const char* /* context */, PluginMode m
 }
 
 bool PluginInitializer::ShutdownPlugin() {
-  try {
-    // Clean up UI elements
-    for (auto& control : commandControls) {
-      if (control && control->isValid()) {
-        control->deleteMe();
-      }
+  // Clean up UI elements
+  for (auto& control : commandControls) {
+    if (control && control->isValid()) {
+      control->deleteMe();
     }
-    commandControls.clear();
-
-    for (auto& cmdDef : commandDefinitions) {
-      if (cmdDef && cmdDef->isValid()) {
-        cmdDef->deleteMe();
-      }
-    }
-    commandDefinitions.clear();
-
-    if (pluginManager) {
-      pluginManager->shutdown();
-      pluginManager.reset();
-    }
-
-    return true;
-  } catch (...) {
-    return false;
   }
+  commandControls.clear();
+
+  for (auto& cmdDef : commandDefinitions) {
+    if (cmdDef && cmdDef->isValid()) {
+      cmdDef->deleteMe();
+    }
+  }
+  commandDefinitions.clear();
+
+  if (pluginManager) {
+    pluginManager->shutdown();
+    pluginManager.reset();
+  }
+
+  return true;
 }
 
 }  // namespace ChipCarving

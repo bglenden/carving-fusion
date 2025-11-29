@@ -8,16 +8,16 @@
 #include <sstream>
 #include <stdexcept>
 
+#include "adapters/IFusionInterface.h"
 #include "geometry/Leaf.h"
 #include "geometry/TriArc.h"
-#include "adapters/IFusionInterface.h"
 
+using ChipCarving::Geometry::distance;
+using ChipCarving::Geometry::Leaf;
 using ChipCarving::Geometry::Point2D;
 using ChipCarving::Geometry::Shape;
-using ChipCarving::Geometry::Leaf;
-using ChipCarving::Geometry::TriArc;
 using ChipCarving::Geometry::ShapeFactory;
-using ChipCarving::Geometry::distance;
+using ChipCarving::Geometry::TriArc;
 
 std::unique_ptr<Shape> ShapeFactory::createFromJson(const std::string& shapeJson, const Adapters::ILogger* logger) {
   std::string shapeType = extractShapeType(shapeJson);

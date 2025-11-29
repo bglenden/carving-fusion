@@ -5,8 +5,8 @@
  * Split from PluginCommandsParameters.cpp for maintainability
  */
 
-#include "utils/logging.h"
 #include "PluginCommands.h"
+#include "utils/logging.h"
 
 namespace ChipCarving {
 namespace Commands {
@@ -15,9 +15,8 @@ Adapters::SketchSelection GeneratePathsCommandHandler::getSelectionFromInputs(
     adsk::core::Ptr<adsk::core::CommandInputs> inputs) {
   Adapters::SketchSelection selection;
 
-  try {
-    // IMMEDIATE EXTRACTION APPROACH: Use cached geometry instead of processing
-    // selections
+  // IMMEDIATE EXTRACTION APPROACH: Use cached geometry instead of processing
+  // selections
     LOG_INFO("Using cached geometry from immediate extraction. Available cached "
              "profiles: "
              << cachedProfiles_.size());
@@ -80,58 +79,49 @@ Adapters::SketchSelection GeneratePathsCommandHandler::getSelectionFromInputs(
 
       // Process direct profile selections (root component)
       for (const auto& profile : directProfiles) {
-        try {
-          // Use areaProperties() as validation - only works for closed profiles
-          adsk::core::Ptr<adsk::fusion::AreaProperties> areaProps = profile->areaProperties();
-          if (areaProps && areaProps->area() > 0) {
-            // Valid closed profile with measurable area
-            selection.closedPathCount++;
+        // Use areaProperties() as validation - only works for closed profiles
+        adsk::core::Ptr<adsk::fusion::AreaProperties> areaProps = profile->areaProperties();
+        if (areaProps && areaProps->area() > 0) {
+          // Valid closed profile with measurable area
+          selection.closedPathCount++;
 
-            // Store the entity token for backward compatibility
-            std::string profileToken = profile->entityToken();
-            selection.selectedEntityIds.push_back(profileToken);
+          // Store the entity token for backward compatibility
+          std::string profileToken = profile->entityToken();
+          selection.selectedEntityIds.push_back(profileToken);
 
-            // Store profile metadata immediately INCLUDING the actual profile object
-            Adapters::ProfileGeometry profileGeom;
+          // Store profile metadata immediately INCLUDING the actual profile object
+          Adapters::ProfileGeometry profileGeom;
 
-            // Store basic profile data
-            profileGeom.area = areaProps->area();
-            auto centroid = areaProps->centroid();
-            if (centroid) {
-              profileGeom.centroid = {centroid->x(), centroid->y()};
-            }
+          // Store basic profile data
+          profileGeom.area = areaProps->area();
+          auto centroid = areaProps->centroid();
+          if (centroid) {
+            profileGeom.centroid = {centroid->x(), centroid->y()};
+          }
 
-            // Get sketch name if available
-            if (profile->parentSketch()) {
-              profileGeom.sketchName = profile->parentSketch()->name();
+          // Get sketch name if available
+          if (profile->parentSketch()) {
+            profileGeom.sketchName = profile->parentSketch()->name();
 
-              // Get plane entity ID
-              auto referenceEntity = profile->parentSketch()->referencePlane();
-              if (referenceEntity) {
-                auto constructionPlane = referenceEntity->cast<adsk::fusion::ConstructionPlane>();
-                if (constructionPlane) {
-                  profileGeom.planeEntityId = constructionPlane->entityToken();
-                } else {
-                  auto face = referenceEntity->cast<adsk::fusion::BRepFace>();
-                  if (face) {
-                    profileGeom.planeEntityId = face->entityToken();
-                  }
+            // Get plane entity ID
+            auto referenceEntity = profile->parentSketch()->referencePlane();
+            if (referenceEntity) {
+              auto constructionPlane = referenceEntity->cast<adsk::fusion::ConstructionPlane>();
+              if (constructionPlane) {
+                profileGeom.planeEntityId = constructionPlane->entityToken();
+              } else {
+                auto face = referenceEntity->cast<adsk::fusion::BRepFace>();
+                if (face) {
+                  profileGeom.planeEntityId = face->entityToken();
                 }
               }
             }
-
-            // Add to selected profiles
-            selection.selectedProfiles.push_back(profileGeom);
-          } else {
-            selection.errorMessage = "Selected profile has no area (not closed)";
-            selection.isValid = false;
-            return selection;
           }
-        } catch (...) {
-          // If areaProperties() fails, it's not a valid closed profile
-          selection.errorMessage = "Selected entity is not a valid closed profile. Click INSIDE "
-                                   "blue "
-                                   "shaded regions only.";
+
+          // Add to selected profiles
+          selection.selectedProfiles.push_back(profileGeom);
+        } else {
+          selection.errorMessage = "Selected profile has no area (not closed)";
           selection.isValid = false;
           return selection;
         }
@@ -207,42 +197,38 @@ Adapters::SketchSelection GeneratePathsCommandHandler::getSelectionFromInputs(
             if (matchingCurves == totalCurvesInProfile && totalCurvesInProfile > 0) {
               LOG_INFO("Found complete profile match!");
               // We found a complete profile! Process it like a direct profile selection
-              try {
-                adsk::core::Ptr<adsk::fusion::AreaProperties> areaProps = candidateProfile->areaProperties();
-                if (areaProps && areaProps->area() > 0) {
-                  selection.closedPathCount++;
+              adsk::core::Ptr<adsk::fusion::AreaProperties> areaProps = candidateProfile->areaProperties();
+              if (areaProps && areaProps->area() > 0) {
+                selection.closedPathCount++;
 
-                  std::string profileToken = candidateProfile->entityToken();
-                  selection.selectedEntityIds.push_back(profileToken);
+                std::string profileToken = candidateProfile->entityToken();
+                selection.selectedEntityIds.push_back(profileToken);
 
-                  Adapters::ProfileGeometry profileGeom;
-                  profileGeom.area = areaProps->area();
-                  auto centroid = areaProps->centroid();
-                  if (centroid) {
-                    profileGeom.centroid = {centroid->x(), centroid->y()};
-                  }
+                Adapters::ProfileGeometry profileGeom;
+                profileGeom.area = areaProps->area();
+                auto centroid = areaProps->centroid();
+                if (centroid) {
+                  profileGeom.centroid = {centroid->x(), centroid->y()};
+                }
 
-                  profileGeom.sketchName = sketch->name();
+                profileGeom.sketchName = sketch->name();
 
-                  auto referenceEntity = sketch->referencePlane();
-                  if (referenceEntity) {
-                    auto constructionPlane = referenceEntity->cast<adsk::fusion::ConstructionPlane>();
-                    if (constructionPlane) {
-                      profileGeom.planeEntityId = constructionPlane->entityToken();
-                    } else {
-                      auto face = referenceEntity->cast<adsk::fusion::BRepFace>();
-                      if (face) {
-                        profileGeom.planeEntityId = face->entityToken();
-                      }
+                auto referenceEntity = sketch->referencePlane();
+                if (referenceEntity) {
+                  auto constructionPlane = referenceEntity->cast<adsk::fusion::ConstructionPlane>();
+                  if (constructionPlane) {
+                    profileGeom.planeEntityId = constructionPlane->entityToken();
+                  } else {
+                    auto face = referenceEntity->cast<adsk::fusion::BRepFace>();
+                    if (face) {
+                      profileGeom.planeEntityId = face->entityToken();
                     }
                   }
-
-                  selection.selectedProfiles.push_back(profileGeom);
-                  foundCompleteProfile = true;
-                  break;
                 }
-              } catch (...) {
-                // Profile validation failed
+
+                selection.selectedProfiles.push_back(profileGeom);
+                foundCompleteProfile = true;
+                break;
               }
             }
           }
@@ -272,10 +258,6 @@ Adapters::SketchSelection GeneratePathsCommandHandler::getSelectionFromInputs(
     } else {
       selection.errorMessage = "Profile selection input not found";
     }
-  } catch (...) {
-    selection.isValid = false;
-    selection.errorMessage = "Error processing profile selection";
-  }
 
   return selection;
 }

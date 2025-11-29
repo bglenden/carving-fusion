@@ -11,18 +11,18 @@
 #include <limits>
 #include <stdexcept>
 
-#include "geometry/TriArc.h"
 #include "adapters/IFusionInterface.h"
+#include "geometry/TriArc.h"
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
 #endif
 
-using ChipCarving::Geometry::Point2D;
 using ChipCarving::Geometry::ArcParams;
-using ChipCarving::Geometry::TriArc;
 using ChipCarving::Geometry::distance;
 using ChipCarving::Geometry::midpoint;
+using ChipCarving::Geometry::Point2D;
+using ChipCarving::Geometry::TriArc;
 
 std::array<ArcParams, 3> TriArc::getArcParameters() const {
   std::array<ArcParams, 3> arcs;

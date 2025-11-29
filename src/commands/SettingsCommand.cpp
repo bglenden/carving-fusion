@@ -7,8 +7,8 @@
 
 #include "SettingsCommand.h"
 
-#include "utils/logging.h"
 #include "core/PluginManager.h"
+#include "utils/logging.h"
 
 namespace ChipCarving {
 namespace Commands {
@@ -17,60 +17,53 @@ SettingsCommandHandler::SettingsCommandHandler(std::shared_ptr<Core::PluginManag
     : pluginManager_(pluginManager) {}
 
 void SettingsCommandHandler::notify(const adsk::core::Ptr<adsk::core::CommandCreatedEventArgs>& eventArgs) {
-  try {
-    if (!eventArgs || !pluginManager_) {
-      return;
-    }
-
-    adsk::core::Ptr<adsk::core::Command> cmd = eventArgs->command();
-    if (!cmd) {
-      return;
-    }
-
-    // Set command properties
-    cmd->isOKButtonVisible(true);
-    cmd->okButtonText("Apply");
-    cmd->cancelButtonText("Cancel");
-    cmd->isRepeatable(false);
-
-    // Set dialog size
-    cmd->setDialogInitialSize(400, 300);
-    cmd->setDialogMinimumSize(350, 250);
-
-    // Create command inputs
-    adsk::core::Ptr<adsk::core::CommandInputs> inputs = cmd->commandInputs();
-    if (!inputs) {
-      return;
-    }
-
-    createSettingsInputs(inputs);
-
-    // Create and register execute handler
-    class ExecuteHandler : public adsk::core::CommandEventHandler {
-     public:
-      explicit ExecuteHandler(SettingsCommandHandler* parent) : parent_(parent) {}
-      void notify(const adsk::core::Ptr<adsk::core::CommandEventArgs>& eventArgs) override {
-        if (parent_ && eventArgs && eventArgs->command() && eventArgs->command()->commandInputs()) {
-          parent_->applySettings(eventArgs->command()->commandInputs());
-        }
-      }
-
-     private:
-      SettingsCommandHandler* parent_;
-    };
-
-    auto onExecute = new ExecuteHandler(this);
-    cmd->execute()->add(onExecute);
-  } catch (const std::exception& e) {
-    LOG_ERROR("Exception in SettingsCommandHandler::notify: " << e.what());
-  } catch (...) {
-    LOG_ERROR("Unknown exception in SettingsCommandHandler::notify");
+  if (!eventArgs || !pluginManager_) {
+    return;
   }
+
+  adsk::core::Ptr<adsk::core::Command> cmd = eventArgs->command();
+  if (!cmd) {
+    return;
+  }
+
+  // Set command properties
+  cmd->isOKButtonVisible(true);
+  cmd->okButtonText("Apply");
+  cmd->cancelButtonText("Cancel");
+  cmd->isRepeatable(false);
+
+  // Set dialog size
+  cmd->setDialogInitialSize(400, 300);
+  cmd->setDialogMinimumSize(350, 250);
+
+  // Create command inputs
+  adsk::core::Ptr<adsk::core::CommandInputs> inputs = cmd->commandInputs();
+  if (!inputs) {
+    return;
+  }
+
+  createSettingsInputs(inputs);
+
+  // Create and register execute handler
+  class ExecuteHandler : public adsk::core::CommandEventHandler {
+   public:
+    explicit ExecuteHandler(SettingsCommandHandler* parent) : parent_(parent) {}
+    void notify(const adsk::core::Ptr<adsk::core::CommandEventArgs>& eventArgs) override {
+      if (parent_ && eventArgs && eventArgs->command() && eventArgs->command()->commandInputs()) {
+        parent_->applySettings(eventArgs->command()->commandInputs());
+      }
+    }
+
+   private:
+    SettingsCommandHandler* parent_;
+  };
+
+  auto onExecute = new ExecuteHandler(this);
+  cmd->execute()->add(onExecute);
 }
 
 void SettingsCommandHandler::createSettingsInputs(adsk::core::Ptr<adsk::core::CommandInputs> inputs) {
-  try {
-    // Add title
+  // Add title
     adsk::core::Ptr<adsk::core::TextBoxCommandInput> titleDesc =
         inputs->addTextBoxCommandInput("titleDescription", "",
                                        "<b>Carving Plugin Settings</b><br/>"
@@ -102,39 +95,28 @@ void SettingsCommandHandler::createSettingsInputs(adsk::core::Ptr<adsk::core::Co
                                               "Note: This setting applies immediately and persists for the "
                                               "current session only.",
                                               1, true);
-  } catch (const std::exception& e) {
-    LOG_ERROR("Exception creating settings inputs: " << e.what());
-  } catch (...) {
-    LOG_ERROR("Unknown exception creating settings inputs");
-  }
 }
 
 void SettingsCommandHandler::applySettings(adsk::core::Ptr<adsk::core::CommandInputs> inputs) {
-  try {
-    // Get the checkbox value
-    adsk::core::Ptr<adsk::core::BoolValueCommandInput> showInfoCheckbox = inputs->itemById("showInfoDebugMessages");
+  // Get the checkbox value
+  adsk::core::Ptr<adsk::core::BoolValueCommandInput> showInfoCheckbox = inputs->itemById("showInfoDebugMessages");
 
-    if (showInfoCheckbox) {
-      if (showInfoCheckbox->value()) {
-        // Show INFO and DEBUG messages
+  if (showInfoCheckbox) {
+    if (showInfoCheckbox->value()) {
+      // Show INFO and DEBUG messages
 #ifdef DEBUG
-        SetMinLogLevel(LogLevel::LOG_DEBUG);
-        LOG_INFO("Log level set to DEBUG (showing all messages)");
+      SetMinLogLevel(LogLevel::LOG_DEBUG);
+      LOG_INFO("Log level set to DEBUG (showing all messages)");
 #else
-        SetMinLogLevel(LogLevel::INFO);
-        LOG_INFO("Log level set to INFO (showing INFO, WARNING, and ERROR "
-                 "messages)");
+      SetMinLogLevel(LogLevel::INFO);
+      LOG_INFO("Log level set to INFO (showing INFO, WARNING, and ERROR "
+               "messages)");
 #endif
-      } else {
-        // Show only WARNING and ERROR messages
-        SetMinLogLevel(LogLevel::WARNING);
-        LOG_WARNING("Log level set to WARNING (INFO and DEBUG messages hidden)");
-      }
+    } else {
+      // Show only WARNING and ERROR messages
+      SetMinLogLevel(LogLevel::WARNING);
+      LOG_WARNING("Log level set to WARNING (INFO and DEBUG messages hidden)");
     }
-  } catch (const std::exception& e) {
-    LOG_ERROR("Exception applying settings: " << e.what());
-  } catch (...) {
-    LOG_ERROR("Unknown exception applying settings");
   }
 }
 

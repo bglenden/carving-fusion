@@ -10,10 +10,10 @@
 #include <set>
 #include <sstream>
 
+#include "PluginManager.h"
 #include "geometry/MedialAxisProcessor.h"
 #include "geometry/Point2D.h"
 #include "geometry/Point3D.h"
-#include "PluginManager.h"
 
 namespace ChipCarving {
 namespace Core {

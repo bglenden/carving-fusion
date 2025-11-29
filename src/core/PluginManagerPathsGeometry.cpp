@@ -18,8 +18,7 @@ namespace Core {
 namespace {
 
 // Convert vertex pairs to Point2D polygon
-std::vector<Geometry::Point2D> convertToPolygon(
-    const std::vector<std::pair<double, double>>& vertices) {
+std::vector<Geometry::Point2D> convertToPolygon(const std::vector<std::pair<double, double>>& vertices) {
   std::vector<Geometry::Point2D> polygon;
   polygon.reserve(vertices.size());
   std::transform(vertices.begin(), vertices.end(), std::back_inserter(polygon),
@@ -28,10 +27,9 @@ std::vector<Geometry::Point2D> convertToPolygon(
 }
 
 // Extract from cached profile geometry
-void extractFromCachedProfiles(
-    const std::vector<Adapters::ProfileGeometry>& profiles,
-    std::vector<std::vector<Geometry::Point2D>>& polygons,
-    std::vector<Adapters::IWorkspace::TransformParams>& transforms) {
+void extractFromCachedProfiles(const std::vector<Adapters::ProfileGeometry>& profiles,
+                               std::vector<std::vector<Geometry::Point2D>>& polygons,
+                               std::vector<Adapters::IWorkspace::TransformParams>& transforms) {
   for (size_t i = 0; i < profiles.size(); ++i) {
     const auto& profileGeom = profiles[i];
 
@@ -40,8 +38,8 @@ void extractFromCachedProfiles(
       continue;
     }
 
-    LOG_INFO("Using cached geometry for profile " << i << " from sketch '"
-             << profileGeom.sketchName << "' with " << profileGeom.vertices.size() << " vertices");
+    LOG_INFO("Using cached geometry for profile " << i << " from sketch '" << profileGeom.sketchName << "' with "
+                                                  << profileGeom.vertices.size() << " vertices");
 
     auto polygon = convertToPolygon(profileGeom.vertices);
     polygons.push_back(std::move(polygon));
@@ -50,11 +48,9 @@ void extractFromCachedProfiles(
 }
 
 // Extract via workspace interface (fallback path)
-void extractFromEntityIds(
-    const std::vector<std::string>& entityIds,
-    Adapters::IWorkspace* workspace,
-    std::vector<std::vector<Geometry::Point2D>>& polygons,
-    std::vector<Adapters::IWorkspace::TransformParams>& transforms) {
+void extractFromEntityIds(const std::vector<std::string>& entityIds, Adapters::IWorkspace* workspace,
+                          std::vector<std::vector<Geometry::Point2D>>& polygons,
+                          std::vector<Adapters::IWorkspace::TransformParams>& transforms) {
   for (const auto& entityId : entityIds) {
     std::vector<std::pair<double, double>> rawVertices;
     Adapters::IWorkspace::TransformParams transform;
@@ -75,10 +71,9 @@ void extractFromEntityIds(
 
 }  // namespace
 
-bool PluginManager::extractProfileGeometry(
-    const Adapters::SketchSelection& selection,
-    std::vector<std::vector<Geometry::Point2D>>& profilePolygons,
-    std::vector<Adapters::IWorkspace::TransformParams>& profileTransforms) {
+bool PluginManager::extractProfileGeometry(const Adapters::SketchSelection& selection,
+                                           std::vector<std::vector<Geometry::Point2D>>& profilePolygons,
+                                           std::vector<Adapters::IWorkspace::TransformParams>& profileTransforms) {
   if (!initialized_ || !workspace_) {
     return false;
   }
@@ -93,26 +88,19 @@ bool PluginManager::extractProfileGeometry(
   profilePolygons.clear();
   profileTransforms.clear();
 
-  try {
-    if (!selection.selectedProfiles.empty()) {
-      extractFromCachedProfiles(selection.selectedProfiles, profilePolygons, profileTransforms);
-    } else {
-      extractFromEntityIds(selection.selectedEntityIds, workspace_.get(),
-                           profilePolygons, profileTransforms);
-    }
+  if (!selection.selectedProfiles.empty()) {
+    extractFromCachedProfiles(selection.selectedProfiles, profilePolygons, profileTransforms);
+  } else {
+    extractFromEntityIds(selection.selectedEntityIds, workspace_.get(), profilePolygons, profileTransforms);
+  }
 
-    if (profilePolygons.empty()) {
-      LOG_INFO("No valid profile polygons extracted");
-      return false;
-    }
-
-    LOG_INFO("Successfully extracted " << profilePolygons.size() << " profile polygons");
-    return true;
-  } catch (const std::exception& e) {
-    return false;
-  } catch (...) {
+  if (profilePolygons.empty()) {
+    LOG_INFO("No valid profile polygons extracted");
     return false;
   }
+
+  LOG_INFO("Successfully extracted " << profilePolygons.size() << " profile polygons");
+  return true;
 }
 
 }  // namespace Core

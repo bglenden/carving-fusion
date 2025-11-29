@@ -13,8 +13,8 @@
 
 #include "geometry/SVGGenerator.h"
 
-using ChipCarving::Geometry::SVGGenerator;
 using ChipCarving::Geometry::Point2D;
+using ChipCarving::Geometry::SVGGenerator;
 
 SVGGenerator::SVGGenerator(double width, double height, double scale)
     : width_(width), height_(height), scale_(scale), offset_(0.0, 0.0) {

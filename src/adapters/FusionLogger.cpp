@@ -173,31 +173,23 @@ std::string FusionUserInterface::showFileDialog(const std::string& title, const 
     return "";
   }
 
-  try {
-    // Create file dialog
-    Ptr<FileDialog> fileDialog = ui_->createFileDialog();
-    if (!fileDialog) {
-      return "";
-    }
+  // Create file dialog
+  Ptr<FileDialog> fileDialog = ui_->createFileDialog();
+  if (!fileDialog) {
+    return "";
+  }
 
-    // Configure the dialog
-    fileDialog->isMultiSelectEnabled(false);
-    fileDialog->title(title);
-    fileDialog->filter(filter);
+  // Configure the dialog
+  fileDialog->isMultiSelectEnabled(false);
+  fileDialog->title(title);
+  fileDialog->filter(filter);
 
-    // Show the dialog
-    DialogResults result = fileDialog->showOpen();
-    if (result == DialogOK) {
-      if (fileDialog->filenames().size() > 0) {
-        return fileDialog->filename();
-      }
+  // Show the dialog
+  DialogResults result = fileDialog->showOpen();
+  if (result == DialogOK) {
+    if (fileDialog->filenames().size() > 0) {
+      return fileDialog->filename();
     }
-  } catch (const std::exception& e) {
-    (void)e;  // Log error but don't crash
-    std::cout << "File dialog error: " << e.what() << std::endl;
-  } catch (...) {
-    (void)0;  // Unknown file dialog error
-    std::cout << "Unknown file dialog error" << std::endl;
   }
 
   return "";

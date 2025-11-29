@@ -10,8 +10,8 @@
  * for details on reverting if issues arise.
  */
 
-#include "utils/logging.h"
 #include "FusionAPIAdapter.h"
+#include "utils/logging.h"
 
 using adsk::core::Base;
 using adsk::core::Ptr;

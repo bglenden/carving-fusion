@@ -9,21 +9,19 @@
 #include <set>
 #include <sstream>
 
+#include "PluginManager.h"
 #include "geometry/Point2D.h"
 #include "geometry/Point3D.h"
 #include "geometry/VCarveCalculator.h"
 #include "parsers/DesignParser.h"
-#include "utils/logging.h"
-#include "utils/UnitConversion.h"
-#include "version.h"
-#include "PluginManager.h"
-
 #include "utils/ErrorHandler.h"
+#include "utils/UnitConversion.h"
+#include "utils/logging.h"
+#include "version.h"
 namespace ChipCarving {
 namespace Core {
 
-PluginManager::PluginManager(std::unique_ptr<Adapters::IFusionFactory> factory)
-    : factory_(std::move(factory)) {}
+PluginManager::PluginManager(std::unique_ptr<Adapters::IFusionFactory> factory) : factory_(std::move(factory)) {}
 
 bool PluginManager::initialize() {
   if (initialized_) {
@@ -81,9 +79,9 @@ void PluginManager::shutdown() {
 
     initialized_ = false;
   } catch (const std::exception& e) {
-    LOG_ERROR("Exception during initialization: " << e.what());
+    LOG_ERROR("Exception during shutdown: " << e.what());
   } catch (...) {
-    LOG_ERROR("Unknown exception during initialization");
+    LOG_ERROR("Unknown exception during shutdown");
   }
 }
 
@@ -95,16 +93,14 @@ std::string PluginManager::getName() const {
   return std::string(ADDIN_NAME) + " (Refactored)";
 }
 
-}  // namespace Core
-void ChipCarving::Core::PluginManager::setupErrorHandling() {
+void PluginManager::setupErrorHandling() {
   if (!ui_) {
     return;
   }
 
   // Setup error handler with UI integration for user-facing messages
+  // (implementation removed for simplicity)
 }
 
-
+}  // namespace Core
 }  // namespace ChipCarving
-#include "utils/ErrorHandler.h"
-

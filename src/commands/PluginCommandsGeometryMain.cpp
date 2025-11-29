@@ -6,9 +6,9 @@
  * Extracted from PluginCommandsGeometry.cpp
  */
 
-#include "utils/logging.h"
 #include "PluginCommands.h"
 #include "PluginCommandsGeometryChaining.h"
+#include "utils/logging.h"
 
 namespace ChipCarving {
 namespace Commands {
@@ -25,8 +25,7 @@ void GeneratePathsCommandHandler::extractAndCacheProfileGeometry(adsk::core::Ptr
     return;
   }
 
-  try {
-    ChipCarving::Adapters::ProfileGeometry profileGeom;
+  ChipCarving::Adapters::ProfileGeometry profileGeom;
 
     // Get basic profile information while it's still valid
     auto sketch = profile->parentSketch();
@@ -245,11 +244,6 @@ void GeneratePathsCommandHandler::extractAndCacheProfileGeometry(adsk::core::Ptr
     LOG_INFO("Successfully cached geometry for profile " << index << " from sketch '" << profileGeom.sketchName
                                                          << "' with " << profileGeom.vertices.size()
                                                          << " vertices and area " << profileGeom.area << " sq cm");
-  } catch (const std::exception& e) {
-    LOG_INFO("Exception during geometry extraction for profile " << index << ": " << e.what());
-  } catch (...) {
-    LOG_INFO("Unknown exception during geometry extraction for profile " << index);
-  }
 }
 
 }  // namespace Commands
