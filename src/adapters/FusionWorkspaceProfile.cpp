@@ -31,7 +31,6 @@ bool FusionWorkspace::extractProfileVertices(const std::string& entityId,
 
   // Use centralized debug logging
   LOG_DEBUG("=== PROFILE EXTRACTION === extractProfileVertices called for: " << entityId);
-  // TODO(developer): Remove indicator file creation
 
   try {
     // Use extracted profile search method

@@ -16,13 +16,13 @@ namespace Core {
 
 void PluginManager::logStartup() {
   if (logger_) {
-    // TODO(developer): Add implementation
+    logger_->logInfo("PluginManager startup completed successfully");
   }
 }
 
 void PluginManager::logShutdown() {
   if (logger_) {
-    // TODO(developer): Add implementation
+    logger_->logInfo("PluginManager shutdown completed successfully");
   }
 }
 
