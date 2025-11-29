@@ -41,8 +41,8 @@ struct ArcParams {
  */
 class TriArc : public Shape {
  private:
-  std::array<Point2D, 3> vertices_;
-  std::array<double, 3> bulgeFactors_;
+  std::array<Point2D, 3> vertices_{};
+  std::array<double, 3> bulgeFactors_{};
 
   static constexpr double DEFAULT_BULGE = -0.125;
   static constexpr double MIN_BULGE = -0.2;

@@ -33,7 +33,7 @@ class BaseCommandHandler : public adsk::core::CommandCreatedEventHandler {
   virtual ~BaseCommandHandler() = default;
 
  protected:
-  std::shared_ptr<Core::PluginManager> pluginManager_;
+  std::shared_ptr<Core::PluginManager> pluginManager_{};
 };
 
 /**
@@ -49,7 +49,7 @@ class ImportDesignCommandHandler : public BaseCommandHandler {
   void executeImportDesign(const adsk::core::Ptr<adsk::core::CommandEventArgs>& args);
   void handleInputChanged(const adsk::core::Ptr<adsk::core::InputChangedEventArgs>& args);
 
-  std::string selectedFilePath_;  // Store the selected file path
+  std::string selectedFilePath_{};  // Store the selected file path
 };
 
 /**
@@ -79,10 +79,10 @@ class GeneratePathsCommandHandler : public BaseCommandHandler {
   void validateAndCleanSelection(adsk::core::Ptr<adsk::core::SelectionCommandInput> selectionInput);
 
   // Sketch tracking for incremental generation
-  std::map<std::string, std::string> toolToSketchMap_;  // Maps tool name to sketch name
+  std::map<std::string, std::string> toolToSketchMap_{};  // Maps tool name to sketch name
 
   // Cached geometry to avoid stale token issues
-  std::vector<Adapters::ProfileGeometry> cachedProfiles_;
+  std::vector<Adapters::ProfileGeometry> cachedProfiles_{};
 };
 
 }  // namespace Commands

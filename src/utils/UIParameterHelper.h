@@ -80,7 +80,7 @@ class UIParameterHelper {
   Optional<std::string> getDropdownValue(const std::string& inputId);
 
  private:
-  adsk::core::Ptr<adsk::core::CommandInputs> inputs_;
+  adsk::core::Ptr<adsk::core::CommandInputs> inputs_{};
 
   /**
    * Helper method to log parameter access attempts

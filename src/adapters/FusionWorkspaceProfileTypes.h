@@ -17,11 +17,11 @@ namespace Adapters {
 
 // Structure to hold curve data for chaining
 struct CurveData {
-  size_t originalIndex;
-  std::vector<adsk::core::Ptr<adsk::core::Point3D>> strokePoints;
-  adsk::core::Ptr<adsk::core::Point3D> startPoint;
-  adsk::core::Ptr<adsk::core::Point3D> endPoint;
-  bool used;
+  size_t originalIndex = 0;
+  std::vector<adsk::core::Ptr<adsk::core::Point3D>> strokePoints{};
+  adsk::core::Ptr<adsk::core::Point3D> startPoint{};
+  adsk::core::Ptr<adsk::core::Point3D> endPoint{};
+  bool used = false;
 };
 
 }  // namespace Adapters

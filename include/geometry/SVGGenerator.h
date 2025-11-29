@@ -21,11 +21,11 @@ namespace Geometry {
  */
 class SVGGenerator {
  private:
-  std::stringstream svg_;
-  double width_;
-  double height_;
-  double scale_;
-  Point2D offset_;
+  std::stringstream svg_{};
+  double width_ = 0.0;
+  double height_ = 0.0;
+  double scale_ = 0.0;
+  Point2D offset_{0, 0};
 
  public:
   /**

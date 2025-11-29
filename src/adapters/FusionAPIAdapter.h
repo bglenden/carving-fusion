@@ -31,8 +31,8 @@ class FusionLogger : public ILogger {
   void logError(const std::string& message) const override;
 
  private:
-  mutable std::ofstream logFile_;
-  std::string logFilePath_;
+  mutable std::ofstream logFile_{};
+  std::string logFilePath_{};
 
   void writeLog(const std::string& message, const std::string& level) const;
   void rotateLogFile();
@@ -59,7 +59,7 @@ class FusionUserInterface : public IUserInterface {
   void updateSelectionCount(int count) override;
 
  private:
-  adsk::core::Ptr<adsk::core::UserInterface> ui_;
+  adsk::core::Ptr<adsk::core::UserInterface> ui_{};
 };
 
 /**
@@ -97,15 +97,15 @@ class FusionSketch : public ISketch {
   std::vector<std::string> getSketchCurveEntityIds() override;
 
  private:
-  std::string name_;
-  adsk::core::Ptr<adsk::core::Application> app_;
-  adsk::core::Ptr<adsk::fusion::Sketch> sketch_;
-  std::vector<adsk::core::Ptr<adsk::fusion::SketchPoint>> sketchPoints_;
+  std::string name_{};
+  adsk::core::Ptr<adsk::core::Application> app_{};
+  adsk::core::Ptr<adsk::fusion::Sketch> sketch_{};
+  std::vector<adsk::core::Ptr<adsk::fusion::SketchPoint>> sketchPoints_{};
 
   // Construction geometry tracking
-  std::vector<adsk::core::Ptr<adsk::fusion::SketchLine>> constructionLines_;
-  std::vector<adsk::core::Ptr<adsk::fusion::SketchCircle>> constructionCircles_;
-  std::vector<adsk::core::Ptr<adsk::fusion::SketchPoint>> constructionPoints_;
+  std::vector<adsk::core::Ptr<adsk::fusion::SketchLine>> constructionLines_{};
+  std::vector<adsk::core::Ptr<adsk::fusion::SketchCircle>> constructionCircles_{};
+  std::vector<adsk::core::Ptr<adsk::fusion::SketchPoint>> constructionPoints_{};
 };
 
 /**
@@ -138,7 +138,7 @@ class FusionWorkspace : public IWorkspace {
   double getSurfaceZAtXY(const std::string& surfaceId, double x, double y) override;
 
  private:
-  adsk::core::Ptr<adsk::core::Application> app_;
+  adsk::core::Ptr<adsk::core::Application> app_{};
 
   // Helper method for getting world geometry of sketch curves
   adsk::core::Ptr<adsk::core::Curve3D> getCurveWorldGeometry(adsk::core::Ptr<adsk::fusion::SketchCurve> sketchCurve);
@@ -184,9 +184,9 @@ class FusionAPIFactory : public IFusionFactory {
   std::unique_ptr<IWorkspace> createWorkspace() override;
 
  private:
-  adsk::core::Ptr<adsk::core::Application> app_;
-  adsk::core::Ptr<adsk::core::UserInterface> ui_;
-  std::string logFilePath_;
+  adsk::core::Ptr<adsk::core::Application> app_{};
+  adsk::core::Ptr<adsk::core::UserInterface> ui_{};
+  std::string logFilePath_{};
 };
 
 }  // namespace Adapters

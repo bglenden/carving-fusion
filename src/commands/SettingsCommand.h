@@ -31,7 +31,7 @@ class SettingsCommandHandler : public adsk::core::CommandCreatedEventHandler {
   void notify(const adsk::core::Ptr<adsk::core::CommandCreatedEventArgs>& eventArgs) override;
 
  private:
-  std::shared_ptr<Core::PluginManager> pluginManager_;
+  std::shared_ptr<Core::PluginManager> pluginManager_{};
 
   /**
    * Creates the settings dialog inputs

@@ -26,35 +26,35 @@ namespace Parsers {
  * Metadata about a design file
  */
 struct DesignMetadata {
-  Optional<std::string> name;
-  Optional<std::string> author;
-  Optional<std::string> created;
-  Optional<std::string> modified;
-  Optional<std::string> description;
+  Optional<std::string> name{};
+  Optional<std::string> author{};
+  Optional<std::string> created{};
+  Optional<std::string> modified{};
+  Optional<std::string> description{};
 };
 
 /**
  * Background image data (not used for sketches, but part of schema)
  */
 struct BackgroundImage {
-  std::string id;
-  std::string imageData;  // Base64 encoded
-  Geometry::Point2D position;
-  double rotation;
-  double scale;
-  double opacity;
-  double naturalWidth;
-  double naturalHeight;
+  std::string id{};
+  std::string imageData{};  // Base64 encoded
+  Geometry::Point2D position{0, 0};
+  double rotation = 0.0;
+  double scale = 1.0;
+  double opacity = 1.0;
+  double naturalWidth = 0.0;
+  double naturalHeight = 0.0;
 };
 
 /**
  * Complete design file contents
  */
 struct DesignFile {
-  std::string version;
-  DesignMetadata metadata;
-  std::vector<std::unique_ptr<Geometry::Shape>> shapes;
-  std::vector<BackgroundImage> backgroundImages;
+  std::string version{};
+  DesignMetadata metadata{};
+  std::vector<std::unique_ptr<Geometry::Shape>> shapes{};
+  std::vector<BackgroundImage> backgroundImages{};
 };
 
 /**

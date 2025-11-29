@@ -58,7 +58,7 @@ class FusionComponentTraverser {
   std::vector<adsk::core::Ptr<adsk::fusion::Component>> getComponentsContaining();
 
  private:
-  adsk::core::Ptr<adsk::fusion::Component> rootComponent_;
+  adsk::core::Ptr<adsk::fusion::Component> rootComponent_{};
 
   void collectComponents(std::vector<adsk::core::Ptr<adsk::fusion::Component>>& components);
 };

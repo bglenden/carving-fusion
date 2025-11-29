@@ -21,21 +21,19 @@ namespace Geometry {
  * Coordinate transformation parameters for unit circle conversion
  */
 struct TransformParams {
-  Point2D offset;       // Translation to center at origin
-  double scale;         // Uniform scale factor to fit in unit circle
-  Point2D originalMin;  // Original bounding box minimum
-  Point2D originalMax;  // Original bounding box maximum
-
-  TransformParams() : offset(0, 0), scale(1.0), originalMin(0, 0), originalMax(0, 0) {}
+  Point2D offset{0, 0};       // Translation to center at origin
+  double scale = 1.0;         // Uniform scale factor to fit in unit circle
+  Point2D originalMin{0, 0};  // Original bounding box minimum
+  Point2D originalMax{0, 0};  // Original bounding box maximum
 };
 
 /**
  * Complete medial axis computation results
  */
 struct MedialAxisResults {
-  std::vector<std::vector<Point2D>> chains;         // Medial axis chains in world coordinates
-  std::vector<std::vector<double>> clearanceRadii;  // Clearance radii for each chain point
-  TransformParams transform;                        // Transform parameters used
+  std::vector<std::vector<Point2D>> chains{};       // Medial axis chains in world coordinates
+  std::vector<std::vector<double>> clearanceRadii{};  // Clearance radii for each chain point
+  TransformParams transform{};                      // Transform parameters used
 
   // Statistics
   int numChains = 0;
@@ -46,7 +44,7 @@ struct MedialAxisResults {
 
   // Success/error status
   bool success = false;
-  std::string errorMessage;
+  std::string errorMessage{};
 };
 
 /**

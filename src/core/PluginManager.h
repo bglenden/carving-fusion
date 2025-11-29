@@ -64,21 +64,21 @@ class PluginManager {
   }
 
  private:
-  std::unique_ptr<Adapters::IFusionFactory> factory_;
-  std::unique_ptr<Adapters::ILogger> logger_;
-  std::unique_ptr<Adapters::IUserInterface> ui_;
-  std::unique_ptr<Adapters::IWorkspace> workspace_;
+  std::unique_ptr<Adapters::IFusionFactory> factory_{};
+  std::unique_ptr<Adapters::ILogger> logger_{};
+  std::unique_ptr<Adapters::IUserInterface> ui_{};
+  std::unique_ptr<Adapters::IWorkspace> workspace_{};
 
   // Imported design data
-  std::vector<std::unique_ptr<Geometry::Shape>> importedShapes_;
-  std::string lastImportedFile_;
-  std::string lastImportedPlaneEntityId_;  // Store plane entity ID for medial
-                                           // axis generation
+  std::vector<std::unique_ptr<Geometry::Shape>> importedShapes_{};
+  std::string lastImportedFile_{};
+  std::string lastImportedPlaneEntityId_{};  // Store plane entity ID for medial
+                                             // axis generation
 
   // Medial axis processing
-  std::unique_ptr<Geometry::MedialAxisProcessor> medialProcessor_;
+  std::unique_ptr<Geometry::MedialAxisProcessor> medialProcessor_{};
 
-  bool initialized_;
+  bool initialized_ = false;
 
   // Helper methods
   void addConstructionGeometryVisualization(Adapters::ISketch* sketch, const Geometry::MedialAxisResults& results,
@@ -89,8 +89,8 @@ class PluginManager {
   // Enhanced UI Phase 5.2: Profile geometry extraction
   // Structure to hold profile geometry with transformation parameters
   struct ProfileData {
-    std::vector<Geometry::Point2D> polygon;
-    Adapters::IWorkspace::TransformParams transform;
+    std::vector<Geometry::Point2D> polygon{};
+    Adapters::IWorkspace::TransformParams transform{};
   };
 
   bool extractProfileGeometry(const Adapters::SketchSelection& selection,

@@ -55,9 +55,9 @@ class Result {
   Result(T value, bool success, const std::string& error)
       : value_(std::move(value)), success_(success), error_(error) {}
 
-  T value_;
-  bool success_;
-  std::string error_;
+  T value_{};
+  bool success_ = false;
+  std::string error_{};
 };
 
 /**

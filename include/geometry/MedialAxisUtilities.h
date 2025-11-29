@@ -28,10 +28,8 @@ struct SampledMedialPoint {
  * Represents a single continuous path of sampled medial axis points
  */
 struct SampledMedialPath {
-  std::vector<SampledMedialPoint> points;  ///< Sampled points along this path
-  double totalLength;                      ///< Total length of this path in mm
-
-  SampledMedialPath() : totalLength(0.0) {}
+  std::vector<SampledMedialPoint> points{};  ///< Sampled points along this path
+  double totalLength = 0.0;                  ///< Total length of this path in mm
 };
 
 /**

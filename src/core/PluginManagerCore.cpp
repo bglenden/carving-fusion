@@ -23,7 +23,7 @@ namespace ChipCarving {
 namespace Core {
 
 PluginManager::PluginManager(std::unique_ptr<Adapters::IFusionFactory> factory)
-    : factory_(std::move(factory)), initialized_(false) {}
+    : factory_(std::move(factory)) {}
 
 bool PluginManager::initialize() {
   if (initialized_) {

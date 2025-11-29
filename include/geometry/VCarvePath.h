@@ -31,11 +31,9 @@ struct VCarvePoint {
  * Represents a continuous V-carve toolpath consisting of connected points
  */
 struct VCarvePath {
-  std::vector<VCarvePoint> points;  ///< Sequential points along this path
-  double totalLength;               ///< Total 2D length of path in mm
-  bool isClosed;                    ///< Whether path forms a closed loop
-
-  VCarvePath() : totalLength(0.0), isClosed(false) {}
+  std::vector<VCarvePoint> points{};  ///< Sequential points along this path
+  double totalLength = 0.0;           ///< Total 2D length of path in mm
+  bool isClosed = false;              ///< Whether path forms a closed loop
 
   /**
    * Calculate total 2D path length
@@ -66,7 +64,7 @@ struct VCarvePath {
  * Collection of V-carve paths with statistics
  */
 struct VCarveResults {
-  std::vector<VCarvePath> paths;  ///< Individual toolpaths
+  std::vector<VCarvePath> paths{};  ///< Individual toolpaths
 
   // Statistics
   int totalPaths = 0;        ///< Number of generated paths
@@ -76,8 +74,8 @@ struct VCarveResults {
   double minDepth = 0.0;     ///< Shallowest cut across all paths (mm)
 
   // Success/error status
-  bool success = false;      ///< Whether generation succeeded
-  std::string errorMessage;  ///< Error details if failed
+  bool success = false;        ///< Whether generation succeeded
+  std::string errorMessage{};  ///< Error details if failed
 
   /**
    * Update statistics based on current paths
