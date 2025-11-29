@@ -102,18 +102,46 @@ endif()
 
 # Add source files to compile (only core logic, no Fusion API dependencies)
 target_sources(chip_carving_tests PRIVATE
-    ../src/core/PluginManager.cpp
+    # PluginManager sub-files (was PluginManager.cpp aggregator)
+    ../src/core/PluginManagerCore.cpp
+    ../src/core/PluginManagerImport.cpp
+    ../src/core/PluginManagerLegacyPaths.cpp
+    ../src/core/PluginManagerPathsCore.cpp
+    ../src/core/PluginManagerPathsGeometry.cpp
+    ../src/core/PluginManagerPathsVisualization.cpp
+    ../src/core/PluginManagerUtils.cpp
+    ../src/core/PluginManagerVCarve.cpp
+
     ../src/geometry/Leaf.cpp
-    ../src/geometry/TriArc.cpp
+
+    # TriArc sub-files (was TriArc.cpp aggregator)
+    ../src/geometry/TriArcCore.cpp
+    ../src/geometry/TriArcGeometry.cpp
+    ../src/geometry/TriArcSketch.cpp
+
     ../src/geometry/ShapeFactory.cpp
-    ../src/geometry/SVGGenerator.cpp
+
+    # SVGGenerator sub-files (was SVGGenerator.cpp aggregator)
+    ../src/geometry/SVGGeneratorCore.cpp
+    ../src/geometry/SVGGeneratorShapes.cpp
+    ../src/geometry/SVGGeneratorComparator.cpp
+
     ../src/geometry/MedialAxisUtilities.cpp
-    ../src/geometry/MedialAxisProcessor.cpp
+
+    # MedialAxisProcessor sub-files (was MedialAxisProcessor.cpp aggregator)
+    ../src/geometry/MedialAxisProcessorCore.cpp
+    ../src/geometry/MedialAxisProcessorValidation.cpp
+    ../src/geometry/MedialAxisProcessorVoronoi.cpp
+
     ../src/parsers/DesignParser.cpp
     ../src/geometry/VCarvePath.cpp
     ../src/utils/ErrorHandler.cpp
 
-    ../src/geometry/VCarveCalculator.cpp
+    # VCarveCalculator sub-files (was VCarveCalculator.cpp aggregator)
+    ../src/geometry/VCarveCalculatorCore.cpp
+    ../src/geometry/VCarveCalculatorOptimization.cpp
+    ../src/geometry/VCarveCalculatorSurface.cpp
+
     mocks/MockLogging.cpp
 )
 
@@ -143,8 +171,17 @@ target_link_libraries(standalone_medial_axis_test
 # Add source files needed for standalone test
 target_sources(standalone_medial_axis_test PRIVATE
     ../src/geometry/Leaf.cpp
-    ../src/geometry/TriArc.cpp
-    ../src/geometry/SVGGenerator.cpp
+
+    # TriArc sub-files (was TriArc.cpp aggregator)
+    ../src/geometry/TriArcCore.cpp
+    ../src/geometry/TriArcGeometry.cpp
+    ../src/geometry/TriArcSketch.cpp
+
+    # SVGGenerator sub-files (was SVGGenerator.cpp aggregator)
+    ../src/geometry/SVGGeneratorCore.cpp
+    ../src/geometry/SVGGeneratorShapes.cpp
+    ../src/geometry/SVGGeneratorComparator.cpp
+
     ../src/geometry/MedialAxisUtilities.cpp
 )
 

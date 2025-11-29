@@ -18,7 +18,8 @@ using namespace adsk::core;
 namespace ChipCarving {
 namespace Adapters {
 
-// Constructor is moved to main file to avoid duplication
+// Constructor - anchors the vtable in this compilation unit
+FusionWorkspace::FusionWorkspace(Ptr<Application> app) : app_(app) {}
 
 std::unique_ptr<ISketch> FusionWorkspace::createSketch(const std::string& name) {
   if (!app_) {

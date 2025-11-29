@@ -77,9 +77,11 @@ make format lint       # Auto-format and check for issues
 
 # Individual commands
 make format            # Auto-format all code with clang-format
-make lint              # Full lint check including file length limits
+make lint              # cpplint style check + file length limits
 make lint-quick        # Quick check for critical issues only
 make lint-verbose      # Detailed cpplint output with explanations
+make lint-tidy         # clang-tidy static analysis (requires: brew install llvm)
+make lint-all          # cpplint + clang-tidy combined (comprehensive)
 make format-check      # Check if formatting is needed (dry run)
 
 # Pre-commit workflow

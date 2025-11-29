@@ -95,15 +95,37 @@ add_custom_command(
 add_library(chip_carving_paths_cpp SHARED 
     src/main.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/version.h
-    src/core/PluginManager.cpp
+    # PluginManager sub-files (was PluginManager.cpp aggregator)
+    src/core/PluginManagerCore.cpp
+    src/core/PluginManagerImport.cpp
+    src/core/PluginManagerLegacyPaths.cpp
+    src/core/PluginManagerPathsCore.cpp
+    src/core/PluginManagerPathsGeometry.cpp
+    src/core/PluginManagerPathsVisualization.cpp
+    src/core/PluginManagerUtils.cpp
+    src/core/PluginManagerVCarve.cpp
     src/core/PluginInitializer.cpp
     src/core/PluginInitializerCommands.cpp
     src/adapters/FusionAPIAdapter.cpp
     src/adapters/FusionLogger.cpp
-    src/adapters/FusionWorkspace.cpp
+    # FusionWorkspace sub-files (was FusionWorkspace.cpp aggregator)
+    # FusionWorkspaceCurve sub-files (was nested aggregator)
+    src/adapters/FusionWorkspaceCurveGeometry.cpp
+    src/adapters/FusionWorkspaceCurveSurface.cpp
+    src/adapters/FusionWorkspaceCurveUtils.cpp
+    src/adapters/FusionWorkspaceEntityLookup.cpp
+    src/adapters/FusionWorkspaceProfile.cpp
+    src/adapters/FusionWorkspaceProfileGeometry.cpp
+    # FusionWorkspaceSketch sub-files (was nested aggregator)
+    src/adapters/FusionWorkspaceSketchBasic.cpp
+    src/adapters/FusionWorkspaceSketchComponent.cpp
+    src/adapters/FusionWorkspaceSketchPlane.cpp
     src/adapters/FusionWorkspaceProfileSearch.cpp
     src/adapters/FusionWorkspaceCurveExtraction.cpp
-    src/adapters/FusionSketch.cpp
+    # FusionSketch sub-files (was FusionSketch.cpp aggregator)
+    src/adapters/FusionSketch3D.cpp
+    src/adapters/FusionSketchConstruction.cpp
+    src/adapters/FusionSketchCore.cpp
     src/adapters/FusionAPIFactory.cpp
     src/commands/PluginCommands.cpp
     src/commands/PluginCommandsCreation.cpp
@@ -118,11 +140,20 @@ add_library(chip_carving_paths_cpp SHARED
     src/parsers/DesignParser.cpp
     src/geometry/ShapeFactory.cpp
     src/geometry/Leaf.cpp
-    src/geometry/TriArc.cpp
+    # TriArc sub-files (was TriArc.cpp aggregator)
+    src/geometry/TriArcCore.cpp
+    src/geometry/TriArcGeometry.cpp
+    src/geometry/TriArcSketch.cpp
     src/geometry/MedialAxisUtilities.cpp
-    src/geometry/MedialAxisProcessor.cpp
+    # MedialAxisProcessor sub-files (was MedialAxisProcessor.cpp aggregator)
+    src/geometry/MedialAxisProcessorCore.cpp
+    src/geometry/MedialAxisProcessorValidation.cpp
+    src/geometry/MedialAxisProcessorVoronoi.cpp
     src/geometry/VCarvePath.cpp
-    src/geometry/VCarveCalculator.cpp
+    # VCarveCalculator sub-files (was VCarveCalculator.cpp aggregator)
+    src/geometry/VCarveCalculatorCore.cpp
+    src/geometry/VCarveCalculatorOptimization.cpp
+    src/geometry/VCarveCalculatorSurface.cpp
     src/utils/logging.cpp
     src/utils/FusionComponentTraverser.cpp
     src/utils/UIParameterHelper.cpp
@@ -342,20 +373,57 @@ else()
 endif()
 
 # clang-tidy target - static analysis (optional, requires LLVM)
+# Try to find clang-tidy from LLVM installation
+if(NOT CLANG_TIDY_EXECUTABLE)
+    find_program(CLANG_TIDY_EXECUTABLE
+        NAMES clang-tidy
+        PATHS /opt/homebrew/opt/llvm/bin /usr/local/opt/llvm/bin
+        NO_DEFAULT_PATH
+    )
+endif()
+
 if(CLANG_TIDY_EXECUTABLE)
     message(STATUS "Found clang-tidy: ${CLANG_TIDY_EXECUTABLE}")
-    
-    # Comprehensive static analysis
-    add_custom_target(lint-analysis
-        COMMAND ${CLANG_TIDY_EXECUTABLE}
-            -p ${CMAKE_BINARY_DIR}
-            --config-file=${CMAKE_CURRENT_SOURCE_DIR}/.clang-tidy
-            src/**/*.cpp
+
+    # Standalone clang-tidy target for detailed analysis
+    add_custom_target(lint-tidy
+        COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/scripts/run_clang_tidy.sh ${CLANG_TIDY_EXECUTABLE} ${CMAKE_BINARY_DIR}
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-        COMMENT "Running static analysis with clang-tidy"
+        COMMENT "Running clang-tidy static analysis"
+    )
+
+    # Alias for backwards compatibility
+    add_custom_target(lint-analysis DEPENDS lint-tidy)
+else()
+    message(STATUS "clang-tidy not found. Install with: brew install llvm")
+    message(STATUS "  After install, clang-tidy will be at: /opt/homebrew/opt/llvm/bin/clang-tidy")
+
+    add_custom_target(lint-tidy
+        COMMAND ${CMAKE_COMMAND} -E echo "clang-tidy not found. Install with: brew install llvm"
+        COMMENT "clang-tidy not available"
+    )
+endif()
+
+# Combined lint-all target: cpplint + clang-tidy (when available)
+if(CLANG_TIDY_EXECUTABLE AND CPPLINT_EXECUTABLE)
+    add_custom_target(lint-all
+        COMMAND ${CPPLINT_EXECUTABLE}
+            --recursive
+            --extensions=h,cpp
+            --headers=h
+            --quiet
+            src/ include/
+        COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/scripts/check_file_length.sh
+        COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/scripts/run_clang_tidy.sh ${CLANG_TIDY_EXECUTABLE} ${CMAKE_BINARY_DIR}
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        COMMENT "Running cpplint + clang-tidy (comprehensive linting)"
     )
 else()
-    message(STATUS "clang-tidy not found. Install LLVM for static analysis: brew install llvm")
+    add_custom_target(lint-all
+        COMMAND ${CMAKE_COMMAND} -E echo "lint-all requires both cpplint and clang-tidy"
+        COMMAND ${CMAKE_COMMAND} -E echo "  cpplint: pip3 install cpplint"
+        COMMAND ${CMAKE_COMMAND} -E echo "  clang-tidy: brew install llvm"
+    )
 endif()
 
 # Combined quality check target

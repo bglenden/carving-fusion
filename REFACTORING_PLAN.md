@@ -2,8 +2,8 @@
 
 ## CRITICAL INFRASTRUCTURE - HIGHEST PRIORITY
 
-### 🚨 Anti-Pattern: CPP Files Including CPP Files
-**Status: CRITICAL BUG - Causing Hidden Build Issues**
+### ✅ Anti-Pattern: CPP Files Including CPP Files
+**Status: FIXED (2025-11-29)** - See "Completion Summary" at end of document
 
 **Problem**: Multiple aggregator files use `#include "OtherFile.cpp"` instead of proper compilation units
 
@@ -772,30 +772,127 @@ $ wc -l src/**/*.cpp | sort -n | tail -10
 
 ---
 
-## Status Update - Critical Anti-Pattern Fix Attempt (2025-11-28)
+## Status Update - Critical Anti-Pattern Fix ✅ COMPLETE (2025-11-29)
 
-**Attempted Solution**: Removed all CPP-includes-CPP aggregator files and added individual implementation files to CMakeLists.txt
+**Status**: FIXED - All 10 aggregator files have been eliminated.
 
-**Files Successfully Deleted**:
-- src/geometry/SVGGenerator.cpp ✓
-- src/geometry/VCarveCalculator.cpp ✓
-- src/geometry/MedialAxisProcessor.cpp ✓
-- src/geometry/TriArc.cpp ✓
-- src/core/PluginManagerPaths.cpp ✓
+**Confirmed Aggregator Files (verified via grep)**:
 
-**Files Reverted Due to Linker Errors**:
-- src/core/PluginManager.cpp (caused vtable errors)
-- src/adapters/FusionWorkspace.cpp (caused vtable errors)
+| Aggregator File | Includes | Total Sub-files |
+|-----------------|----------|-----------------|
+| `src/core/PluginManager.cpp` | 6 .cpp files | PluginManagerCore, Import, LegacyPaths, Paths, Utils, VCarve |
+| `src/core/PluginManagerPaths.cpp` | 3 .cpp files | PathsCore, PathsGeometry, PathsVisualization |
+| `src/geometry/VCarveCalculator.cpp` | 3 .cpp files | Core, Optimization, Surface |
+| `src/geometry/SVGGenerator.cpp` | 3 .cpp files | Comparator, Core, Shapes |
+| `src/geometry/TriArc.cpp` | 3 .cpp files | Core, Geometry, Sketch |
+| `src/geometry/MedialAxisProcessor.cpp` | 3 .cpp files | Core, Validation, Voronoi |
+| `src/adapters/FusionWorkspace.cpp` | 5 .cpp files | Curve(agg), EntityLookup, Profile, ProfileGeometry, Sketch(agg) |
+| `src/adapters/FusionWorkspaceCurve.cpp` | 3 .cpp files | Geometry, Surface, Utils |
+| `src/adapters/FusionWorkspaceSketch.cpp` | 3 .cpp files | Basic, Component, Plane |
+| `src/adapters/FusionSketch.cpp` | 3 .cpp files | 3D, Construction, Core |
 
-**Root Cause**: FusionWorkspace and PluginManager classes rely on the CPP-includes-CPP pattern to ensure complete vtable generation. When split into separate compilation units, the vtable becomes incomplete because the virtual functions are defined across multiple .cpp files.
+**Total**: 10 aggregator files, 31 sub-files needing conversion
 
-**Impact**: Could not complete the anti-pattern fix for all files. The build system still has 2 aggregator files remaining.
+---
 
-**Recommendation**: This requires a more sophisticated refactoring approach:
-1. Move all virtual function definitions into .h files as inline
-2. Or create dedicated .cpp files that explicitly instantiate all virtual functions
-3. Or restructure the class hierarchy to avoid the need for complete vtables
+### Implementation Plan - Step-by-Step
 
-**Remaining Work**: 2 out of 10 aggregator files still use the anti-pattern pattern. These are the most complex ones due to their extensive virtual function tables.
+#### Step 1: Add include paths to CMakeLists.txt (if not present)
+Ensure `src/` is in include path so sub-files can use clean includes.
+
+#### Step 2: Fix each sub-file to be a standalone compilation unit
+Each sub-file currently relies on the aggregator to provide includes. Add required headers directly:
+```cpp
+// Example: PluginManagerCore.cpp needs these at the top:
+#include "core/PluginManager.h"
+#include <memory>
+#include <string>
+// ... other headers it uses
+```
+
+#### Step 3: Update CMakeLists.txt
+Replace each aggregator entry with its sub-files:
+```cmake
+# BEFORE:
+src/core/PluginManager.cpp
+
+# AFTER:
+src/core/PluginManagerCore.cpp
+src/core/PluginManagerImport.cpp
+src/core/PluginManagerLegacyPaths.cpp
+src/core/PluginManagerPathsCore.cpp
+src/core/PluginManagerPathsGeometry.cpp
+src/core/PluginManagerPathsVisualization.cpp
+src/core/PluginManagerUtils.cpp
+src/core/PluginManagerVCarve.cpp
+```
+
+#### Step 4: Delete aggregator files
+Remove the empty aggregator files after sub-files compile independently.
+
+#### Step 5: Verify build
+```bash
+make clean && cmake .. && make && make test && make lint && make install
+```
+
+---
+
+### Known Challenges from Previous Attempt
+
+**vtable linker errors**: If a class has virtual methods defined across multiple .cpp files, the linker may fail to find the vtable. Solutions:
+1. Ensure ONE .cpp file has at least one virtual method definition (anchors the vtable)
+2. Add a pure virtual destructor definition in base class .cpp
+3. Check that `~ClassName() override = default;` is in a compiled .cpp, not just header
+
+**Include order**: Some files may have implicit header dependencies. Build errors after splitting reveal these.
+
+---
+
+### Execution Order (safest to riskiest)
+
+1. **geometry/ files** - least coupling, easiest to split
+   - SVGGenerator (3 sub-files)
+   - VCarveCalculator (3 sub-files)
+   - TriArc (3 sub-files)
+   - MedialAxisProcessor (3 sub-files)
+
+2. **adapters/ files** - moderate coupling
+   - FusionSketch (3 sub-files)
+   - FusionWorkspaceCurve (3 sub-files)
+   - FusionWorkspaceSketch (3 sub-files)
+   - FusionWorkspace (5 sub-files, includes 2 aggregators)
+
+3. **core/ files** - most coupling, save for last
+   - PluginManagerPaths (3 sub-files)
+   - PluginManager (6 sub-files, includes PluginManagerPaths aggregator)
+
+---
+
+### Completion Summary (2025-11-29)
+
+**All 10 aggregator files successfully eliminated:**
+
+1. ✅ Deleted `src/geometry/SVGGenerator.cpp` → 3 sub-files now compile independently
+2. ✅ Deleted `src/geometry/VCarveCalculator.cpp` → 3 sub-files now compile independently
+3. ✅ Deleted `src/geometry/TriArc.cpp` → 3 sub-files now compile independently
+4. ✅ Deleted `src/geometry/MedialAxisProcessor.cpp` → 3 sub-files now compile independently
+5. ✅ Deleted `src/adapters/FusionSketch.cpp` → 3 sub-files now compile independently
+6. ✅ Deleted `src/adapters/FusionWorkspaceCurve.cpp` → 3 sub-files now compile independently
+7. ✅ Deleted `src/adapters/FusionWorkspaceSketch.cpp` → 3 sub-files now compile independently
+8. ✅ Deleted `src/adapters/FusionWorkspace.cpp` → 5 sub-files now compile independently
+9. ✅ Deleted `src/core/PluginManagerPaths.cpp` → 3 sub-files now compile independently
+10. ✅ Deleted `src/core/PluginManager.cpp` → 8 sub-files now compile independently
+
+**Fixes applied:**
+- Added missing `#include "utils/logging.h"` to `PluginManagerPathsGeometry.cpp`
+- Moved `FusionWorkspace::FusionWorkspace()` constructor to `FusionWorkspaceSketchBasic.cpp` to anchor vtable
+- Updated both `CMakeLists.txt` and `tests/CMakeLists.txt` to list individual sub-files
+
+**Verification:**
+- ✅ Clean build succeeds
+- ✅ All 287 tests pass
+- ✅ Lint passes (all files ≤ 350 lines)
+- ✅ Plugin installs successfully
+- ✅ `grep '#include.*\.cpp'` returns no matches
 
 ---

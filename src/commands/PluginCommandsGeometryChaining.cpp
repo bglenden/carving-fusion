@@ -78,8 +78,8 @@ std::vector<std::pair<double, double>> chainCurvesAndExtractVertices(const std::
         LOG_INFO("    Chained curve " << i << " (normal)");
         break;
       } else if (distEnd < tolerance) {
-        // Reversed orientation - mark with special flag
-        chainOrder.push_back(i);
+        // Reversed orientation - mark with high bit flag
+        chainOrder.push_back(i | 0x80000000);
         tempCurves[i].used = true;
         currentEndPoint = tempCurves[i].startPoint;
         foundNext = true;
@@ -110,17 +110,17 @@ std::vector<std::pair<double, double>> chainCurvesAndExtractVertices(const std::
 
   // Extract vertices from chained curves
   for (size_t i = 0; i < chainOrder.size(); ++i) {
-    const CurveData& curve = tempCurves[chainOrder[i]];
+    bool reversed = (chainOrder[i] & 0x80000000) != 0;
+    size_t curveIdx = chainOrder[i] & 0x7FFFFFFF;
+
+    const CurveData& curve = tempCurves[curveIdx];
     const auto& strokePoints = curve.strokePoints;
 
     // Determine how many points to add (skip last to avoid duplicates)
     size_t numPoints = strokePoints.size() - 1;
 
-    // Check if reversed by comparing endpoints
-    if (i < tempCurves.size() && std::abs(curve.endPoint->x() - currentEndPoint->x()) < tolerance / 2 &&
-        std::abs(curve.endPoint->y() - currentEndPoint->y()) < tolerance / 2 &&
-        std::abs(curve.endPoint->z() - currentEndPoint->z()) < tolerance / 2) {
-      // Add points in reverse order
+    if (reversed) {
+      // Add points in reverse order, skip first point (which is last in reverse)
       for (int j = static_cast<int>(strokePoints.size()) - 1; j >= 1; --j) {
         if (strokePoints[j]) {
           vertices.push_back({strokePoints[j]->x(), strokePoints[j]->y()});

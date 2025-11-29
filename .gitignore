@@ -50,3 +50,5 @@ temp_output/
 # Version files (version.h is auto-generated from VERSION file)
 src/version.h.bak
 src/version.h
+.cache/
+.cache/
