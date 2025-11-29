@@ -1,6 +1,6 @@
-#include "../../include/commands/HelloWorldCommand.h"
+#include "commands/HelloWorldCommand.h"
 
-#include "../../include/utils/logging.h"
+#include "utils/logging.h"
 
 using namespace adsk::core;
 using namespace adsk::fusion;

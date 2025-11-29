@@ -25,9 +25,9 @@
 #include <iomanip>
 #include <sstream>
 
-#include "../../include/utils/logging.h"
-#include "../adapters/FusionAPIAdapter.h"
-#include "../version.h"
+#include "utils/logging.h"
+#include "adapters/FusionAPIAdapter.h"
+#include "version.h"
 #include "PluginInitializerGlobals.h"
 
 using namespace adsk::core;

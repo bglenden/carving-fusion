@@ -11,7 +11,7 @@
 #include <utility>
 #include <vector>
 
-#include "../adapters/FusionWorkspaceProfileTypes.h"
+#include "adapters/FusionWorkspaceProfileTypes.h"
 
 namespace ChipCarving {
 namespace Commands {

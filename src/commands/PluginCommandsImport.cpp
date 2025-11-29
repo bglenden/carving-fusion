@@ -7,8 +7,8 @@
 
 #include <iostream>
 
-#include "../core/PluginManager.h"
-#include "../utils/UnitConversion.h"
+#include "core/PluginManager.h"
+#include "utils/UnitConversion.h"
 #include "PluginCommands.h"
 
 namespace ChipCarving {

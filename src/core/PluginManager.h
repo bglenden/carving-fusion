@@ -9,10 +9,10 @@
 #include <string>
 #include <vector>
 
-#include "../../include/geometry/MedialAxisProcessor.h"
-#include "../../include/geometry/Shape.h"
-#include "../../include/parsers/DesignParser.h"
-#include "../adapters/IFusionInterface.h"
+#include "geometry/MedialAxisProcessor.h"
+#include "geometry/Shape.h"
+#include "parsers/DesignParser.h"
+#include "adapters/IFusionInterface.h"
 
 namespace ChipCarving {
 namespace Core {

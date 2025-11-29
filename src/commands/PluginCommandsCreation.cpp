@@ -5,10 +5,10 @@
  * Split from PluginCommands.cpp for maintainability
  */
 
-#include "../../include/utils/logging.h"
+#include "utils/logging.h"
 #include "PluginCommands.h"
-#include "../utils/ErrorHandler.h"
-#include "../utils/logging.h"
+#include "utils/ErrorHandler.h"
+#include "utils/logging.h"
 
 namespace ChipCarving {
 namespace Commands {

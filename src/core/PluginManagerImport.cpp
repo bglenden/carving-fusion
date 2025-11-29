@@ -10,9 +10,9 @@
 #include <set>
 #include <sstream>
 
-#include "../../include/geometry/Point2D.h"
-#include "../../include/parsers/DesignParser.h"
-#include "../../include/utils/logging.h"
+#include "geometry/Point2D.h"
+#include "parsers/DesignParser.h"
+#include "utils/logging.h"
 #include "PluginManager.h"
 
 namespace ChipCarving {

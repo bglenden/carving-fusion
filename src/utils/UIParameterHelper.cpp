@@ -6,7 +6,7 @@
 
 #include "UIParameterHelper.h"
 
-#include "../../include/utils/logging.h"
+#include "utils/logging.h"
 #include "UnitConversion.h"
 
 namespace ChipCarving {

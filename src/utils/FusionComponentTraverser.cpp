@@ -6,7 +6,7 @@
 
 #include "FusionComponentTraverser.h"
 
-#include "../../include/utils/logging.h"
+#include "utils/logging.h"
 
 namespace ChipCarving {
 namespace Utils {

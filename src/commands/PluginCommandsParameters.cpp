@@ -7,8 +7,8 @@
  * Note: getSelectionFromInputs() is in PluginCommandsParametersSelection.cpp
  */
 
-#include "../../include/utils/logging.h"
-#include "../utils/UnitConversion.h"
+#include "utils/logging.h"
+#include "utils/UnitConversion.h"
 #include "PluginCommands.h"
 
 using namespace ChipCarving::Utils;

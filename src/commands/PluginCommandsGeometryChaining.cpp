@@ -8,7 +8,7 @@
 
 #include "PluginCommandsGeometryChaining.h"
 
-#include "../../include/utils/logging.h"
+#include "utils/logging.h"
 
 namespace ChipCarving {
 namespace Commands {

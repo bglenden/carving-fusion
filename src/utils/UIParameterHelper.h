@@ -12,7 +12,7 @@
 
 #include <string>
 
-#include "../../include/utils/Optional.h"
+#include "utils/Optional.h"
 
 namespace ChipCarving {
 namespace Utils {

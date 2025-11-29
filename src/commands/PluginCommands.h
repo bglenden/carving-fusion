@@ -12,7 +12,7 @@
 #include <memory>
 #include <string>
 
-#include "../adapters/IFusionInterface.h"
+#include "adapters/IFusionInterface.h"
 
 namespace ChipCarving {
 namespace Core {

@@ -6,7 +6,7 @@
  * Extracted from PluginCommandsGeometry.cpp
  */
 
-#include "../../include/utils/logging.h"
+#include "utils/logging.h"
 #include "PluginCommands.h"
 #include "PluginCommandsGeometryChaining.h"
 

@@ -7,8 +7,8 @@
 
 #include "SettingsCommand.h"
 
-#include "../../include/utils/logging.h"
-#include "../core/PluginManager.h"
+#include "utils/logging.h"
+#include "core/PluginManager.h"
 
 namespace ChipCarving {
 namespace Commands {
