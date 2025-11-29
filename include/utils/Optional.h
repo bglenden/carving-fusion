@@ -33,7 +33,7 @@ class Optional {
     }
   }
 
-  Optional(Optional&& other) : has_value_(other.has_value_) {
+  Optional(Optional&& other) noexcept : has_value_(other.has_value_) {
     if (has_value_) {
       new (storage_) T(std::move(*other));
       other.reset();
@@ -55,7 +55,7 @@ class Optional {
     return *this;
   }
 
-  Optional& operator=(Optional&& other) {
+  Optional& operator=(Optional&& other) noexcept {
     if (this != &other) {
       reset();
       has_value_ = other.has_value_;
