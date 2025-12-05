@@ -43,12 +43,12 @@ class SettingsCommandHandler : public adsk::core::CommandCreatedEventHandler {
   /**
    * Creates the settings dialog inputs
    */
-  void createSettingsInputs(adsk::core::Ptr<adsk::core::CommandInputs> inputs);
+  void createSettingsInputs(const adsk::core::Ptr<adsk::core::CommandInputs>& inputs);
 
   /**
    * Applies settings from the dialog inputs
    */
-  void applySettings(adsk::core::Ptr<adsk::core::CommandInputs> inputs);
+  void applySettings(const adsk::core::Ptr<adsk::core::CommandInputs>& inputs);
 
   /**
    * Cleans up event handlers to prevent memory leaks

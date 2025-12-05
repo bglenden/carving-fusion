@@ -6,7 +6,7 @@
  */
 
 #include "PluginCommands.h"
-#include "core/PluginManager.h"
+#include "core/PluginManager.h"  // IWYU pragma: keep
 #include "utils/ErrorHandler.h"
 
 namespace ChipCarving {

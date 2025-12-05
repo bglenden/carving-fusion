@@ -74,7 +74,7 @@ void SettingsCommandHandler::notify(const adsk::core::Ptr<adsk::core::CommandCre
   commandEventHandlers_.push_back(onExecute);
 }
 
-void SettingsCommandHandler::createSettingsInputs(adsk::core::Ptr<adsk::core::CommandInputs> inputs) {
+void SettingsCommandHandler::createSettingsInputs(const adsk::core::Ptr<adsk::core::CommandInputs>& inputs) {
   // Add title
   adsk::core::Ptr<adsk::core::TextBoxCommandInput> titleDesc =
       inputs->addTextBoxCommandInput("titleDescription", "",
@@ -109,7 +109,7 @@ void SettingsCommandHandler::createSettingsInputs(adsk::core::Ptr<adsk::core::Co
                                             1, true);
 }
 
-void SettingsCommandHandler::applySettings(adsk::core::Ptr<adsk::core::CommandInputs> inputs) {
+void SettingsCommandHandler::applySettings(const adsk::core::Ptr<adsk::core::CommandInputs>& inputs) {
   // Get the checkbox value
   adsk::core::Ptr<adsk::core::BoolValueCommandInput> showInfoCheckbox = inputs->itemById("showInfoDebugMessages");
 
