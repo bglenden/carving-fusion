@@ -43,44 +43,18 @@ The codebase demonstrates **generally good API usage patterns** with a well-desi
 
 ## Issues Found
 
-### Issue 1: Event Handler Memory Management (MEDIUM PRIORITY)
+### Issue 1: Event Handler Memory Management (MEDIUM PRIORITY) - ✅ IMPLEMENTED
 
-**Location:** `src/commands/PluginCommandsCreation.cpp:45-60`
+**Location:** `src/commands/PluginCommandsCreation.cpp`, `src/commands/PluginCommandsImport.cpp`, `src/commands/SettingsCommand.cpp`
 
-**Problem:** Event handlers are allocated with `new` but never explicitly deleted. While Fusion may clean these up when the add-in unloads, explicit cleanup is safer.
+**Problem:** Event handlers were allocated with `new` but never explicitly deleted.
 
-**Current Code:**
+**Solution Implemented (Dec 2025):**
 
-```cpp
-auto onExecute = new ExecuteHandler(this);
-cmd->execute()->add(onExecute);
-
-auto onInputChanged = new InputChangedHandler(this);
-cmd->inputChanged()->add(onInputChanged);
-
-auto onValidateInputs = new ValidateInputsHandler(this);
-cmd->validateInputs()->add(onValidateInputs);
-```
-
-**Recommended Fix:**
-
-```cpp
-// Store handlers for cleanup
-std::vector<Ptr<CommandEventHandler>> handlers_;
-
-// In setup:
-auto onExecute = new ExecuteHandler(this);
-cmd->execute()->add(onExecute);
-handlers_.push_back(onExecute);
-
-// In cleanup/destructor:
-for (auto& handler : handlers_) {
-    // Remove from event, then delete
-}
-handlers_.clear();
-```
-
-**Why This Matters:** Memory leaks can accumulate if the add-in is repeatedly loaded/unloaded during development. Explicit cleanup ensures predictable behavior.
+- Added `std::vector<CommandEventHandler*> commandEventHandlers_` to track allocated handlers
+- Added `cleanupEventHandlers()` method to each command handler class
+- Destructors now call `cleanupEventHandlers()` to delete all tracked handlers
+- Applied Rule of 5 (deleted copy/move operations) to prevent handler pointer issues
 
 ---
 
