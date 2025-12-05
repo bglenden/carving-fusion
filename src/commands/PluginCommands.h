@@ -11,6 +11,7 @@
 #include <map>
 #include <memory>
 #include <string>
+#include <vector>
 
 #include "adapters/IFusionInterface.h"
 
@@ -42,14 +43,20 @@ class BaseCommandHandler : public adsk::core::CommandCreatedEventHandler {
 class ImportDesignCommandHandler : public BaseCommandHandler {
  public:
   explicit ImportDesignCommandHandler(std::shared_ptr<Core::PluginManager> pluginManager);
+  ~ImportDesignCommandHandler() override;
 
   void notify(const adsk::core::Ptr<adsk::core::CommandCreatedEventArgs>& eventArgs) override;
 
  private:
   void executeImportDesign(const adsk::core::Ptr<adsk::core::CommandEventArgs>& args);
   void handleInputChanged(const adsk::core::Ptr<adsk::core::InputChangedEventArgs>& args);
+  void cleanupEventHandlers();
 
   std::string selectedFilePath_{};  // Store the selected file path
+
+  // Event handlers for cleanup (Issue #1: Event Handler Memory Management)
+  std::vector<adsk::core::CommandEventHandler*> commandEventHandlers_{};
+  std::vector<adsk::core::InputChangedEventHandler*> inputChangedHandlers_{};
 };
 
 /**
@@ -58,6 +65,7 @@ class ImportDesignCommandHandler : public BaseCommandHandler {
 class GeneratePathsCommandHandler : public BaseCommandHandler {
  public:
   explicit GeneratePathsCommandHandler(std::shared_ptr<Core::PluginManager> pluginManager);
+  ~GeneratePathsCommandHandler() override;
 
   void notify(const adsk::core::Ptr<adsk::core::CommandCreatedEventArgs>& eventArgs) override;
 
@@ -83,6 +91,11 @@ class GeneratePathsCommandHandler : public BaseCommandHandler {
 
   // Cached geometry to avoid stale token issues
   std::vector<Adapters::ProfileGeometry> cachedProfiles_{};
+
+  // Event handlers for cleanup (Issue #1: Event Handler Memory Management)
+  std::vector<adsk::core::CommandEventHandler*> commandEventHandlers_{};
+  std::vector<adsk::core::InputChangedEventHandler*> inputChangedHandlers_{};
+  void cleanupEventHandlers();
 };
 
 }  // namespace Commands

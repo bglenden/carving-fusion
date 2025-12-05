@@ -18,6 +18,24 @@ namespace Commands {
 GeneratePathsCommandHandler::GeneratePathsCommandHandler(std::shared_ptr<Core::PluginManager> pluginManager)
     : BaseCommandHandler(pluginManager) {}
 
+GeneratePathsCommandHandler::~GeneratePathsCommandHandler() {
+  cleanupEventHandlers();
+}
+
+void GeneratePathsCommandHandler::cleanupEventHandlers() {
+  // Delete all command event handlers
+  for (auto* handler : commandEventHandlers_) {
+    delete handler;
+  }
+  commandEventHandlers_.clear();
+
+  // Delete all input changed handlers
+  for (auto* handler : inputChangedHandlers_) {
+    delete handler;
+  }
+  inputChangedHandlers_.clear();
+}
+
 void GeneratePathsCommandHandler::notify(const adsk::core::Ptr<adsk::core::CommandCreatedEventArgs>& eventArgs) {
   if (!eventArgs || !pluginManager_) {
     return;
@@ -66,6 +84,7 @@ void GeneratePathsCommandHandler::notify(const adsk::core::Ptr<adsk::core::Comma
 
   auto onExecute = new ExecuteHandler(this);
   cmd->execute()->add(onExecute);
+  commandEventHandlers_.push_back(onExecute);
 
   // Create and register preview handler (minimal implementation)
   class PreviewHandler : public adsk::core::CommandEventHandler {
@@ -86,6 +105,7 @@ void GeneratePathsCommandHandler::notify(const adsk::core::Ptr<adsk::core::Comma
 
   auto onPreview = new PreviewHandler(this);
   cmd->executePreview()->add(onPreview);
+  commandEventHandlers_.push_back(onPreview);
 
   // Create and register input changed handler for immediate geometry
   // extraction
@@ -142,6 +162,7 @@ void GeneratePathsCommandHandler::notify(const adsk::core::Ptr<adsk::core::Comma
 
   auto onInputChanged = new InputChangedHandler(this);
   cmd->inputChanged()->add(onInputChanged);
+  inputChangedHandlers_.push_back(onInputChanged);
 
   // Create and register activate handler to clear curve filters after dialog
   // is shown
@@ -177,6 +198,7 @@ void GeneratePathsCommandHandler::notify(const adsk::core::Ptr<adsk::core::Comma
 
   auto onActivate = new ActivateHandler();
   cmd->activate()->add(onActivate);
+  commandEventHandlers_.push_back(onActivate);
 
   // Create and register destroy handler to restore curve filters when dialog
   // closes
@@ -217,6 +239,7 @@ void GeneratePathsCommandHandler::notify(const adsk::core::Ptr<adsk::core::Comma
 
   auto onDestroy = new DestroyHandler();
   cmd->destroy()->add(onDestroy);
+  commandEventHandlers_.push_back(onDestroy);
 }
 
 }  // namespace Commands

@@ -11,6 +11,7 @@
 #include <Fusion/FusionAll.h>
 
 #include <memory>
+#include <vector>
 
 namespace ChipCarving {
 
@@ -27,6 +28,7 @@ namespace Commands {
 class SettingsCommandHandler : public adsk::core::CommandCreatedEventHandler {
  public:
   explicit SettingsCommandHandler(std::shared_ptr<Core::PluginManager> pluginManager);
+  ~SettingsCommandHandler() override;
   void notify(const adsk::core::Ptr<adsk::core::CommandCreatedEventArgs>& eventArgs) override;
 
  private:
@@ -41,6 +43,14 @@ class SettingsCommandHandler : public adsk::core::CommandCreatedEventHandler {
    * Applies settings from the dialog inputs
    */
   void applySettings(adsk::core::Ptr<adsk::core::CommandInputs> inputs);
+
+  /**
+   * Cleans up event handlers to prevent memory leaks
+   */
+  void cleanupEventHandlers();
+
+  // Event handlers for cleanup (Issue #1: Event Handler Memory Management)
+  std::vector<adsk::core::CommandEventHandler*> commandEventHandlers_{};
 };
 
 }  // namespace Commands

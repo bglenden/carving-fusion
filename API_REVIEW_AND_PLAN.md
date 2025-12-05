@@ -442,18 +442,18 @@ After implementing fixes, test these scenarios:
 
 ## Implementation Status
 
-| Issue | Description                            | Priority | Status         | Notes                              |
-| ----- | -------------------------------------- | -------- | -------------- | ---------------------------------- |
-| 1     | Event Handler Memory Management        | Medium   | Open           |                                    |
-| 2     | Inconsistent Unit Conversion in 3D     | Low      | Open           |                                    |
-| 3     | Missing isValid() Checks in Iterations | Medium   | Open           |                                    |
-| 4     | ValueInput Usage                       | N/A      | No Action      | Already correct                    |
-| 5     | Profile Caching Without Invalidation   | Low      | Open           |                                    |
-| 6     | Hard-Coded Tolerance Values            | Low      | Open           |                                    |
-| 7     | Missing Null Checks in API Call Chains | Medium   | Open           |                                    |
-| 8     | size_t vs int in Collection Iteration  | Low      | Open           |                                    |
-| 9     | Command Cleanup Order                  | Low      | Open           |                                    |
-| 10    | XY-Parallel Plane Restriction          | Low      | ✅ Implemented | Documented in README.md (Dec 2025) |
+| Issue | Description                            | Priority | Status         | Notes                                   |
+| ----- | -------------------------------------- | -------- | -------------- | --------------------------------------- |
+| 1     | Event Handler Memory Management        | Medium   | ✅ Implemented | Added cleanup in destructors (Dec 2025) |
+| 2     | Inconsistent Unit Conversion in 3D     | Low      | Open           |                                         |
+| 3     | Missing isValid() Checks in Iterations | Medium   | Open           |                                         |
+| 4     | ValueInput Usage                       | N/A      | No Action      | Already correct                         |
+| 5     | Profile Caching Without Invalidation   | Low      | Open           |                                         |
+| 6     | Hard-Coded Tolerance Values            | Low      | Open           |                                         |
+| 7     | Missing Null Checks in API Call Chains | Medium   | Open           |                                         |
+| 8     | size_t vs int in Collection Iteration  | Low      | Open           |                                         |
+| 9     | Command Cleanup Order                  | Low      | Open           |                                         |
+| 10    | XY-Parallel Plane Restriction          | Low      | ✅ Implemented | Documented in README.md (Dec 2025)      |
 
 ---
 

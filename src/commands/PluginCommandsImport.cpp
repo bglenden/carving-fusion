@@ -22,6 +22,24 @@ BaseCommandHandler::BaseCommandHandler(std::shared_ptr<Core::PluginManager> plug
 ImportDesignCommandHandler::ImportDesignCommandHandler(std::shared_ptr<Core::PluginManager> pluginManager)
     : BaseCommandHandler(pluginManager) {}
 
+ImportDesignCommandHandler::~ImportDesignCommandHandler() {
+  cleanupEventHandlers();
+}
+
+void ImportDesignCommandHandler::cleanupEventHandlers() {
+  // Delete all command event handlers
+  for (auto* handler : commandEventHandlers_) {
+    delete handler;
+  }
+  commandEventHandlers_.clear();
+
+  // Delete all input changed handlers
+  for (auto* handler : inputChangedHandlers_) {
+    delete handler;
+  }
+  inputChangedHandlers_.clear();
+}
+
 void ImportDesignCommandHandler::notify(const adsk::core::Ptr<adsk::core::CommandCreatedEventArgs>& eventArgs) {
   if (!eventArgs)
     return;
@@ -75,6 +93,7 @@ void ImportDesignCommandHandler::notify(const adsk::core::Ptr<adsk::core::Comman
 
   auto onExecute = new ExecuteHandler(this);
   command->execute()->add(onExecute);
+  commandEventHandlers_.push_back(onExecute);
 
   // Create and register input changed handler
   class InputChangedHandler : public adsk::core::InputChangedEventHandler {
@@ -90,6 +109,7 @@ void ImportDesignCommandHandler::notify(const adsk::core::Ptr<adsk::core::Comman
 
   auto onInputChanged = new InputChangedHandler(this);
   command->inputChanged()->add(onInputChanged);
+  inputChangedHandlers_.push_back(onInputChanged);
 }
 
 void ImportDesignCommandHandler::handleInputChanged(const adsk::core::Ptr<adsk::core::InputChangedEventArgs>& args) {

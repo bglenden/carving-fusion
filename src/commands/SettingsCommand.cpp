@@ -16,6 +16,17 @@ namespace Commands {
 SettingsCommandHandler::SettingsCommandHandler(std::shared_ptr<Core::PluginManager> pluginManager)
     : pluginManager_(pluginManager) {}
 
+SettingsCommandHandler::~SettingsCommandHandler() {
+  cleanupEventHandlers();
+}
+
+void SettingsCommandHandler::cleanupEventHandlers() {
+  for (auto* handler : commandEventHandlers_) {
+    delete handler;
+  }
+  commandEventHandlers_.clear();
+}
+
 void SettingsCommandHandler::notify(const adsk::core::Ptr<adsk::core::CommandCreatedEventArgs>& eventArgs) {
   if (!eventArgs || !pluginManager_) {
     return;
@@ -60,41 +71,42 @@ void SettingsCommandHandler::notify(const adsk::core::Ptr<adsk::core::CommandCre
 
   auto onExecute = new ExecuteHandler(this);
   cmd->execute()->add(onExecute);
+  commandEventHandlers_.push_back(onExecute);
 }
 
 void SettingsCommandHandler::createSettingsInputs(adsk::core::Ptr<adsk::core::CommandInputs> inputs) {
   // Add title
-    adsk::core::Ptr<adsk::core::TextBoxCommandInput> titleDesc =
-        inputs->addTextBoxCommandInput("titleDescription", "",
-                                       "<b>Carving Plugin Settings</b><br/>"
-                                       "Configure plugin preferences and behavior",
-                                       2, true);
+  adsk::core::Ptr<adsk::core::TextBoxCommandInput> titleDesc =
+      inputs->addTextBoxCommandInput("titleDescription", "",
+                                     "<b>Carving Plugin Settings</b><br/>"
+                                     "Configure plugin preferences and behavior",
+                                     2, true);
 
-    // Logging Settings Group
-    adsk::core::Ptr<adsk::core::GroupCommandInput> loggingGroup =
-        inputs->addGroupCommandInput("loggingGroup", "Logging Settings");
-    loggingGroup->isExpanded(true);
-    loggingGroup->isEnabledCheckBoxDisplayed(false);
-    adsk::core::Ptr<adsk::core::CommandInputs> loggingInputs = loggingGroup->children();
+  // Logging Settings Group
+  adsk::core::Ptr<adsk::core::GroupCommandInput> loggingGroup =
+      inputs->addGroupCommandInput("loggingGroup", "Logging Settings");
+  loggingGroup->isExpanded(true);
+  loggingGroup->isEnabledCheckBoxDisplayed(false);
+  adsk::core::Ptr<adsk::core::CommandInputs> loggingInputs = loggingGroup->children();
 
-    // Get current log level to set checkbox state
-    LogLevel currentLevel = GetMinLogLevel();
-    bool showInfoDebug = (currentLevel == LogLevel::INFO || currentLevel == LogLevel::LOG_DEBUG);
+  // Get current log level to set checkbox state
+  LogLevel currentLevel = GetMinLogLevel();
+  bool showInfoDebug = (currentLevel == LogLevel::INFO || currentLevel == LogLevel::LOG_DEBUG);
 
-    // Add checkbox for INFO/DEBUG messages
-    adsk::core::Ptr<adsk::core::BoolValueCommandInput> showInfoCheckbox = loggingInputs->addBoolValueInput(
-        "showInfoDebugMessages", "Show INFO and DEBUG messages", true, "", showInfoDebug);
-    showInfoCheckbox->tooltip("When enabled, displays detailed INFO and DEBUG log messages in the "
-                              "Text Commands window.\n"
-                              "When disabled, only WARNING and ERROR messages are shown.\n"
-                              "Default: disabled (for cleaner output)");
+  // Add checkbox for INFO/DEBUG messages
+  adsk::core::Ptr<adsk::core::BoolValueCommandInput> showInfoCheckbox = loggingInputs->addBoolValueInput(
+      "showInfoDebugMessages", "Show INFO and DEBUG messages", true, "", showInfoDebug);
+  showInfoCheckbox->tooltip("When enabled, displays detailed INFO and DEBUG log messages in the "
+                            "Text Commands window.\n"
+                            "When disabled, only WARNING and ERROR messages are shown.\n"
+                            "Default: disabled (for cleaner output)");
 
-    // Add info text
-    adsk::core::Ptr<adsk::core::TextBoxCommandInput> infoText =
-        loggingInputs->addTextBoxCommandInput("loggingInfo", "",
-                                              "Note: This setting applies immediately and persists for the "
-                                              "current session only.",
-                                              1, true);
+  // Add info text
+  adsk::core::Ptr<adsk::core::TextBoxCommandInput> infoText =
+      loggingInputs->addTextBoxCommandInput("loggingInfo", "",
+                                            "Note: This setting applies immediately and persists for the "
+                                            "current session only.",
+                                            1, true);
 }
 
 void SettingsCommandHandler::applySettings(adsk::core::Ptr<adsk::core::CommandInputs> inputs) {
