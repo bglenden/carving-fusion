@@ -78,9 +78,7 @@ make format lint       # Auto-format and check for issues
 # Individual commands
 make format            # Auto-format all code with clang-format
 make lint              # cpplint style check + file length limits
-make lint-quick        # Quick check for critical issues only
-make lint-verbose      # Detailed cpplint output with explanations
-make lint-tidy         # clang-tidy static analysis (requires: brew install llvm)
+make lint-tidy         # clang-tidy static analysis (0 warnings maintained)
 make lint-all          # cpplint + clang-tidy combined (comprehensive)
 make format-check      # Check if formatting is needed (dry run)
 
@@ -88,26 +86,29 @@ make format-check      # Check if formatting is needed (dry run)
 make pre-commit        # Run quality checks before committing
 ```
 
+**Quality targets:** Both `make lint` and `make lint-tidy` should report 0 errors/warnings.
+
 ### Version Management
 
-Follows [semver.org](https://semver.org) with automatic git hash for dev builds:
+Follows [semver.org](https://semver.org) with automatic git hash for dev builds.
+
+**Single-branch workflow** - all development happens on `main`:
 
 | VERSION file | Build outputs        | Use case                             |
 | ------------ | -------------------- | ------------------------------------ |
-| `1.0.1-dev`  | `1.0.1-dev+abc1234`  | Development (git hash auto-appended) |
-| `1.0.1-rc.1` | `1.0.1-rc.1+abc1234` | Release candidate                    |
-| `1.0.1`      | `1.0.1`              | Release (clean, no hash)             |
+| `1.0.3-dev`  | `1.0.3-dev+abc1234`  | Development (git hash auto-appended) |
+| `1.0.3-rc.1` | `1.0.3-rc.1+abc1234` | Release candidate                    |
+| `1.0.3`      | `1.0.3`              | Release (clean, no hash)             |
 
 **Release workflow:**
 
-1. During development: `VERSION` = `X.Y.Z-dev`
-2. Ready to release: change to `X.Y.Z` (remove `-dev`)
-3. After release: bump to `X.Y.(Z+1)-dev`
+1. During development: `VERSION` = `X.Y.Z-dev` (always)
+2. Ready to release: change VERSION to `X.Y.Z`, commit, tag, push
+3. After release: bump VERSION to `X.Y.(Z+1)-dev`
 
-```bash
-# Edit VERSION file directly - no commands needed
-# The build system auto-generates version.h with git hash for pre-releases
-```
+**Auto-generated files** (no manual updates needed):
+- `src/version.h` - generated from `src/version.h.in` with git hash
+- `build/chip_carving_paths_cpp.manifest` - generated from `.manifest.in` template
 
 ### Complete Make Targets Reference
 
@@ -129,11 +130,9 @@ make format-check      # Check if formatting needed (no changes)
 make lint              # Full cpplint style checking
 make lint-quick        # Quick cpplint (critical issues only)
 make lint-verbose      # Detailed cpplint with explanations
+make lint-tidy         # clang-tidy static analysis
 make quality-check     # Run comprehensive quality checks
 make pre-commit        # Format and lint before committing
-
-# Version management
-make increment_version # Manually increment patch version (legacy)
 ```
 
 ## High-Level Architecture
