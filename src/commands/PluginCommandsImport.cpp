@@ -13,11 +13,11 @@ namespace Commands {
 
 // BaseCommandHandler Implementation
 BaseCommandHandler::BaseCommandHandler(std::shared_ptr<Core::PluginManager> pluginManager)
-    : pluginManager_(pluginManager) {}
+    : pluginManager_(std::move(pluginManager)) {}
 
 // ImportDesignCommandHandler Implementation
 ImportDesignCommandHandler::ImportDesignCommandHandler(std::shared_ptr<Core::PluginManager> pluginManager)
-    : BaseCommandHandler(pluginManager) {}
+    : BaseCommandHandler(std::move(pluginManager)) {}
 
 ImportDesignCommandHandler::~ImportDesignCommandHandler() {
   cleanupEventHandlers();
@@ -88,7 +88,7 @@ void ImportDesignCommandHandler::notify(const adsk::core::Ptr<adsk::core::Comman
     ImportDesignCommandHandler* parent_;
   };
 
-  auto onExecute = new ExecuteHandler(this);
+  auto* onExecute = new ExecuteHandler(this);
   command->execute()->add(onExecute);
   commandEventHandlers_.push_back(onExecute);
 
@@ -104,7 +104,7 @@ void ImportDesignCommandHandler::notify(const adsk::core::Ptr<adsk::core::Comman
     ImportDesignCommandHandler* parent_;
   };
 
-  auto onInputChanged = new InputChangedHandler(this);
+  auto* onInputChanged = new InputChangedHandler(this);
   command->inputChanged()->add(onInputChanged);
   inputChangedHandlers_.push_back(onInputChanged);
 }
@@ -125,7 +125,7 @@ void ImportDesignCommandHandler::handleInputChanged(const adsk::core::Ptr<adsk::
   if (changedInput->id() == "fileSelectionButton") {
     // Show file dialog
     if (pluginManager()) {
-      auto factory = pluginManager()->getFactory();
+      auto* factory = pluginManager()->getFactory();
       if (factory) {
         auto ui = factory->createUserInterface();
         if (ui) {
@@ -164,7 +164,7 @@ void ImportDesignCommandHandler::executeImportDesign(const adsk::core::Ptr<adsk:
   // Check if a file was selected
   if (selectedFilePath_.empty()) {
     if (pluginManager()) {
-      auto factory = pluginManager()->getFactory();
+      auto* factory = pluginManager()->getFactory();
       if (factory) {
         auto ui = factory->createUserInterface();
         if (ui) {

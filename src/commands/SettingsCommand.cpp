@@ -14,7 +14,7 @@ namespace ChipCarving {
 namespace Commands {
 
 SettingsCommandHandler::SettingsCommandHandler(std::shared_ptr<Core::PluginManager> pluginManager)
-    : pluginManager_(pluginManager) {}
+    : pluginManager_(std::move(pluginManager)) {}
 
 SettingsCommandHandler::~SettingsCommandHandler() {
   cleanupEventHandlers();
@@ -60,7 +60,7 @@ void SettingsCommandHandler::notify(const adsk::core::Ptr<adsk::core::CommandCre
    public:
     explicit ExecuteHandler(SettingsCommandHandler* parent) : parent_(parent) {}
     void notify(const adsk::core::Ptr<adsk::core::CommandEventArgs>& eventArgs) override {
-      if (parent_ && eventArgs && eventArgs->command() && eventArgs->command()->commandInputs()) {
+      if (parent_ != nullptr && eventArgs && eventArgs->command() && eventArgs->command()->commandInputs()) {
         parent_->applySettings(eventArgs->command()->commandInputs());
       }
     }
@@ -69,7 +69,7 @@ void SettingsCommandHandler::notify(const adsk::core::Ptr<adsk::core::CommandCre
     SettingsCommandHandler* parent_;
   };
 
-  auto onExecute = new ExecuteHandler(this);
+  auto* onExecute = new ExecuteHandler(this);
   cmd->execute()->add(onExecute);
   commandEventHandlers_.push_back(onExecute);
 }
