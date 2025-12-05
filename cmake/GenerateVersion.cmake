@@ -1,5 +1,9 @@
 # GenerateVersion.cmake - Process version.h.in template at build time
 # Supports semantic versioning with pre-release tags and git hash metadata
+#
+# This script is designed to run on EVERY build to ensure the git hash
+# is always current. It only rewrites version.h if content actually changes,
+# avoiding unnecessary rebuilds.
 
 # Read version from VERSION file
 file(READ "${SOURCE_DIR}/VERSION" VERSION_CONTENT)
@@ -47,9 +51,28 @@ if(NOT DEFINED CMAKE_BUILD_TYPE_DEBUG)
     set(CMAKE_BUILD_TYPE_DEBUG 0)
 endif()
 
-# Process the template
+# Generate the new content to a temporary file
 configure_file(
     "${SOURCE_DIR}/src/version.h.in"
-    "${SOURCE_DIR}/src/version.h"
+    "${SOURCE_DIR}/src/version.h.tmp"
     @ONLY
 )
+
+# Only update version.h if content actually changed (avoids unnecessary rebuilds)
+set(VERSION_H_PATH "${SOURCE_DIR}/src/version.h")
+set(VERSION_H_TMP "${SOURCE_DIR}/src/version.h.tmp")
+
+if(EXISTS "${VERSION_H_PATH}")
+    file(READ "${VERSION_H_PATH}" EXISTING_CONTENT)
+    file(READ "${VERSION_H_TMP}" NEW_CONTENT)
+    if(NOT "${EXISTING_CONTENT}" STREQUAL "${NEW_CONTENT}")
+        file(RENAME "${VERSION_H_TMP}" "${VERSION_H_PATH}")
+        message(STATUS "Updated version.h: ${ADDIN_VERSION_STRING}")
+    else()
+        file(REMOVE "${VERSION_H_TMP}")
+        # No message - version unchanged
+    endif()
+else()
+    file(RENAME "${VERSION_H_TMP}" "${VERSION_H_PATH}")
+    message(STATUS "Created version.h: ${ADDIN_VERSION_STRING}")
+endif()

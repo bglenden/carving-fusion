@@ -84,24 +84,19 @@ else()
     set(CMAKE_BUILD_TYPE_DEBUG 0)
 endif()
 
-# Generate version header after incrementing version
-add_custom_command(
-    OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/src/version.h
+# Generate version header on every build (checks git hash)
+# Only rewrites version.h if content actually changed, avoiding unnecessary rebuilds
+add_custom_target(generate_version ALL
     COMMAND ${CMAKE_COMMAND}
         -DSOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}
-        -DADDIN_VERSION_MAJOR=${ADDIN_VERSION_MAJOR}
-        -DADDIN_VERSION_MINOR=${ADDIN_VERSION_MINOR}
-        -DADDIN_VERSION_PATCH=${ADDIN_VERSION_PATCH}
         -DCMAKE_BUILD_TYPE_DEBUG=$<IF:$<CONFIG:Debug>,1,0>
         -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/GenerateVersion.cmake
-    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/VERSION ${CMAKE_CURRENT_SOURCE_DIR}/src/version.h.in
-    COMMENT "Generating version.h from template"
+    COMMENT "Checking version.h (updates if git hash changed)"
 )
 
 # Create the main add-in shared library with full functionality
-add_library(chip_carving_paths_cpp SHARED 
+add_library(chip_carving_paths_cpp SHARED
     src/main.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/version.h
     # PluginManager sub-files (was PluginManager.cpp aggregator)
     src/core/PluginManagerCore.cpp
     src/core/PluginManagerImport.cpp
@@ -167,10 +162,10 @@ add_library(chip_carving_paths_cpp SHARED
     src/utils/ErrorHandler.cpp
 )
 
-# Version is no longer auto-incremented on build
-# Use 'make increment_version' to manually increment if needed
+# Ensure version.h is generated before compiling the library
+add_dependencies(chip_carving_paths_cpp generate_version)
 
-# Debug version now uses the same main with environment variable control
+# Debug version uses environment variable control
 # Set CHIP_CARVING_PLUGIN_MODE=DEBUG to enable debug mode
 
 # Set properties for macOS
