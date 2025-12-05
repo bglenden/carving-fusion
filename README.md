@@ -78,6 +78,7 @@ For detailed development instructions, see [CLAUDE.md](CLAUDE.md).
 ## Design File Format
 
 Carving Fusion reads design files conforming to `design-schema-v2.json`. Designs contain:
+
 - **Leaf shapes**: Vesica piscis (pointed oval) elements
 - **TriArc shapes**: Curved triangles with configurable bulge
 - **Layout information**: Position, rotation, and scale
@@ -85,6 +86,15 @@ Carving Fusion reads design files conforming to `design-schema-v2.json`. Designs
 The schema is shared with the Carving Designer application to ensure compatibility.
 
 ## Technical Details
+
+### Coordinate System Assumptions
+
+The plugin currently assumes a specific coordinate orientation:
+
+- **Cutting axis**: Z axis, with smaller Z values representing deeper cuts into the material
+- **Design plane**: Sketches must be in a plane parallel to the XY plane (i.e., the plane's normal must be parallel to the Z axis)
+
+This means the workpiece surface should be oriented with its "top" facing the positive Z direction. When selecting a sketch plane or construction plane for your design, ensure it is horizontal (parallel to XY).
 
 ### Medial Axis Computation
 
@@ -99,6 +109,7 @@ The plugin uses OpenVoronoi to compute the medial axis (centerline) of each carv
 ### Cross-Component Support
 
 Unlike many Fusion 360 plugins, Carving Fusion can work with geometry distributed across multiple components:
+
 - Sketches in any component hierarchy
 - Surfaces from mesh bodies (STL/OBJ imports)
 - Proper world coordinate transformation throughout
@@ -128,21 +139,25 @@ schema/            # Design file schema and constants
 ## Troubleshooting
 
 ### Plugin doesn't appear in Fusion 360
+
 - Verify the plugin folder is in the correct AddIns directory
 - Check that the manifest file is present
 - Restart Fusion 360 completely
 
 ### Import fails with "Invalid design file"
+
 - Ensure the JSON file matches schema version 2.0
 - Validate the design file structure
 - Check for proper shape definitions (Leaf or TriArc types)
 
 ### Toolpaths appear offset or incorrect
+
 - Verify surface selection includes the target geometry
 - Check that sketch and surface are in consistent units
 - Ensure surface normal faces the correct direction
 
 ### Performance issues with complex designs
+
 - OpenVoronoi computation is the primary bottleneck
 - Simplify shapes or reduce pattern density
 - Consider breaking large designs into smaller sections
@@ -150,6 +165,7 @@ schema/            # Design file schema and constants
 ## Contributing
 
 Contributions are welcome! Please:
+
 1. Write unit tests for new features
 2. Follow the existing code style (use `make format lint`)
 3. Ensure all tests pass (`make test`)
