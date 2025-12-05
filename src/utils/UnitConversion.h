@@ -15,6 +15,23 @@ namespace ChipCarving {
 namespace Utils {
 
 /**
+ * Geometric tolerances for Fusion 360 API operations
+ * All tolerances are in Fusion's internal units (centimeters)
+ */
+namespace Tolerance {
+
+// General geometric tolerance for point matching and near-zero checks (0.01mm)
+constexpr double GEOMETRIC = 0.001;
+
+// Tolerance for curve tessellation and chord approximation (0.01mm)
+constexpr double TESSELLATION = 0.001;
+
+// Tolerance for ray casting surface intersection
+constexpr double RAY_CASTING = 0.001;
+
+}  // namespace Tolerance
+
+/**
  * Convert length from Fusion's database units (cm) to millimeters
  * @param lengthInCm Length value in centimeters (from Fusion API)
  * @return Length value in millimeters

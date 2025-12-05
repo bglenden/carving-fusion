@@ -9,6 +9,7 @@
 
 #include "FusionAPIAdapter.h"
 #include "FusionWorkspaceProfileTypes.h"
+#include "utils/UnitConversion.h"
 #include "utils/logging.h"
 
 using adsk::core::Ptr;
@@ -91,7 +92,7 @@ bool FusionWorkspace::extractProfileGeometry(Ptr<adsk::fusion::Profile> profile,
   geometry.transform = transform;
 
   // Chain curves and extract vertices (similar to existing extractProfileVertices)
-  const double tolerance = 0.001;  // 0.01mm tolerance
+  const double tolerance = Utils::Tolerance::GEOMETRIC;
   std::vector<size_t> chainOrder;
 
   // Start with first curve

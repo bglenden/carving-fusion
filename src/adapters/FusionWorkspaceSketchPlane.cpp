@@ -14,6 +14,7 @@
 #include <iostream>
 
 #include "FusionAPIAdapter.h"
+#include "utils/UnitConversion.h"
 #include "utils/logging.h"
 
 using adsk::core::Base;
@@ -100,9 +101,9 @@ std::unique_ptr<ISketch> FusionWorkspace::createSketchOnPlane(const std::string&
       Ptr<Vector3D> normal = geometry->normal();
       if (normal) {
         // Check if normal is parallel to Z axis (0, 0, ±1)
-        double tolerance = 0.001;
-        if (std::abs(normal->x()) < tolerance && std::abs(normal->y()) < tolerance &&
-            std::abs(std::abs(normal->z()) - 1.0) < tolerance) {
+        if (std::abs(normal->x()) < Utils::Tolerance::GEOMETRIC &&
+            std::abs(normal->y()) < Utils::Tolerance::GEOMETRIC &&
+            std::abs(std::abs(normal->z()) - 1.0) < Utils::Tolerance::GEOMETRIC) {
           isValidPlane = true;
           Ptr<Point3D> origin = geometry->origin();
           if (origin) {
@@ -124,9 +125,9 @@ std::unique_ptr<ISketch> FusionWorkspace::createSketchOnPlane(const std::string&
           Ptr<Vector3D> normal = plane->normal();
           if (normal) {
             // Check if normal is parallel to Z axis
-            double tolerance = 0.001;
-            if (std::abs(normal->x()) < tolerance && std::abs(normal->y()) < tolerance &&
-                std::abs(std::abs(normal->z()) - 1.0) < tolerance) {
+            if (std::abs(normal->x()) < Utils::Tolerance::GEOMETRIC &&
+                std::abs(normal->y()) < Utils::Tolerance::GEOMETRIC &&
+                std::abs(std::abs(normal->z()) - 1.0) < Utils::Tolerance::GEOMETRIC) {
               isValidPlane = true;
               Ptr<Point3D> origin = plane->origin();
               if (origin) {

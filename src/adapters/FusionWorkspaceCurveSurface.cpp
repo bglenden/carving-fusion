@@ -10,6 +10,7 @@
 #include <vector>
 
 #include "FusionAPIAdapter.h"
+#include "utils/UnitConversion.h"
 #include "utils/logging.h"
 
 using adsk::core::Point3D;
@@ -98,7 +99,7 @@ double FusionWorkspace::getSurfaceZAtXY(const std::string& /*surfaceId*/, double
     // This searches both B-Rep faces AND mesh surfaces in this component
     Ptr<adsk::core::ObjectCollection> intersectedEntities =
         component->findBRepUsingRay(rayOrigin, rayDirection, adsk::fusion::BRepEntityTypes::BRepFaceEntityType,
-                                    0.001,  // tolerance
+                                    Utils::Tolerance::RAY_CASTING,
                                     false,  // visibleEntitiesOnly - include all faces (critical for
                                             // cross-component)
                                     hitPoints);

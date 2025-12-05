@@ -8,6 +8,7 @@
 
 #include "PluginCommands.h"
 #include "PluginCommandsGeometryChaining.h"
+#include "utils/UnitConversion.h"
 #include "utils/logging.h"
 
 namespace ChipCarving {
@@ -156,7 +157,7 @@ void GeneratePathsCommandHandler::extractAndCacheProfileGeometry(adsk::core::Ptr
 
                   // Try again with finer tolerance
                   strokePoints.clear();
-                  chordTolerance = 0.001;  // 0.01mm for very fine tessellation
+                  chordTolerance = Utils::Tolerance::TESSELLATION;
                   if (evaluator->getStrokes(startParam, endParam, chordTolerance, strokePoints)) {
                     LOG_INFO("    Retessellated with finer tolerance: " << strokePoints.size() << " points");
                   }

@@ -11,6 +11,7 @@
 
 #include "FusionAPIAdapter.h"
 #include "FusionWorkspaceProfileTypes.h"
+#include "utils/UnitConversion.h"
 #include "utils/logging.h"
 
 using adsk::core::Ptr;
@@ -50,7 +51,7 @@ bool FusionWorkspace::extractProfileVertices(const std::string& entityId,
   LOG_DEBUG("Starting curve chaining algorithm...");
 
   std::vector<size_t> chainOrder;
-  const double tolerance = 0.001;  // 0.01mm tolerance for point matching
+  const double tolerance = Utils::Tolerance::GEOMETRIC;
 
   // Start with the first curve
   chainOrder.push_back(0);
@@ -139,7 +140,7 @@ bool FusionWorkspace::extractProfileVertices(const std::string& entityId,
 
           // NOTE: With world coordinates, Z can be non-zero (expected)
           // This is the correct behavior for medial axis computation
-          if (std::abs(z) > 0.001) {
+          if (std::abs(z) > Utils::Tolerance::GEOMETRIC) {
             LOG_DEBUG("Point has Z value: " << z << " cm (world coordinates)");
           }
 
@@ -156,7 +157,7 @@ bool FusionWorkspace::extractProfileVertices(const std::string& entityId,
 
           // NOTE: With world coordinates, Z can be non-zero (expected)
           // This is the correct behavior for medial axis computation
-          if (std::abs(z) > 0.001) {
+          if (std::abs(z) > Utils::Tolerance::GEOMETRIC) {
             LOG_DEBUG("Point has Z value: " << z << " cm (world coordinates)");
           }
 

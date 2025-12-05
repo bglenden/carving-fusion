@@ -8,6 +8,7 @@
 
 #include "PluginCommandsGeometryChaining.h"
 
+#include "utils/UnitConversion.h"
 #include "utils/logging.h"
 
 namespace ChipCarving {
@@ -29,7 +30,7 @@ std::vector<std::pair<double, double>> chainCurvesAndExtractVertices(const std::
 
   // Adaptive tolerance based on tessellation - use coarser tolerance if we
   // had issues
-  double baseTolerance = 0.001;  // 0.01mm default tolerance
+  double baseTolerance = Utils::Tolerance::GEOMETRIC;
 
   // Check if we had any tessellation issues that might require looser
   // tolerance

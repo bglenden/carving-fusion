@@ -422,7 +422,7 @@ After implementing fixes, test these scenarios:
 | 3     | Missing isValid() Checks in Iterations | Medium   | ✅ Implemented | Added checks to 5 files (Dec 2025)      |
 | 4     | ValueInput Usage                       | N/A      | No Action      | Already correct                         |
 | 5     | Profile Caching Without Invalidation   | Low      | Open           |                                         |
-| 6     | Hard-Coded Tolerance Values            | Low      | Open           |                                         |
+| 6     | Hard-Coded Tolerance Values            | Low      | ✅ Implemented | Added Utils::Tolerance constants (Dec 2025) |
 | 7     | Missing Null Checks in API Call Chains | Medium   | ✅ Implemented | Fixed chained call in PluginCommandsImport.cpp (Dec 2025) |
 | 8     | size_t vs int in Collection Iteration  | Low      | Open           |                                         |
 | 9     | Command Cleanup Order                  | Low      | Open           |                                         |
