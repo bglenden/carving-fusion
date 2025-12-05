@@ -12,10 +12,11 @@
 
 namespace ChipCarving {
 namespace Geometry {
+namespace {
 
 // Helper function to check if two line segments intersect
 // Based on the orientation method
-static bool doSegmentsIntersect(const Point2D& p1, const Point2D& q1, const Point2D& p2, const Point2D& q2) {
+bool doSegmentsIntersect(const Point2D& p1, const Point2D& q1, const Point2D& p2, const Point2D& q2) {
   auto orientation = [](const Point2D& p, const Point2D& q, const Point2D& r) -> int {
     double val = (q.y - p.y) * (r.x - q.x) - (q.x - p.x) * (r.y - q.y);
     if (std::abs(val) < 1e-10)
@@ -24,10 +25,8 @@ static bool doSegmentsIntersect(const Point2D& p1, const Point2D& q1, const Poin
   };
 
   auto onSegment = [](const Point2D& p, const Point2D& q, const Point2D& r) -> bool {
-    if (q.x <= std::max(p.x, r.x) && q.x >= std::min(p.x, r.x) && q.y <= std::max(p.y, r.y) &&
-        q.y >= std::min(p.y, r.y))
-      return true;
-    return false;
+    return q.x <= std::max(p.x, r.x) && q.x >= std::min(p.x, r.x) && q.y <= std::max(p.y, r.y) &&
+           q.y >= std::min(p.y, r.y);
   };
 
   int o1 = orientation(p1, q1, p2);
@@ -58,6 +57,8 @@ static bool doSegmentsIntersect(const Point2D& p1, const Point2D& q1, const Poin
 
   return false;  // Doesn't fall in any of the above cases
 }
+
+}  // namespace
 
 bool MedialAxisProcessor::validatePolygonForOpenVoronoi(const std::vector<Point2D>& polygon) {
   log("=== POLYGON VALIDATION START ===");

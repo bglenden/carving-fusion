@@ -15,7 +15,9 @@
 #include "geometry/MedialAxisProcessor.h"
 #include "geometry/Point2D.h"
 
-using namespace ChipCarving::Geometry;
+using ChipCarving::Geometry::MedialAxisProcessor;
+using ChipCarving::Geometry::MedialAxisResults;
+using ChipCarving::Geometry::Point2D;
 
 class MedialAxisRobustnessTest : public ::testing::Test {
  protected:
