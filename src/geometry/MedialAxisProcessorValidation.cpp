@@ -178,6 +178,27 @@ bool MedialAxisProcessor::validatePolygonForOpenVoronoi(const std::vector<Point2
 
   log("Unit circle check passed - all points within circle");
 
+  // Check for zero-area polygon (collinear points)
+  // Use the shoelace formula to compute signed area
+  log("Checking for degenerate (zero-area) polygon...");
+  double signedArea = 0.0;
+  for (size_t i = 0; i < polygon.size(); ++i) {
+    size_t j = (i + 1) % polygon.size();
+    signedArea += polygon[i].x * polygon[j].y;
+    signedArea -= polygon[j].x * polygon[i].y;
+  }
+  signedArea = std::abs(signedArea) / 2.0;
+
+  // For a polygon scaled to unit circle, a reasonable minimum area threshold
+  // is based on the minimum edge length squared
+  double minArea = 1e-10;
+  if (signedArea < minArea) {
+    log("ERROR: Polygon has near-zero area (" + std::to_string(signedArea) +
+        ") - points may be collinear or nearly collinear");
+    return false;
+  }
+  log("Area check passed - polygon has sufficient area: " + std::to_string(signedArea));
+
   log("=== POLYGON VALIDATION PASSED ===");
   return true;
 }
