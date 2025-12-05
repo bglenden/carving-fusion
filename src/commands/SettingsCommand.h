@@ -31,8 +31,14 @@ class SettingsCommandHandler : public adsk::core::CommandCreatedEventHandler {
   ~SettingsCommandHandler() override;
   void notify(const adsk::core::Ptr<adsk::core::CommandCreatedEventArgs>& eventArgs) override;
 
+  // Non-copyable, non-movable (prevent slicing, handlers are registered by pointer)
+  SettingsCommandHandler(const SettingsCommandHandler&) = delete;
+  SettingsCommandHandler& operator=(const SettingsCommandHandler&) = delete;
+  SettingsCommandHandler(SettingsCommandHandler&&) = delete;
+  SettingsCommandHandler& operator=(SettingsCommandHandler&&) = delete;
+
  private:
-  std::shared_ptr<Core::PluginManager> pluginManager_{};
+  std::shared_ptr<Core::PluginManager> pluginManager_;
 
   /**
    * Creates the settings dialog inputs
@@ -50,7 +56,7 @@ class SettingsCommandHandler : public adsk::core::CommandCreatedEventHandler {
   void cleanupEventHandlers();
 
   // Event handlers for cleanup (Issue #1: Event Handler Memory Management)
-  std::vector<adsk::core::CommandEventHandler*> commandEventHandlers_{};
+  std::vector<adsk::core::CommandEventHandler*> commandEventHandlers_;
 };
 
 }  // namespace Commands

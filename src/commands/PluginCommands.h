@@ -31,10 +31,21 @@ namespace Commands {
 class BaseCommandHandler : public adsk::core::CommandCreatedEventHandler {
  public:
   explicit BaseCommandHandler(std::shared_ptr<Core::PluginManager> pluginManager);
-  virtual ~BaseCommandHandler() = default;
+  ~BaseCommandHandler() override = default;
+
+  // Non-copyable, non-movable (prevent slicing, handlers are registered by pointer)
+  BaseCommandHandler(const BaseCommandHandler&) = delete;
+  BaseCommandHandler& operator=(const BaseCommandHandler&) = delete;
+  BaseCommandHandler(BaseCommandHandler&&) = delete;
+  BaseCommandHandler& operator=(BaseCommandHandler&&) = delete;
 
  protected:
-  std::shared_ptr<Core::PluginManager> pluginManager_{};
+  std::shared_ptr<Core::PluginManager> pluginManager() const {
+    return pluginManager_;
+  }
+
+ private:
+  std::shared_ptr<Core::PluginManager> pluginManager_;
 };
 
 /**
@@ -52,11 +63,11 @@ class ImportDesignCommandHandler : public BaseCommandHandler {
   void handleInputChanged(const adsk::core::Ptr<adsk::core::InputChangedEventArgs>& args);
   void cleanupEventHandlers();
 
-  std::string selectedFilePath_{};  // Store the selected file path
+  std::string selectedFilePath_;
 
   // Event handlers for cleanup (Issue #1: Event Handler Memory Management)
-  std::vector<adsk::core::CommandEventHandler*> commandEventHandlers_{};
-  std::vector<adsk::core::InputChangedEventHandler*> inputChangedHandlers_{};
+  std::vector<adsk::core::CommandEventHandler*> commandEventHandlers_;
+  std::vector<adsk::core::InputChangedEventHandler*> inputChangedHandlers_;
 };
 
 /**
@@ -87,14 +98,14 @@ class GeneratePathsCommandHandler : public BaseCommandHandler {
   void validateAndCleanSelection(adsk::core::Ptr<adsk::core::SelectionCommandInput> selectionInput);
 
   // Sketch tracking for incremental generation
-  std::map<std::string, std::string> toolToSketchMap_{};  // Maps tool name to sketch name
+  std::map<std::string, std::string> toolToSketchMap_;
 
   // Cached geometry to avoid stale token issues
-  std::vector<Adapters::ProfileGeometry> cachedProfiles_{};
+  std::vector<Adapters::ProfileGeometry> cachedProfiles_;
 
   // Event handlers for cleanup (Issue #1: Event Handler Memory Management)
-  std::vector<adsk::core::CommandEventHandler*> commandEventHandlers_{};
-  std::vector<adsk::core::InputChangedEventHandler*> inputChangedHandlers_{};
+  std::vector<adsk::core::CommandEventHandler*> commandEventHandlers_;
+  std::vector<adsk::core::InputChangedEventHandler*> inputChangedHandlers_;
   void cleanupEventHandlers();
 };
 

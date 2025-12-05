@@ -5,11 +5,8 @@
  * Split from PluginCommands.cpp for maintainability
  */
 
-#include <iostream>
-
 #include "PluginCommands.h"
 #include "core/PluginManager.h"
-#include "utils/UnitConversion.h"
 
 namespace ChipCarving {
 namespace Commands {
@@ -127,8 +124,8 @@ void ImportDesignCommandHandler::handleInputChanged(const adsk::core::Ptr<adsk::
   // Check if file selection button was clicked
   if (changedInput->id() == "fileSelectionButton") {
     // Show file dialog
-    if (pluginManager_) {
-      auto factory = pluginManager_->getFactory();
+    if (pluginManager()) {
+      auto factory = pluginManager()->getFactory();
       if (factory) {
         auto ui = factory->createUserInterface();
         if (ui) {
@@ -157,7 +154,7 @@ void ImportDesignCommandHandler::handleInputChanged(const adsk::core::Ptr<adsk::
 }
 
 void ImportDesignCommandHandler::executeImportDesign(const adsk::core::Ptr<adsk::core::CommandEventArgs>& args) {
-  if (!args || !pluginManager_)
+  if (!args || !pluginManager())
     return;
 
   auto inputs = args->command()->commandInputs();
@@ -166,8 +163,8 @@ void ImportDesignCommandHandler::executeImportDesign(const adsk::core::Ptr<adsk:
 
   // Check if a file was selected
   if (selectedFilePath_.empty()) {
-    if (pluginManager_) {
-      auto factory = pluginManager_->getFactory();
+    if (pluginManager()) {
+      auto factory = pluginManager()->getFactory();
       if (factory) {
         auto ui = factory->createUserInterface();
         if (ui) {
@@ -205,7 +202,7 @@ void ImportDesignCommandHandler::executeImportDesign(const adsk::core::Ptr<adsk:
   }
 
   // Execute the import with the selected file and optional plane
-  pluginManager_->executeImportDesign(selectedFilePath_, planeEntityId);
+  pluginManager()->executeImportDesign(selectedFilePath_, planeEntityId);
 }
 
 }  // namespace Commands

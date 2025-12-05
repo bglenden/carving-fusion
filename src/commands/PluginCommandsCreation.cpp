@@ -6,9 +6,9 @@
  */
 
 #include <iostream>
+#include <utility>
 
 #include "PluginCommands.h"
-#include "utils/ErrorHandler.h"
 #include "utils/logging.h"
 
 namespace ChipCarving {
@@ -16,7 +16,7 @@ namespace Commands {
 
 // GeneratePathsCommandHandler Implementation
 GeneratePathsCommandHandler::GeneratePathsCommandHandler(std::shared_ptr<Core::PluginManager> pluginManager)
-    : BaseCommandHandler(pluginManager) {}
+    : BaseCommandHandler(std::move(pluginManager)) {}
 
 GeneratePathsCommandHandler::~GeneratePathsCommandHandler() {
   cleanupEventHandlers();
@@ -37,7 +37,7 @@ void GeneratePathsCommandHandler::cleanupEventHandlers() {
 }
 
 void GeneratePathsCommandHandler::notify(const adsk::core::Ptr<adsk::core::CommandCreatedEventArgs>& eventArgs) {
-  if (!eventArgs || !pluginManager_) {
+  if (!eventArgs || !pluginManager()) {
     return;
   }
 
@@ -73,7 +73,7 @@ void GeneratePathsCommandHandler::notify(const adsk::core::Ptr<adsk::core::Comma
    public:
     explicit ExecuteHandler(GeneratePathsCommandHandler* parent) : parent_(parent) {}
     void notify(const adsk::core::Ptr<adsk::core::CommandEventArgs>& eventArgs) override {
-      if (parent_ && eventArgs && eventArgs->command() && eventArgs->command()->commandInputs()) {
+      if ((parent_ != nullptr) && eventArgs && eventArgs->command() && eventArgs->command()->commandInputs()) {
         parent_->executeMedialAxisProcessing(eventArgs->command()->commandInputs());
       }
     }
@@ -82,7 +82,7 @@ void GeneratePathsCommandHandler::notify(const adsk::core::Ptr<adsk::core::Comma
     GeneratePathsCommandHandler* parent_;
   };
 
-  auto onExecute = new ExecuteHandler(this);
+  auto* onExecute = new ExecuteHandler(this);
   cmd->execute()->add(onExecute);
   commandEventHandlers_.push_back(onExecute);
 
@@ -103,7 +103,7 @@ void GeneratePathsCommandHandler::notify(const adsk::core::Ptr<adsk::core::Comma
     GeneratePathsCommandHandler* parent_;  // TODO(developer): Use parent for preview functionality
   };
 
-  auto onPreview = new PreviewHandler(this);
+  auto* onPreview = new PreviewHandler(this);
   cmd->executePreview()->add(onPreview);
   commandEventHandlers_.push_back(onPreview);
 
@@ -160,7 +160,7 @@ void GeneratePathsCommandHandler::notify(const adsk::core::Ptr<adsk::core::Comma
     GeneratePathsCommandHandler* parent_;
   };
 
-  auto onInputChanged = new InputChangedHandler(this);
+  auto* onInputChanged = new InputChangedHandler(this);
   cmd->inputChanged()->add(onInputChanged);
   inputChangedHandlers_.push_back(onInputChanged);
 
@@ -196,7 +196,7 @@ void GeneratePathsCommandHandler::notify(const adsk::core::Ptr<adsk::core::Comma
     }
   };
 
-  auto onActivate = new ActivateHandler();
+  auto* onActivate = new ActivateHandler();
   cmd->activate()->add(onActivate);
   commandEventHandlers_.push_back(onActivate);
 
@@ -237,7 +237,7 @@ void GeneratePathsCommandHandler::notify(const adsk::core::Ptr<adsk::core::Comma
     }
   };
 
-  auto onDestroy = new DestroyHandler();
+  auto* onDestroy = new DestroyHandler();
   cmd->destroy()->add(onDestroy);
   commandEventHandlers_.push_back(onDestroy);
 }

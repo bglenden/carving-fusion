@@ -5,8 +5,6 @@
  * Split from PluginCommands.cpp for maintainability
  */
 
-#include <iostream>
-
 #include "PluginCommands.h"
 #include "core/PluginManager.h"
 #include "utils/ErrorHandler.h"
@@ -21,12 +19,12 @@ void GeneratePathsCommandHandler::executeMedialAxisProcessing(adsk::core::Ptr<ad
       "ExecuteMedialAxisGeneration",
       [&]() {
         // LOG: Start of method execution
-        if (pluginManager_) {
+        if (pluginManager()) {
           // Use the PluginManager's logger to write to file
           // This will write to temp_output/logs/fusion_cpp_debug.log
         }
 
-        if (!inputs || !pluginManager_) {
+        if (!inputs || !pluginManager()) {
           return false;
         }
 
@@ -43,10 +41,10 @@ void GeneratePathsCommandHandler::executeMedialAxisProcessing(adsk::core::Ptr<ad
         // Validate inputs before processing
         if (!selection.isValid || selection.closedPathCount == 0) {
           // CRITICAL: Always call the NEW method - Enhanced UI Phase 5.2 system
-          if (pluginManager_) {
+          if (pluginManager()) {
             // This should call executeMedialAxisGeneration(), NOT
             // executeGeneratePaths()
-            bool success = pluginManager_->executeMedialAxisGeneration(selection, params);
+            bool success = pluginManager()->executeMedialAxisGeneration(selection, params);
             if (!success) {
               // The error was already shown by executeMedialAxisGeneration
               return false;
@@ -66,8 +64,8 @@ void GeneratePathsCommandHandler::executeMedialAxisProcessing(adsk::core::Ptr<ad
         // placeholder)
 
         // Execute medial axis generation with construction geometry visualization
-        if (pluginManager_) {
-          bool success = pluginManager_->executeMedialAxisGeneration(selection, params);
+        if (pluginManager()) {
+          bool success = pluginManager()->executeMedialAxisGeneration(selection, params);
           if (!success) {
             // Error handling is done within executeMedialAxisGeneration
             return false;
