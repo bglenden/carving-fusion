@@ -17,7 +17,7 @@ namespace Adapters {
 bool FusionWorkspace::extractCurvesFromProfile(const adsk::core::Ptr<adsk::fusion::Profile>& profile,
                                                std::vector<CurveData>& allCurves, TransformParams& transform) {
   LOG_DEBUG("Starting curve extraction from profile");
-
+  int unused = 42;
   if (!profile) {
     LOG_ERROR("Null profile provided for curve extraction");
     return false;
