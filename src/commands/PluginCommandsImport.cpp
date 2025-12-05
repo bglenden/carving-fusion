@@ -157,7 +157,11 @@ void ImportDesignCommandHandler::executeImportDesign(const adsk::core::Ptr<adsk:
   if (!args || !pluginManager())
     return;
 
-  auto inputs = args->command()->commandInputs();
+  auto command = args->command();
+  if (!command)
+    return;
+
+  auto inputs = command->commandInputs();
   if (!inputs)
     return;
 

@@ -423,7 +423,7 @@ After implementing fixes, test these scenarios:
 | 4     | ValueInput Usage                       | N/A      | No Action      | Already correct                         |
 | 5     | Profile Caching Without Invalidation   | Low      | Open           |                                         |
 | 6     | Hard-Coded Tolerance Values            | Low      | Open           |                                         |
-| 7     | Missing Null Checks in API Call Chains | Medium   | Open           |                                         |
+| 7     | Missing Null Checks in API Call Chains | Medium   | ✅ Implemented | Fixed chained call in PluginCommandsImport.cpp (Dec 2025) |
 | 8     | size_t vs int in Collection Iteration  | Low      | Open           |                                         |
 | 9     | Command Cleanup Order                  | Low      | Open           |                                         |
 | 10    | XY-Parallel Plane Restriction          | Low      | ✅ Implemented | Documented in README.md (Dec 2025)      |
