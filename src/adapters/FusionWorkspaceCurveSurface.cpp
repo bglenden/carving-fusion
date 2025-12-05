@@ -97,12 +97,11 @@ double FusionWorkspace::getSurfaceZAtXY(const std::string& /*surfaceId*/, double
 
     // Cast ray to find intersections with ALL surface types
     // This searches both B-Rep faces AND mesh surfaces in this component
-    Ptr<adsk::core::ObjectCollection> intersectedEntities =
-        component->findBRepUsingRay(rayOrigin, rayDirection, adsk::fusion::BRepEntityTypes::BRepFaceEntityType,
-                                    Utils::Tolerance::RAY_CASTING,
-                                    false,  // visibleEntitiesOnly - include all faces (critical for
-                                            // cross-component)
-                                    hitPoints);
+    Ptr<adsk::core::ObjectCollection> intersectedEntities = component->findBRepUsingRay(
+        rayOrigin, rayDirection, adsk::fusion::BRepEntityTypes::BRepFaceEntityType, Utils::Tolerance::RAY_CASTING,
+        false,  // visibleEntitiesOnly - include all faces (critical for
+                // cross-component)
+        hitPoints);
 
     if (intersectedEntities && intersectedEntities->count() > 0) {
       LOG_DEBUG("Component " << compIdx << " ray casting found " << intersectedEntities->count()

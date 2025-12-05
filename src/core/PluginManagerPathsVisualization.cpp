@@ -5,15 +5,8 @@
  * Split from PluginManagerPaths.cpp for maintainability
  */
 
-#include <algorithm>
-#include <chrono>
-#include <set>
-#include <sstream>
-
 #include "PluginManager.h"
 #include "geometry/Point2D.h"
-#include "geometry/Point3D.h"
-#include "geometry/VCarveCalculator.h"
 #include "utils/UnitConversion.h"
 
 namespace ChipCarving {

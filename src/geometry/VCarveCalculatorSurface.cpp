@@ -5,9 +5,7 @@
  * Split from VCarveCalculator.cpp for maintainability
  */
 
-#include <algorithm>
 #include <cmath>
-#include <set>
 
 #include "geometry/VCarveCalculator.h"
 #include "utils/logging.h"
@@ -17,7 +15,8 @@ namespace Geometry {
 
 VCarveResults VCarveCalculator::generateVCarvePathsWithSurface(const std::vector<SampledMedialPath>& sampledPaths,
                                                                const Adapters::MedialAxisParameters& params,
-                                                               double sketchPlaneZ, SurfaceQueryFunction surfaceQuery) {
+                                                               double sketchPlaneZ,
+                                                               const SurfaceQueryFunction& surfaceQuery) {
   (void)sketchPlaneZ;  // Used only in LOG_DEBUG which may be compiled out
   VCarveResults results;
 

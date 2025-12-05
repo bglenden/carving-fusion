@@ -86,14 +86,14 @@ class ErrorHandler {
                                              std::function<void()> unknownExceptionHandler);
 
   // Fusion 360 specific error handling (returns false on error)
-  static bool executeFusionOperation(const std::string& operation, std::function<bool()> func,
+  static bool executeFusionOperation(const std::string& operation, const std::function<bool()>& func,
                                      bool showMessageToUser = false);
 
   // Void operations with error logging only
-  static void executeWithLogging(const std::string& operation, std::function<void()> func);
+  static void executeWithLogging(const std::string& operation, const std::function<void()>& func);
 
   // Configuration
-  static void setGlobalErrorCallback(ErrorCallback callback);
+  static void setGlobalErrorCallback(const ErrorCallback& callback);
   static void enableConsoleLogging(bool enabled);
   static void enableUserMessages(bool enabled);
   static void setUserInterface(Adapters::IUserInterface* ui);

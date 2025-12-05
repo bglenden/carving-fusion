@@ -6,8 +6,6 @@
 
 #include "ErrorHandler.h"
 
-#include <iostream>
-
 #include "adapters/IFusionInterface.h"
 #include "utils/logging.h"
 
@@ -20,7 +18,7 @@ bool ErrorHandler::consoleLoggingEnabled_ = true;
 bool ErrorHandler::userMessagesEnabled_ = false;
 Adapters::IUserInterface* ErrorHandler::userInterface_ = nullptr;
 
-bool ErrorHandler::executeFusionOperation(const std::string& operation, std::function<bool()> func,
+bool ErrorHandler::executeFusionOperation(const std::string& operation, const std::function<bool()>& func,
                                           bool showMessageToUser) {
   LOG_DEBUG("Executing Fusion operation: " << operation);
 
@@ -61,7 +59,7 @@ bool ErrorHandler::executeFusionOperation(const std::string& operation, std::fun
   }
 }
 
-void ErrorHandler::executeWithLogging(const std::string& operation, std::function<void()> func) {
+void ErrorHandler::executeWithLogging(const std::string& operation, const std::function<void()>& func) {
   LOG_DEBUG("Executing operation with logging: " << operation);
 
   try {
@@ -74,7 +72,7 @@ void ErrorHandler::executeWithLogging(const std::string& operation, std::functio
   }
 }
 
-void ErrorHandler::setGlobalErrorCallback(ErrorCallback callback) {
+void ErrorHandler::setGlobalErrorCallback(const ErrorCallback& callback) {
   globalErrorCallback_ = callback;
 
   if (callback) {

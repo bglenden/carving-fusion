@@ -5,10 +5,6 @@
  * Split from PluginManager.cpp for maintainability
  */
 
-#include <algorithm>
-#include <fstream>
-#include <sstream>
-
 #include "PluginManager.h"
 
 namespace ChipCarving {

@@ -12,7 +12,7 @@ namespace ChipCarving {
 namespace Commands {
 
 Adapters::SketchSelection GeneratePathsCommandHandler::getSelectionFromInputs(
-    adsk::core::Ptr<adsk::core::CommandInputs> inputs) {
+    const adsk::core::Ptr<adsk::core::CommandInputs>& inputs) {
   Adapters::SketchSelection selection;
 
   // IMMEDIATE EXTRACTION APPROACH: Use cached geometry instead of processing
@@ -25,7 +25,7 @@ Adapters::SketchSelection GeneratePathsCommandHandler::getSelectionFromInputs(
     // Use the cached geometry that was extracted immediately when selections
     // were made
     selection.isValid = true;
-    selection.closedPathCount = cachedProfiles_.size();
+    selection.closedPathCount = static_cast<int>(cachedProfiles_.size());
     selection.selectedProfiles = cachedProfiles_;
 
     // Generate dummy entity IDs for backward compatibility (these won't be
@@ -168,7 +168,7 @@ Adapters::SketchSelection GeneratePathsCommandHandler::getSelectionFromInputs(
 
               auto loopCurves = loop->profileCurves();
               if (loopCurves) {
-                totalCurvesInProfile += loopCurves->count();
+                totalCurvesInProfile += static_cast<int>(loopCurves->count());
 
                 // Check if selected curves match this loop's curves
                 for (size_t c = 0; c < loopCurves->count(); ++c) {

@@ -132,7 +132,7 @@ bool FusionWorkspace::extractProfileVertices(const std::string& entityId,
     if (reversed) {
       // Add points in reverse order, skip first point (which is last in
       // reverse)
-      for (int j = strokePoints.size() - 1; j >= 1; --j) {
+      for (int j = static_cast<int>(strokePoints.size()) - 1; j >= 1; --j) {
         if (strokePoints[j]) {
           double x = strokePoints[j]->x();
           double y = strokePoints[j]->y();

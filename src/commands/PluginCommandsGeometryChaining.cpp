@@ -78,7 +78,8 @@ std::vector<std::pair<double, double>> chainCurvesAndExtractVertices(const std::
         foundNext = true;
         LOG_INFO("    Chained curve " << i << " (normal)");
         break;
-      } else if (distEnd < tolerance) {
+      }
+      if (distEnd < tolerance) {
         // Reversed orientation - mark with high bit flag
         chainOrder.push_back(i | 0x80000000);
         tempCurves[i].used = true;

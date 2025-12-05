@@ -19,7 +19,7 @@ void GeneratePathsCommandHandler::clearCachedGeometry() {
   LOG_INFO("Cleared cached profile geometry");
 }
 
-void GeneratePathsCommandHandler::extractAndCacheProfileGeometry(adsk::core::Ptr<adsk::fusion::Profile> profile,
+void GeneratePathsCommandHandler::extractAndCacheProfileGeometry(const adsk::core::Ptr<adsk::fusion::Profile>& profile,
                                                                  int index) {
   if (!profile) {
     LOG_INFO("Cannot extract geometry from null profile at index " << index);
@@ -174,7 +174,8 @@ void GeneratePathsCommandHandler::extractAndCacheProfileGeometry(adsk::core::Ptr
                 // Try fallback with endpoints only for critical path
                 // continuity
                 std::vector<adsk::core::Ptr<adsk::core::Point3D>> fallbackPoints;
-                adsk::core::Ptr<adsk::core::Point3D> startPt, endPt;
+                adsk::core::Ptr<adsk::core::Point3D> startPt;
+                adsk::core::Ptr<adsk::core::Point3D> endPt;
                 if (evaluator->getPointAtParameter(startParam, startPt) &&
                     evaluator->getPointAtParameter(endParam, endPt)) {
                   fallbackPoints.push_back(startPt);
@@ -214,7 +215,7 @@ void GeneratePathsCommandHandler::extractAndCacheProfileGeometry(adsk::core::Ptr
   LOG_INFO("Extracted " << profileGeom.vertices.size() << " vertices from profile " << index);
   if (!profileGeom.vertices.empty()) {
     // Log first few vertices for debugging
-    size_t numToLog = std::min(size_t(6), profileGeom.vertices.size());
+    size_t numToLog = std::min(static_cast<size_t>(6), profileGeom.vertices.size());
     for (size_t i = 0; i < numToLog; ++i) {
       LOG_INFO("  Vertex " << i << ": (" << profileGeom.vertices[i].first << ", " << profileGeom.vertices[i].second
                            << ")");

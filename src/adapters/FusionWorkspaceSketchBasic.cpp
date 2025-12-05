@@ -5,12 +5,6 @@
  * Split from FusionWorkspaceSketch.cpp for maintainability
  */
 
-#include <algorithm>
-#include <chrono>
-#include <cmath>
-#include <iostream>
-#include <sstream>
-
 #include "FusionAPIAdapter.h"
 
 using adsk::core::Application;
@@ -20,7 +14,7 @@ namespace ChipCarving {
 namespace Adapters {
 
 // Constructor - anchors the vtable in this compilation unit
-FusionWorkspace::FusionWorkspace(Ptr<Application> app) : app_(app) {}
+FusionWorkspace::FusionWorkspace(const Ptr<Application>& app) : app_(app) {}
 
 std::unique_ptr<ISketch> FusionWorkspace::createSketch(const std::string& name) {
   if (!app_) {

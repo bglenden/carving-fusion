@@ -10,8 +10,6 @@
  * for details on reverting if issues arise.
  */
 
-#include <iostream>
-
 #include "FusionAPIAdapter.h"
 #include "utils/logging.h"
 

@@ -6,10 +6,8 @@
  */
 
 #include <cmath>
-#include <iostream>
 
 #include "FusionAPIAdapter.h"
-#include "geometry/Point3D.h"
 #include "geometry/Shape.h"
 #include "utils/UnitConversion.h"
 
@@ -25,7 +23,8 @@ namespace ChipCarving {
 namespace Adapters {
 
 // FusionSketch Implementation
-FusionSketch::FusionSketch(const std::string& name, Ptr<Application> app, Ptr<adsk::fusion::Sketch> sketch)
+FusionSketch::FusionSketch(const std::string& name, const Ptr<Application>& app,
+                           const Ptr<adsk::fusion::Sketch>& sketch)
     : name_(name), app_(app), sketch_(sketch) {}
 
 void FusionSketch::addShape(const Geometry::Shape* shape, ILogger* logger) {
@@ -125,7 +124,7 @@ int FusionSketch::addPointToSketch(double x, double y) {
 
   // Store the SketchPoint object and return its index
   sketchPoints_.push_back(sketchPoint);
-  return sketchPoints_.size() - 1;
+  return static_cast<int>(sketchPoints_.size() - 1);
 }
 
 bool FusionSketch::addArcByThreePointsToSketch(int startPointIndex, int midPointIndex, int endPointIndex) {

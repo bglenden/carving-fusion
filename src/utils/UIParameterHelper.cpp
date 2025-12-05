@@ -6,13 +6,12 @@
 
 #include "UIParameterHelper.h"
 
-#include "UnitConversion.h"
 #include "utils/logging.h"
 
 namespace ChipCarving {
 namespace Utils {
 
-UIParameterHelper::UIParameterHelper(adsk::core::Ptr<adsk::core::CommandInputs> inputs) : inputs_(inputs) {
+UIParameterHelper::UIParameterHelper(const adsk::core::Ptr<adsk::core::CommandInputs>& inputs) : inputs_(inputs) {
   if (!inputs_) {
     LOG_ERROR("UIParameterHelper initialized with null inputs");
   } else {

@@ -70,9 +70,7 @@ std::vector<SampledMedialPath> sampleMedialAxisPaths(const std::vector<std::vect
 
           // Safety limit to prevent excessive interpolation
           const int MAX_INTERMEDIATE_POINTS = 50;
-          if (numIntermediatePoints > MAX_INTERMEDIATE_POINTS) {
-            numIntermediatePoints = MAX_INTERMEDIATE_POINTS;
-          }
+          numIntermediatePoints = std::min(numIntermediatePoints, MAX_INTERMEDIATE_POINTS);
 
           for (int j = 1; j <= numIntermediatePoints; ++j) {
             double t = static_cast<double>(j) / static_cast<double>(numIntermediatePoints + 1);

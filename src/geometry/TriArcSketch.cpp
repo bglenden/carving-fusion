@@ -5,11 +5,7 @@
  * Split from TriArc.cpp for maintainability
  */
 
-#include <algorithm>
 #include <cmath>
-#include <functional>
-#include <limits>
-#include <stdexcept>
 
 #include "adapters/IFusionInterface.h"
 #include "geometry/TriArc.h"
@@ -18,7 +14,6 @@
 #define M_PI 3.14159265358979323846
 #endif
 
-using ChipCarving::Geometry::distance;
 using ChipCarving::Geometry::Point2D;
 using ChipCarving::Geometry::TriArc;
 
@@ -129,7 +124,7 @@ void TriArc::drawToSketch(Adapters::ISketch* sketch, Adapters::ILogger* logger) 
 
   // Clean up midpoints after all arcs are created
   // Delete in reverse order to maintain valid indices
-  for (int i = midpointsToDelete.size() - 1; i >= 0; --i) {
+  for (int i = static_cast<int>(midpointsToDelete.size()) - 1; i >= 0; --i) {
     sketch->deleteSketchPoint(midpointsToDelete[i]);
   }
 }

@@ -82,20 +82,20 @@ class GeneratePathsCommandHandler : public BaseCommandHandler {
 
  private:
   // Helper methods for dialog creation
-  void createParameterInputs(adsk::core::Ptr<adsk::core::CommandInputs> inputs);
-  Adapters::MedialAxisParameters getParametersFromInputs(adsk::core::Ptr<adsk::core::CommandInputs> inputs);
-  Adapters::SketchSelection getSelectionFromInputs(adsk::core::Ptr<adsk::core::CommandInputs> inputs);
+  void createParameterInputs(const adsk::core::Ptr<adsk::core::CommandInputs>& inputs);
+  Adapters::MedialAxisParameters getParametersFromInputs(const adsk::core::Ptr<adsk::core::CommandInputs>& inputs);
+  Adapters::SketchSelection getSelectionFromInputs(const adsk::core::Ptr<adsk::core::CommandInputs>& inputs);
 
   // Enhanced UI Phase 4: Command execution
-  void executeMedialAxisProcessing(adsk::core::Ptr<adsk::core::CommandInputs> inputs);
+  void executeMedialAxisProcessing(const adsk::core::Ptr<adsk::core::CommandInputs>& inputs);
 
   // Immediate geometry extraction (prevents stale tokens)
   void clearCachedGeometry();
-  void extractAndCacheProfileGeometry(adsk::core::Ptr<adsk::fusion::Profile> profile, int index);
+  void extractAndCacheProfileGeometry(const adsk::core::Ptr<adsk::fusion::Profile>& profile, int index);
 
   // Selection validation
-  bool isPartOfClosedProfile(adsk::core::Ptr<adsk::fusion::SketchCurve> curve);
-  void validateAndCleanSelection(adsk::core::Ptr<adsk::core::SelectionCommandInput> selectionInput);
+  bool isPartOfClosedProfile(const adsk::core::Ptr<adsk::fusion::SketchCurve>& curve);
+  void validateAndCleanSelection(const adsk::core::Ptr<adsk::core::SelectionCommandInput>& selectionInput);
 
   // Sketch tracking for incremental generation
   std::map<std::string, std::string> toolToSketchMap_;

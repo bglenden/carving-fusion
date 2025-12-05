@@ -15,7 +15,8 @@ namespace ChipCarving {
 namespace Adapters {
 
 // FusionAPIFactory Implementation
-FusionAPIFactory::FusionAPIFactory(Ptr<Application> app, Ptr<UserInterface> ui, const std::string& logFilePath)
+FusionAPIFactory::FusionAPIFactory(const Ptr<Application>& app, const Ptr<UserInterface>& ui,
+                                   const std::string& logFilePath)
     : app_(app), ui_(ui), logFilePath_(logFilePath) {}
 
 std::unique_ptr<ILogger> FusionAPIFactory::createLogger() {

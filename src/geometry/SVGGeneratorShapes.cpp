@@ -5,12 +5,6 @@
  * Split from SVGGenerator.cpp for maintainability
  */
 
-#include <algorithm>
-#include <cmath>
-#include <fstream>
-#include <iomanip>
-#include <regex>
-
 #include "geometry/SVGGenerator.h"
 
 using ChipCarving::Geometry::ArcParams;

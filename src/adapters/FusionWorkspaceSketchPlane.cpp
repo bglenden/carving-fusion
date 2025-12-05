@@ -11,7 +11,6 @@
  */
 
 #include <cmath>
-#include <iostream>
 
 #include "FusionAPIAdapter.h"
 #include "utils/UnitConversion.h"

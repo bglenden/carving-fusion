@@ -66,7 +66,7 @@ class VCarveCalculator {
    */
   VCarveResults generateVCarvePathsWithSurface(const std::vector<SampledMedialPath>& sampledPaths,
                                                const Adapters::MedialAxisParameters& params, double sketchPlaneZ,
-                                               SurfaceQueryFunction surfaceQuery);
+                                               const SurfaceQueryFunction& surfaceQuery);
 
   /**
    * Calculate V-carve depth for a given clearance radius and tool

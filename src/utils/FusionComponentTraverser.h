@@ -38,20 +38,20 @@ using ComponentCallback = std::function<bool(adsk::core::Ptr<adsk::fusion::Compo
  */
 class FusionComponentTraverser {
  public:
-  explicit FusionComponentTraverser(adsk::core::Ptr<adsk::fusion::Component> rootComponent);
+  explicit FusionComponentTraverser(const adsk::core::Ptr<adsk::fusion::Component>& rootComponent);
 
   // Get all components (root + all occurrences) as a vector
   std::vector<adsk::core::Ptr<adsk::fusion::Component>> getAllComponents();
 
   // Apply callback to each component (root + all occurrences)
-  void forEachComponent(ComponentCallback callback);
+  void forEachComponent(const ComponentCallback& callback);
 
   // Count total components
   size_t getComponentCount();
 
   // Search for specific component by criteria
   adsk::core::Ptr<adsk::fusion::Component> findComponent(
-      std::function<bool(adsk::core::Ptr<adsk::fusion::Component>)> predicate);
+      const std::function<bool(adsk::core::Ptr<adsk::fusion::Component>)>& predicate);
 
   // Get components containing specific entity type
   template <typename T>

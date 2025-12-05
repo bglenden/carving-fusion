@@ -5,14 +5,12 @@
 #include "geometry/ShapeFactory.h"
 
 #include <regex>
-#include <sstream>
 #include <stdexcept>
 
 #include "adapters/IFusionInterface.h"
 #include "geometry/Leaf.h"
 #include "geometry/TriArc.h"
 
-using ChipCarving::Geometry::distance;
 using ChipCarving::Geometry::Leaf;
 using ChipCarving::Geometry::Point2D;
 using ChipCarving::Geometry::Shape;

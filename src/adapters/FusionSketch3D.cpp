@@ -5,12 +5,8 @@
  * Split from FusionSketch.cpp for maintainability
  */
 
-#include <cmath>
-#include <iostream>
-
 #include "FusionAPIAdapter.h"
 #include "geometry/Point3D.h"
-#include "geometry/Shape.h"
 #include "utils/UnitConversion.h"
 
 using adsk::core::ObjectCollection;

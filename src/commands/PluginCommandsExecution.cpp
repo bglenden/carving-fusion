@@ -13,7 +13,8 @@ namespace ChipCarving {
 namespace Commands {
 
 // Enhanced UI Phase 4: Command execution implementation
-void GeneratePathsCommandHandler::executeMedialAxisProcessing(adsk::core::Ptr<adsk::core::CommandInputs> inputs) {
+void GeneratePathsCommandHandler::executeMedialAxisProcessing(
+    const adsk::core::Ptr<adsk::core::CommandInputs>& inputs) {
   // Use ErrorHandler to wrap the entire operation with user-facing error messages
   Utils::ErrorHandler::executeFusionOperation(
       "ExecuteMedialAxisGeneration",

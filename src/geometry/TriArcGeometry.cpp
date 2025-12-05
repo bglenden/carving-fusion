@@ -7,11 +7,9 @@
 
 #include <algorithm>
 #include <cmath>
-#include <functional>
 #include <limits>
 #include <stdexcept>
 
-#include "adapters/IFusionInterface.h"
 #include "geometry/TriArc.h"
 
 #ifndef M_PI
@@ -19,8 +17,6 @@
 #endif
 
 using ChipCarving::Geometry::ArcParams;
-using ChipCarving::Geometry::distance;
-using ChipCarving::Geometry::midpoint;
 using ChipCarving::Geometry::Point2D;
 using ChipCarving::Geometry::TriArc;
 

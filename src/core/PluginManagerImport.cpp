@@ -5,13 +5,9 @@
  * Split from PluginManager.cpp for maintainability
  */
 
-#include <algorithm>
 #include <chrono>
-#include <set>
-#include <sstream>
 
 #include "PluginManager.h"
-#include "geometry/Point2D.h"
 #include "parsers/DesignParser.h"
 #include "utils/logging.h"
 

@@ -33,20 +33,20 @@ FusionLogger::FusionLogger(const std::string& logFilePath) : logFilePath_(logFil
   if (logFile_.is_open()) {
     auto now = std::chrono::system_clock::now();
     auto time_t = std::chrono::system_clock::to_time_t(now);
-    logFile_ << "========================================" << std::endl;
-    logFile_ << "NEW FUSION PLUGIN SESSION STARTED" << std::endl;
-    logFile_ << "Timestamp: " << std::put_time(std::localtime(&time_t), "%Y-%m-%d %H:%M:%S") << std::endl;
-    logFile_ << "Log file: " << logFilePath_ << std::endl;
-    logFile_ << "========================================" << std::endl;
+    logFile_ << "========================================\n";
+    logFile_ << "NEW FUSION PLUGIN SESSION STARTED\n";
+    logFile_ << "Timestamp: " << std::put_time(std::localtime(&time_t), "%Y-%m-%d %H:%M:%S") << '\n';
+    logFile_ << "Log file: " << logFilePath_ << '\n';
+    logFile_ << "========================================\n";
     logFile_.flush();
   }
 }
 
 FusionLogger::~FusionLogger() {
   if (logFile_.is_open()) {
-    logFile_ << "========================================" << std::endl;
-    logFile_ << "SESSION ENDED" << std::endl;
-    logFile_ << "========================================" << std::endl;
+    logFile_ << "========================================\n";
+    logFile_ << "SESSION ENDED\n";
+    logFile_ << "========================================\n";
     logFile_.close();
   }
 }
@@ -82,7 +82,7 @@ void FusionLogger::writeLog(const std::string& message, const std::string& level
 
   // Write to file with error handling
   if (logFile_.is_open()) {
-    logFile_ << fullMessage << std::endl;
+    logFile_ << fullMessage << '\n';
     logFile_.flush();  // Ensure immediate write
 
     // Check for write errors
@@ -91,16 +91,16 @@ void FusionLogger::writeLog(const std::string& message, const std::string& level
       logFile_.close();
       logFile_.open(logFilePath_, std::ios::out | std::ios::app);
       if (logFile_.is_open()) {
-        logFile_ << "[ERROR] Log file write failed, reopened file" << std::endl;
-        logFile_ << fullMessage << std::endl;
+        logFile_ << "[ERROR] Log file write failed, reopened file\n";
+        logFile_ << fullMessage << '\n';
       }
     }
   } else {
     // Try to open the file if it's not open
     logFile_.open(logFilePath_, std::ios::out | std::ios::app);
     if (logFile_.is_open()) {
-      logFile_ << "[ERROR] Log file was closed, reopened" << std::endl;
-      logFile_ << fullMessage << std::endl;
+      logFile_ << "[ERROR] Log file was closed, reopened\n";
+      logFile_ << fullMessage << '\n';
     }
   }
 
@@ -118,10 +118,10 @@ void FusionLogger::rotateLogFile() {
     existingFile.close();
 
     // Always rotate on new session, or if file is larger than 1MB
-    const size_t MAX_LOG_SIZE = 1 * 1024 * 1024;  // 1MB
-    (void)MAX_LOG_SIZE;                           // Suppress unused variable warning (reserved for
-                                                  // future use)
-    bool shouldRotate = (fileSize > 0);           // Always rotate on startup for now
+    const size_t MAX_LOG_SIZE = static_cast<size_t>(1) * 1024 * 1024;  // 1MB
+    (void)MAX_LOG_SIZE;                                                // Suppress unused variable warning (reserved for
+                                                                       // future use)
+    bool shouldRotate = (fileSize > 0);                                // Always rotate on startup for now
 
     if (shouldRotate) {
       // Create backup filename with timestamp
@@ -131,8 +131,8 @@ void FusionLogger::rotateLogFile() {
       std::stringstream backupName;
       backupName << logFilePath_ << ".backup_" << std::put_time(std::localtime(&time_t), "%Y%m%d_%H%M%S");
 
-      // Rename existing file to backup
-      std::rename(logFilePath_.c_str(), backupName.str().c_str());
+      // Rename existing file to backup (ignore return value - best effort)
+      (void)std::rename(logFilePath_.c_str(), backupName.str().c_str());
 
       // For now, don't clean up backups - let user manage them
       // TODO(refactor): Add backup cleanup logic if needed
@@ -144,7 +144,7 @@ void FusionLogger::checkAndRotateIfNeeded() {
   if (logFile_.is_open()) {
     // Check current file size
     size_t currentPos = logFile_.tellp();
-    const size_t MAX_LOG_SIZE = 5 * 1024 * 1024;  // 5MB during runtime
+    const size_t MAX_LOG_SIZE = static_cast<size_t>(5) * 1024 * 1024;  // 5MB during runtime
 
     if (currentPos > MAX_LOG_SIZE) {
       // Close current file
@@ -160,7 +160,7 @@ void FusionLogger::checkAndRotateIfNeeded() {
 }
 
 // FusionUserInterface Implementation
-FusionUserInterface::FusionUserInterface(Ptr<UserInterface> ui) : ui_(ui) {}
+FusionUserInterface::FusionUserInterface(const Ptr<UserInterface>& ui) : ui_(ui) {}
 
 void FusionUserInterface::showMessageBox(const std::string& title, const std::string& message) {
   if (ui_) {

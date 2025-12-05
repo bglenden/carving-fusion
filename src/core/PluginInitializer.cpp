@@ -20,7 +20,6 @@
 #include <Fusion/FusionAll.h>
 
 #include <chrono>
-#include <cstdio>
 #include <cstdlib>
 #include <iomanip>
 #include <sstream>
@@ -33,7 +32,6 @@
 using adsk::core::Application;
 using adsk::core::CommandControl;
 using adsk::core::CommandDefinition;
-using adsk::core::CommandDefinitions;
 using adsk::core::Document;
 using adsk::core::Palettes;
 using adsk::core::Ptr;
@@ -62,11 +60,8 @@ std::shared_ptr<Commands::SettingsCommandHandler> settingsHandler;
 using Internal::app;
 using Internal::commandControls;
 using Internal::commandDefinitions;
-using Internal::generateHandler;
-using Internal::importHandler;
 using Internal::panel;
 using Internal::pluginManager;
-using Internal::settingsHandler;
 using Internal::ui;
 
 PluginMode PluginInitializer::GetModeFromEnv() {

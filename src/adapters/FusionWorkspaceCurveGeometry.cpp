@@ -5,12 +5,6 @@
  * Split from FusionWorkspaceCurve.cpp for maintainability
  */
 
-#include <algorithm>
-#include <chrono>
-#include <cmath>
-#include <iostream>
-#include <sstream>
-
 #include "FusionAPIAdapter.h"
 
 using adsk::core::Curve3D;
@@ -19,7 +13,7 @@ using adsk::core::Ptr;
 namespace ChipCarving {
 namespace Adapters {
 
-Ptr<adsk::core::Curve3D> FusionWorkspace::getCurveWorldGeometry(Ptr<adsk::fusion::SketchCurve> sketchCurve) {
+Ptr<adsk::core::Curve3D> FusionWorkspace::getCurveWorldGeometry(const Ptr<adsk::fusion::SketchCurve>& sketchCurve) {
   if (!sketchCurve) {
     return nullptr;
   }

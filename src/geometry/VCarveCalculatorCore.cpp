@@ -7,7 +7,6 @@
 
 #include <algorithm>
 #include <cmath>
-#include <set>
 
 #include "geometry/VCarveCalculator.h"
 

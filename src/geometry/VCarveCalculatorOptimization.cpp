@@ -7,7 +7,6 @@
 
 #include <algorithm>
 #include <cmath>
-#include <set>
 
 #include "geometry/VCarveCalculator.h"
 
@@ -66,7 +65,7 @@ std::vector<VCarvePath> VCarveCalculator::optimizePaths(const std::vector<VCarve
 
           // Replace path i with merged, remove path j
           optimizedPaths[i] = merged;
-          optimizedPaths.erase(optimizedPaths.begin() + j);
+          optimizedPaths.erase(optimizedPaths.begin() + static_cast<std::ptrdiff_t>(j));
           mergedAny = true;
         }
       }

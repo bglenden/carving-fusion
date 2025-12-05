@@ -45,7 +45,7 @@ class FusionLogger : public ILogger {
  */
 class FusionUserInterface : public IUserInterface {
  public:
-  explicit FusionUserInterface(adsk::core::Ptr<adsk::core::UserInterface> ui);
+  explicit FusionUserInterface(const adsk::core::Ptr<adsk::core::UserInterface>& ui);
   ~FusionUserInterface() override = default;
 
   void showMessageBox(const std::string& title, const std::string& message) override;
@@ -68,8 +68,8 @@ class FusionUserInterface : public IUserInterface {
  */
 class FusionSketch : public ISketch {
  public:
-  explicit FusionSketch(const std::string& name, adsk::core::Ptr<adsk::core::Application> app,
-                        adsk::core::Ptr<adsk::fusion::Sketch> sketch);
+  explicit FusionSketch(const std::string& name, const adsk::core::Ptr<adsk::core::Application>& app,
+                        const adsk::core::Ptr<adsk::fusion::Sketch>& sketch);
   ~FusionSketch() override = default;
 
   void addShape(const Geometry::Shape* shape, ILogger* logger) override;
@@ -114,7 +114,7 @@ class FusionSketch : public ISketch {
  */
 class FusionWorkspace : public IWorkspace {
  public:
-  explicit FusionWorkspace(adsk::core::Ptr<adsk::core::Application> app);
+  explicit FusionWorkspace(const adsk::core::Ptr<adsk::core::Application>& app);
   ~FusionWorkspace() override = default;
 
   std::unique_ptr<ISketch> createSketch(const std::string& name) override;
@@ -132,7 +132,7 @@ class FusionWorkspace : public IWorkspace {
   std::string extractPlaneEntityIdFromProfile(const std::string& profileEntityId) override;
 
   // Extract ProfileGeometry directly from a profile object
-  bool extractProfileGeometry(adsk::core::Ptr<adsk::fusion::Profile> profile, ProfileGeometry& geometry);
+  bool extractProfileGeometry(const adsk::core::Ptr<adsk::fusion::Profile>& profile, ProfileGeometry& geometry);
 
   // Surface query methods for projection
   double getSurfaceZAtXY(const std::string& surfaceId, double x, double y) override;
@@ -141,7 +141,8 @@ class FusionWorkspace : public IWorkspace {
   adsk::core::Ptr<adsk::core::Application> app_{};
 
   // Helper method for getting world geometry of sketch curves
-  adsk::core::Ptr<adsk::core::Curve3D> getCurveWorldGeometry(adsk::core::Ptr<adsk::fusion::SketchCurve> sketchCurve);
+  adsk::core::Ptr<adsk::core::Curve3D> getCurveWorldGeometry(
+      const adsk::core::Ptr<adsk::fusion::SketchCurve>& sketchCurve);
 
   // Profile search operations (split for maintainability)
   adsk::core::Ptr<adsk::fusion::Profile> findProfileByEntityToken(const std::string& entityId);
@@ -162,7 +163,7 @@ class FusionWorkspace : public IWorkspace {
 
   // Get the parent component from various entity types (BRepFace, BRepBody, Profile, etc.)
   // Returns nullptr if component cannot be determined
-  adsk::core::Ptr<adsk::fusion::Component> getComponentFromEntity(adsk::core::Ptr<adsk::core::Base> entity);
+  adsk::core::Ptr<adsk::fusion::Component> getComponentFromEntity(const adsk::core::Ptr<adsk::core::Base>& entity);
 
   // Log detailed error information from Fusion API using getLastError()
   // Call this after an API operation returns null/false for better diagnostics
@@ -175,8 +176,8 @@ class FusionWorkspace : public IWorkspace {
  */
 class FusionAPIFactory : public IFusionFactory {
  public:
-  FusionAPIFactory(adsk::core::Ptr<adsk::core::Application> app, adsk::core::Ptr<adsk::core::UserInterface> ui,
-                   const std::string& logFilePath);
+  FusionAPIFactory(const adsk::core::Ptr<adsk::core::Application>& app,
+                   const adsk::core::Ptr<adsk::core::UserInterface>& ui, const std::string& logFilePath);
   ~FusionAPIFactory() override = default;
 
   std::unique_ptr<ILogger> createLogger() override;

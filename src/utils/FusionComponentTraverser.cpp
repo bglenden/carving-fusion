@@ -11,7 +11,7 @@
 namespace ChipCarving {
 namespace Utils {
 
-FusionComponentTraverser::FusionComponentTraverser(adsk::core::Ptr<adsk::fusion::Component> rootComponent)
+FusionComponentTraverser::FusionComponentTraverser(const adsk::core::Ptr<adsk::fusion::Component>& rootComponent)
     : rootComponent_(rootComponent) {
   if (!rootComponent_) {
     LOG_ERROR("FusionComponentTraverser initialized with null root component");
@@ -29,7 +29,7 @@ std::vector<adsk::core::Ptr<adsk::fusion::Component>> FusionComponentTraverser::
   return components;
 }
 
-void FusionComponentTraverser::forEachComponent(ComponentCallback callback) {
+void FusionComponentTraverser::forEachComponent(const ComponentCallback& callback) {
   if (!callback || !rootComponent_) {
     return;
   }
@@ -60,14 +60,14 @@ size_t FusionComponentTraverser::getComponentCount() {
 }
 
 adsk::core::Ptr<adsk::fusion::Component> FusionComponentTraverser::findComponent(
-    std::function<bool(adsk::core::Ptr<adsk::fusion::Component>)> predicate) {
+    const std::function<bool(adsk::core::Ptr<adsk::fusion::Component>)>& predicate) {
   if (!predicate) {
     return nullptr;
   }
 
   auto components = getAllComponents();
 
-  for (auto component : components) {
+  for (const auto& component : components) {
     if (component && predicate(component)) {
       return component;
     }
@@ -109,7 +109,7 @@ std::vector<adsk::core::Ptr<adsk::fusion::Component>>
 FusionComponentTraverser::getComponentsContaining<adsk::fusion::Sketches>() {
   std::vector<adsk::core::Ptr<adsk::fusion::Component>> result;
 
-  forEachComponent([&result](auto component, size_t index) {
+  forEachComponent([&result](const auto& component, size_t index) {
     (void)index;  // Suppress unused parameter warning
 
     if (component) {
@@ -130,7 +130,7 @@ std::vector<adsk::core::Ptr<adsk::fusion::Component>>
 FusionComponentTraverser::getComponentsContaining<adsk::fusion::BRepBodies>() {
   std::vector<adsk::core::Ptr<adsk::fusion::Component>> result;
 
-  forEachComponent([&result](auto component, size_t index) {
+  forEachComponent([&result](const auto& component, size_t index) {
     (void)index;  // Suppress unused parameter warning
 
     if (component) {

@@ -59,7 +59,7 @@ std::vector<Ptr<Base>> FusionWorkspace::findEntitiesByToken(const std::string& e
   return result;
 }
 
-Ptr<adsk::fusion::Component> FusionWorkspace::getComponentFromEntity(Ptr<Base> entity) {
+Ptr<adsk::fusion::Component> FusionWorkspace::getComponentFromEntity(const Ptr<Base>& entity) {
   if (!entity) {
     return nullptr;
   }

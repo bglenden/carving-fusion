@@ -28,7 +28,7 @@ class UIParameterHelper {
    * Constructor - takes the command inputs collection
    * @param inputs The command inputs collection from the command event
    */
-  explicit UIParameterHelper(adsk::core::Ptr<adsk::core::CommandInputs> inputs);
+  explicit UIParameterHelper(const adsk::core::Ptr<adsk::core::CommandInputs>& inputs);
 
   /**
    * Generic template method for getting typed input by ID

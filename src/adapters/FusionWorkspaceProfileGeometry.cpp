@@ -17,7 +17,7 @@ using adsk::core::Ptr;
 namespace ChipCarving {
 namespace Adapters {
 
-bool FusionWorkspace::extractProfileGeometry(Ptr<adsk::fusion::Profile> profile, ProfileGeometry& geometry) {
+bool FusionWorkspace::extractProfileGeometry(const Ptr<adsk::fusion::Profile>& profile, ProfileGeometry& geometry) {
   if (!profile) {
     LOG_ERROR("Null profile provided to extractProfileGeometry");
     return false;
@@ -149,7 +149,7 @@ bool FusionWorkspace::extractProfileGeometry(Ptr<adsk::fusion::Profile> profile,
 
     if (reversed) {
       // Add points in reverse order, skip first point (which is last in reverse)
-      for (int j = strokePoints.size() - 1; j >= 1; --j) {
+      for (int j = static_cast<int>(strokePoints.size()) - 1; j >= 1; --j) {
         if (strokePoints[j]) {
           geometry.vertices.push_back({strokePoints[j]->x(), strokePoints[j]->y()});
         }

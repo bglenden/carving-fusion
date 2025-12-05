@@ -5,10 +5,8 @@
  * Split from SVGGenerator.cpp for maintainability
  */
 
-#include <algorithm>
 #include <cmath>
 #include <fstream>
-#include <iomanip>
 #include <regex>
 
 #include "geometry/SVGGenerator.h"
@@ -17,7 +15,8 @@ using ChipCarving::Geometry::SVGComparator;
 
 // SVGComparator implementation
 bool SVGComparator::compare(const std::string& file1, const std::string& file2, double tolerance) {
-  std::ifstream f1(file1), f2(file2);
+  std::ifstream f1(file1);
+  std::ifstream f2(file2);
   if (!f1.is_open() || !f2.is_open()) {
     return false;
   }

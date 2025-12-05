@@ -5,13 +5,9 @@
  * centroid Split from TriArc.cpp for maintainability
  */
 
-#include <algorithm>
 #include <cmath>
-#include <functional>
-#include <limits>
 #include <stdexcept>
 
-#include "adapters/IFusionInterface.h"
 #include "geometry/TriArc.h"
 
 #ifndef M_PI

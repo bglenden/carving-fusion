@@ -7,14 +7,10 @@
 
 #include <algorithm>
 #include <cmath>
-#include <iomanip>
-#include <iostream>
 #include <limits>
 #include <memory>
-#include <streambuf>
 
 #include "geometry/MedialAxisProcessor.h"
-#include "geometry/Shape.h"
 #include "utils/logging.h"
 
 // OpenVoronoi includes

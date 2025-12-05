@@ -30,6 +30,7 @@ Checks: >
   -cppcoreguidelines-missing-std-forward,
   -cppcoreguidelines-avoid-c-arrays,
   -cppcoreguidelines-pro-type-const-cast,
+  -cppcoreguidelines-pro-bounds-constant-array-index,
   google-*,
   -google-runtime-references,
   -google-readability-todo,

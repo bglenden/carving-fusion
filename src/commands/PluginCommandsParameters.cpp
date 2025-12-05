@@ -9,14 +9,13 @@
 
 #include "PluginCommands.h"
 #include "utils/UnitConversion.h"
-#include "utils/logging.h"
 
 using ChipCarving::Utils::fusionLengthToMm;
 
 namespace ChipCarving {
 namespace Commands {
 
-void GeneratePathsCommandHandler::createParameterInputs(adsk::core::Ptr<adsk::core::CommandInputs> inputs) {
+void GeneratePathsCommandHandler::createParameterInputs(const adsk::core::Ptr<adsk::core::CommandInputs>& inputs) {
   // Add wide description to make dialog wider
   adsk::core::Ptr<adsk::core::TextBoxCommandInput> titleDesc =
       inputs->addTextBoxCommandInput("titleDescription", "",
@@ -144,7 +143,7 @@ void GeneratePathsCommandHandler::createParameterInputs(adsk::core::Ptr<adsk::co
 }
 
 ChipCarving::Adapters::MedialAxisParameters GeneratePathsCommandHandler::getParametersFromInputs(
-    adsk::core::Ptr<adsk::core::CommandInputs> inputs) {
+    const adsk::core::Ptr<adsk::core::CommandInputs>& inputs) {
   ChipCarving::Adapters::MedialAxisParameters params;
 
   // Get tool selection

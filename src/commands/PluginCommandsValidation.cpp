@@ -15,7 +15,7 @@
 namespace ChipCarving {
 namespace Commands {
 
-bool GeneratePathsCommandHandler::isPartOfClosedProfile(adsk::core::Ptr<adsk::fusion::SketchCurve> curve) {
+bool GeneratePathsCommandHandler::isPartOfClosedProfile(const adsk::core::Ptr<adsk::fusion::SketchCurve>& curve) {
   if (!curve || !curve->parentSketch()) {
     return false;
   }
@@ -81,7 +81,7 @@ bool GeneratePathsCommandHandler::isPartOfClosedProfile(adsk::core::Ptr<adsk::fu
 }
 
 void GeneratePathsCommandHandler::validateAndCleanSelection(
-    adsk::core::Ptr<adsk::core::SelectionCommandInput> selectionInput) {
+    const adsk::core::Ptr<adsk::core::SelectionCommandInput>& selectionInput) {
   if (!selectionInput)
     return;
 
