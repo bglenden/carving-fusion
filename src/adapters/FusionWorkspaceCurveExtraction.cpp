@@ -75,12 +75,8 @@ bool FusionWorkspace::extractCurvesFromProfile(const adsk::core::Ptr<adsk::fusio
             // Check if the sketch plane is parallel to XY plane (normal close
             // to Z-axis)
             if (std::abs(normal->z()) > 0.99) {
-              if (normal->z() > 0) {
-                LOG_DEBUG("Sketch plane is correctly oriented (parallel to XY "
-                          "plane)");
-              } else {
-                LOG_DEBUG("Sketch plane is parallel to XY plane but pointing down");
-              }
+              LOG_DEBUG("Sketch plane is parallel to XY plane"
+                        << (normal->z() > 0 ? " (correctly oriented)" : " (pointing down)"));
 
               // Get the sketch plane Z position
               Ptr<adsk::core::Point3D> origin = plane->origin();

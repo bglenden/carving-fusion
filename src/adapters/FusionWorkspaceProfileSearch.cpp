@@ -105,7 +105,7 @@ Ptr<adsk::fusion::Profile> FusionWorkspace::findProfileByEntityToken(const std::
   // Fallback strategy: Look for a sketch with exactly one profile
   // This handles cases where the token became stale but there's an obvious choice
   for (size_t compIdx = 0; compIdx < allComponents.size(); ++compIdx) {
-    auto component = allComponents[compIdx];
+    const auto& component = allComponents[compIdx];
     if (!component || !component->isValid())
       continue;
 

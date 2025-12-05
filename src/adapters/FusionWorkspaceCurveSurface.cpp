@@ -165,9 +165,9 @@ double FusionWorkspace::getSurfaceZAtXY(const std::string& /*surfaceId*/, double
               static_cast<size_t>(v2Idx) >= nodeCoords.size())
             continue;
 
-          auto v0 = nodeCoords[v0Idx];
-          auto v1 = nodeCoords[v1Idx];
-          auto v2 = nodeCoords[v2Idx];
+          const auto& v0 = nodeCoords[v0Idx];
+          const auto& v1 = nodeCoords[v1Idx];
+          const auto& v2 = nodeCoords[v2Idx];
 
           if (!v0 || !v1 || !v2)
             continue;
