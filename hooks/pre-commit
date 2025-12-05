@@ -1,0 +1,70 @@
+#!/bin/bash
+# Pre-commit hook for carving-fusion
+# Ensures tests pass and lint is clean before allowing commit
+
+set -e
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+BUILD_DIR="$REPO_ROOT/build"
+
+echo "=== Pre-commit checks ==="
+
+# Check if build directory exists
+if [ ! -d "$BUILD_DIR" ]; then
+    echo "Error: Build directory not found at $BUILD_DIR"
+    echo "Please run: mkdir build && cd build && cmake .."
+    exit 1
+fi
+
+# Check if Makefile exists (cmake has been run)
+if [ ! -f "$BUILD_DIR/Makefile" ]; then
+    echo "Error: Makefile not found. Please run cmake in build directory."
+    exit 1
+fi
+
+cd "$BUILD_DIR"
+
+# Run tests
+echo ""
+echo "Running tests..."
+if ! make test ARGS="--output-on-failure" 2>&1; then
+    echo ""
+    echo "ERROR: Tests failed. Commit aborted."
+    echo "Fix failing tests before committing."
+    exit 1
+fi
+echo "Tests passed."
+
+# Run lint (cpplint + clang-tidy)
+echo ""
+echo "Running lint-all (cpplint + clang-tidy)..."
+LINT_OUTPUT=$(make lint-all 2>&1)
+LINT_EXIT=$?
+
+# Check cpplint errors
+if echo "$LINT_OUTPUT" | grep -q "Total errors found:"; then
+    ERROR_COUNT=$(echo "$LINT_OUTPUT" | grep -o "Total errors found: [0-9]*" | grep -o "[0-9]*" || echo "0")
+    if [ "$ERROR_COUNT" != "0" ]; then
+        echo ""
+        echo "$LINT_OUTPUT"
+        echo ""
+        echo "ERROR: cpplint found $ERROR_COUNT errors. Commit aborted."
+        echo "Run 'make format' to auto-fix formatting, then review remaining issues."
+        exit 1
+    fi
+fi
+
+# Check clang-tidy errors (non-zero exit or error/warning output)
+if [ $LINT_EXIT -ne 0 ]; then
+    echo ""
+    echo "$LINT_OUTPUT"
+    echo ""
+    echo "ERROR: clang-tidy found issues. Commit aborted."
+    exit 1
+fi
+
+echo "Lint passed (cpplint + clang-tidy)."
+
+echo ""
+echo "=== All pre-commit checks passed ==="
+exit 0
