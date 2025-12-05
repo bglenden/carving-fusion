@@ -65,9 +65,8 @@ Ptr<adsk::fusion::Profile> FusionWorkspace::findProfileByEntityToken(const std::
       }
 
       return profile;
-    } else {
-      LOG_WARNING("Entity found but is not a Profile type. Actual type: " << entities[0]->objectType());
     }
+    LOG_WARNING("Entity found but is not a Profile type. Actual type: " << entities[0]->objectType());
   }
 
   // ========================================================================
@@ -91,7 +90,11 @@ Ptr<adsk::fusion::Profile> FusionWorkspace::findProfileByEntityToken(const std::
   if (occurrences) {
     for (size_t i = 0; i < occurrences->count(); ++i) {
       auto occurrence = occurrences->item(i);
-      if (occurrence && occurrence->component()) {
+      if (!occurrence || !occurrence->isValid()) {
+        LOG_DEBUG("Skipping invalid occurrence at index " << i);
+        continue;
+      }
+      if (occurrence->component()) {
         allComponents.push_back(occurrence->component());
       }
     }
@@ -103,7 +106,7 @@ Ptr<adsk::fusion::Profile> FusionWorkspace::findProfileByEntityToken(const std::
   // This handles cases where the token became stale but there's an obvious choice
   for (size_t compIdx = 0; compIdx < allComponents.size(); ++compIdx) {
     auto component = allComponents[compIdx];
-    if (!component)
+    if (!component || !component->isValid())
       continue;
 
     auto sketches = component->sketches();
@@ -112,8 +115,10 @@ Ptr<adsk::fusion::Profile> FusionWorkspace::findProfileByEntityToken(const std::
 
     for (size_t i = 0; i < sketches->count(); ++i) {
       Ptr<adsk::fusion::Sketch> candidateSketch = sketches->item(i);
-      if (!candidateSketch)
+      if (!candidateSketch || !candidateSketch->isValid()) {
+        LOG_DEBUG("Skipping invalid sketch at index " << i);
         continue;
+      }
 
       Ptr<adsk::fusion::Profiles> profiles = candidateSketch->profiles();
       if (!profiles)
@@ -122,7 +127,7 @@ Ptr<adsk::fusion::Profile> FusionWorkspace::findProfileByEntityToken(const std::
       // If this sketch has exactly one profile, it might be what we're looking for
       if (profiles->count() == 1) {
         Ptr<adsk::fusion::Profile> profile = profiles->item(0);
-        if (profile) {
+        if (profile && profile->isValid()) {
           LOG_WARNING("Using fallback: single profile from sketch '" << candidateSketch->name() << "'");
           LOG_WARNING("Original token: " << entityId);
           LOG_WARNING("Fallback token: " << profile->entityToken());

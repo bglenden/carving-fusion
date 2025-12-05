@@ -75,7 +75,7 @@ std::vector<SampledMedialPath> sampleMedialAxisPaths(const std::vector<std::vect
           }
 
           for (int j = 1; j <= numIntermediatePoints; ++j) {
-            double t = double(j) / double(numIntermediatePoints + 1);
+            double t = static_cast<double>(j) / static_cast<double>(numIntermediatePoints + 1);
 
             // Linear interpolation of position
             Point2D interpolatedPoint(chain[i].x + t * (chain[i + 1].x - chain[i].x),

@@ -5,18 +5,14 @@
  * Split from FusionWorkspaceProfile.cpp for maintainability
  */
 
-#include <algorithm>
-#include <chrono>
 #include <cmath>
-#include <iostream>
-#include <sstream>
+#include <string>
+#include <vector>
 
 #include "FusionAPIAdapter.h"
 #include "FusionWorkspaceProfileTypes.h"
 #include "utils/logging.h"
 
-using adsk::core::Base;
-using adsk::core::Point3D;
 using adsk::core::Ptr;
 
 namespace ChipCarving {
@@ -61,8 +57,7 @@ bool FusionWorkspace::extractProfileVertices(const std::string& entityId,
   allCurves[0].used = true;
 
   Ptr<adsk::core::Point3D> currentEndPoint = allCurves[0].endPoint;
-  LOG_DEBUG("Starting chain with curve 0, end point: (" << currentEndPoint->x() << ", " << currentEndPoint->y()
-                                                        << ")");
+  LOG_DEBUG("Starting chain with curve 0, end point: (" << currentEndPoint->x() << ", " << currentEndPoint->y() << ")");
 
   // Find the next connected curve
   for (size_t chainPos = 1; chainPos < allCurves.size(); ++chainPos) {
@@ -90,7 +85,8 @@ bool FusionWorkspace::extractProfileVertices(const std::string& entityId,
         LOG_DEBUG("Chained curve " << i << " (normal), end point: (" << currentEndPoint->x() << ", "
                                    << currentEndPoint->y() << ")");
         break;
-      } else if (distToEnd < tolerance) {
+      }
+      if (distToEnd < tolerance) {
         // Reverse direction connection - need to reverse the stroke points
         chainOrder.push_back(i | 0x80000000);  // Mark as reversed with high bit
         allCurves[i].used = true;

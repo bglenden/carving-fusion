@@ -78,14 +78,16 @@ PluginMode PluginInitializer::GetModeFromEnv() {
   std::string modeStr(mode);
   if (modeStr == "DEBUG") {
     return PluginMode::DEBUG_MODE;
-  } else if (modeStr == "COMMANDS_ONLY") {
+  }
+  if (modeStr == "COMMANDS_ONLY") {
     return PluginMode::COMMANDS_ONLY;
-  } else if (modeStr == "UI_SIMPLE") {
+  }
+  if (modeStr == "UI_SIMPLE") {
     return PluginMode::UI_SIMPLE;
-  } else if (modeStr == "REFACTORED") {
+  }
+  if (modeStr == "REFACTORED") {
     return PluginMode::REFACTORED;
   }
-
   return PluginMode::STANDARD;
 }
 

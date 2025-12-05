@@ -31,6 +31,8 @@ Checks: >
   -misc-non-private-member-variables-in-classes,
   -misc-const-correctness,
   -misc-include-cleaner,
+  -misc-use-internal-linkage,
+  -misc-use-anonymous-namespace,
   modernize-*,
   -modernize-use-trailing-return-type,
   -modernize-avoid-c-arrays,
@@ -52,6 +54,10 @@ Checks: >
   -readability-convert-member-functions-to-static,
   -readability-braces-around-statements,
   -readability-math-missing-parentheses,
+  -readability-function-size,
+  -readability-named-parameter,
+  -readability-make-member-function-const,
+  -readability-simplify-boolean-expr,
 
 WarningsAsErrors: ''
 
@@ -83,13 +89,13 @@ CheckOptions:
   readability-identifier-naming.MemberCase: lower_case
   readability-identifier-naming.PrivateMemberSuffix: '_'
   readability-identifier-naming.ProtectedMemberSuffix: '_'
-  
+
   # Function size limits (matching existing codebase)
   readability-function-size.LineThreshold: '350'
   readability-function-size.StatementThreshold: '300'
   readability-function-size.BranchThreshold: '30'
   readability-function-size.ParameterThreshold: '8'
-  
+
   # Modern C++ preferences
   modernize-use-nullptr.NullMacros: 'NULL'
   modernize-use-override.IgnoreDestructors: 'true'
@@ -98,38 +104,37 @@ CheckOptions:
   modernize-loop-convert.MaxCopySize: '16'
   modernize-loop-convert.MinConfidence: 'reasonable'
   modernize-pass-by-value.IncludeStyle: 'google'
-  
+
   # Performance
   performance-move-const-arg.CheckTriviallyCopyableMove: 'true'
   performance-unnecessary-value-param.IncludeStyle: 'google'
   performance-for-range-copy.AllowedTypes: '::std::pair;::std::tuple'
-  
+
   # Readability
   readability-braces-around-statements.ShortStatementLines: '1'
   readability-simplify-boolean-expr.ChainedConditionalReturn: 'true'
   readability-simplify-boolean-expr.ChainedConditionalAssignment: 'true'
   readability-implicit-bool-conversion.AllowIntegerConditions: 'true'
   readability-implicit-bool-conversion.AllowPointerConditions: 'true'
-  
+
   # Google style specific
   google-readability-namespace-comments.ShortNamespaceLines: '10'
   google-readability-namespace-comments.SpacesBeforeComments: '2'
   google-build-using-namespace.HeaderFileExtensions: 'h,hpp'
-  
+
   # Cert checks
   cert-dcl16-c.NewSuffixes: 'L;LL;LU;LLU'
   cert-oop54-cpp.WarnOnlyIfThisHasSuspiciousField: 'false'
   cert-str34-c.DiagnoseSignedUnsignedCharComparisons: 'false'
-  
+
   # Core guidelines
   cppcoreguidelines-non-private-member-variables-in-classes.IgnoreClassesWithAllMemberVariablesBeingPublic: 'true'
   cppcoreguidelines-special-member-functions.AllowSoleDefaultDtor: 'true'
   cppcoreguidelines-pro-type-member-init.IgnoreArrays: 'true'
-  
+
   # Misc
   misc-unused-parameters.StrictMode: 'false'
   misc-non-private-member-variables-in-classes.IgnoreClassesWithAllMemberVariablesBeingPublic: 'true'
 
 SystemHeaders: false
 ...
-

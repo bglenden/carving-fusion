@@ -5,16 +5,12 @@
  * Split from FusionWorkspaceCurve.cpp for maintainability
  */
 
-#include <algorithm>
-#include <chrono>
-#include <cmath>
-#include <iostream>
-#include <sstream>
+#include <string>
+#include <vector>
 
 #include "FusionAPIAdapter.h"
 #include "utils/logging.h"
 
-using adsk::core::Base;
 using adsk::core::Ptr;
 
 namespace ChipCarving {
@@ -54,8 +50,10 @@ std::string FusionWorkspace::extractPlaneEntityIdFromProfile(const std::string& 
 
   for (int sketchIndex = 0; sketchIndex < static_cast<int>(sketches->count()); ++sketchIndex) {
     Ptr<adsk::fusion::Sketch> sketch = sketches->item(sketchIndex);
-    if (!sketch)
+    if (!sketch || !sketch->isValid()) {
+      LOG_DEBUG("Skipping invalid sketch at index " << sketchIndex);
       continue;
+    }
 
     LOG_DEBUG("Checking sketch " << sketchIndex << ": " << sketch->name());
 
@@ -66,8 +64,10 @@ std::string FusionWorkspace::extractPlaneEntityIdFromProfile(const std::string& 
 
     for (int profileIndex = 0; profileIndex < static_cast<int>(profiles->count()); ++profileIndex) {
       Ptr<adsk::fusion::Profile> profile = profiles->item(profileIndex);
-      if (!profile)
+      if (!profile || !profile->isValid()) {
+        LOG_DEBUG("Skipping invalid profile at index " << profileIndex);
         continue;
+      }
 
       std::string currentProfileId = profile->entityToken();
       LOG_DEBUG("Profile " << profileIndex << " token: " << currentProfileId);
@@ -141,11 +141,12 @@ std::vector<std::string> FusionWorkspace::getAllSketchNames() {
   // Iterate through all sketches and collect names
   for (size_t i = 0; i < sketches->count(); ++i) {
     auto sketch = sketches->item(i);
-    if (sketch) {
-      std::string sketchName = sketch->name();
-      if (!sketchName.empty()) {
-        sketchNames.push_back(sketchName);
-      }
+    if (!sketch || !sketch->isValid()) {
+      continue;
+    }
+    std::string sketchName = sketch->name();
+    if (!sketchName.empty()) {
+      sketchNames.push_back(sketchName);
     }
   }
 

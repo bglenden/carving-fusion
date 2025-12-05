@@ -136,9 +136,8 @@ Point2D TriArc::getPerpendicularNormal(int arcIndex) const {
   // negative dot product)
   if (dot1 < dot2) {
     return normal1;  // normal1 points more away from centroid
-  } else {
-    return normal2;  // normal2 points more away from centroid
   }
+  return normal2;  // normal2 points more away from centroid
 }
 
 bool TriArc::hasValidBulgeFactors() const {

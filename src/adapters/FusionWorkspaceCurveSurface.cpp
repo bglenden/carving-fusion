@@ -5,20 +5,15 @@
  * Split from FusionWorkspaceCurve.cpp for maintainability
  */
 
-#include <algorithm>
-#include <chrono>
 #include <cmath>
 #include <iostream>
-#include <sstream>
+#include <vector>
 
 #include "FusionAPIAdapter.h"
 #include "utils/logging.h"
 
-using adsk::core::Base;
-using adsk::core::ObjectCollection;
 using adsk::core::Point3D;
 using adsk::core::Ptr;
-using adsk::core::Vector3D;
 
 namespace ChipCarving {
 namespace Adapters {
@@ -88,7 +83,7 @@ double FusionWorkspace::getSurfaceZAtXY(const std::string& /*surfaceId*/, double
 
   // Search each component for intersections
   for (size_t compIdx = 0; compIdx < allComponents.size(); ++compIdx) {
-    auto component = allComponents[compIdx];
+    const auto& component = allComponents[compIdx];
     if (!component)
       continue;
 
@@ -244,11 +239,10 @@ double FusionWorkspace::getSurfaceZAtXY(const std::string& /*surfaceId*/, double
     LOG_DEBUG("Enhanced ray casting found topmost surface at Z = " << bestZ << " cm across " << allComponents.size()
                                                                    << " components");
     return bestZ;
-  } else {
-    LOG_WARNING("Enhanced ray casting found no valid surface at XY location ("
-                << x << ", " << y << ") across " << allComponents.size() << " components");
-    return std::numeric_limits<double>::quiet_NaN();
   }
+  LOG_WARNING("Enhanced ray casting found no valid surface at XY location (" << x << ", " << y << ") across "
+                                                                             << allComponents.size() << " components");
+  return std::numeric_limits<double>::quiet_NaN();
 }
 
 }  // namespace Adapters

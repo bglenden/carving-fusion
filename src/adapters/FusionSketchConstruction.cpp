@@ -6,8 +6,6 @@
  */
 
 #include "FusionAPIAdapter.h"
-#include "geometry/Point3D.h"
-#include "geometry/Shape.h"
 #include "utils/UnitConversion.h"
 #include "utils/logging.h"
 

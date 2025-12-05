@@ -11,8 +11,6 @@
 #include "FusionWorkspaceProfileTypes.h"
 #include "utils/logging.h"
 
-using adsk::core::Base;
-using adsk::core::Point3D;
 using adsk::core::Ptr;
 
 namespace ChipCarving {
@@ -40,14 +38,26 @@ bool FusionWorkspace::extractProfileGeometry(Ptr<adsk::fusion::Profile> profile,
   }
 
   // Get the parent sketch
-  Ptr<adsk::fusion::ProfileLoop> firstLoop = profile->profileLoops()->item(0);
-  if (!firstLoop) {
+  Ptr<adsk::fusion::ProfileLoops> profileLoops = profile->profileLoops();
+  if (!profileLoops || profileLoops->count() == 0) {
     LOG_ERROR("Profile has no loops");
     return false;
   }
 
-  Ptr<adsk::fusion::ProfileCurve> firstCurve = firstLoop->profileCurves()->item(0);
-  if (!firstCurve || !firstCurve->sketchEntity()) {
+  Ptr<adsk::fusion::ProfileLoop> firstLoop = profileLoops->item(0);
+  if (!firstLoop || !firstLoop->isValid()) {
+    LOG_ERROR("Profile has no valid loops");
+    return false;
+  }
+
+  Ptr<adsk::fusion::ProfileCurves> loopCurves = firstLoop->profileCurves();
+  if (!loopCurves || loopCurves->count() == 0) {
+    LOG_ERROR("Profile loop has no curves");
+    return false;
+  }
+
+  Ptr<adsk::fusion::ProfileCurve> firstCurve = loopCurves->item(0);
+  if (!firstCurve || !firstCurve->isValid() || !firstCurve->sketchEntity()) {
     LOG_ERROR("Profile has no valid curves");
     return false;
   }
@@ -109,7 +119,8 @@ bool FusionWorkspace::extractProfileGeometry(Ptr<adsk::fusion::Profile> profile,
         currentEndPoint = allCurves[i].endPoint;
         foundNext = true;
         break;
-      } else if (distToEnd < tolerance) {
+      }
+      if (distToEnd < tolerance) {
         chainOrder.push_back(i | 0x80000000);  // Mark as reversed with high bit
         allCurves[i].used = true;
         currentEndPoint = allCurves[i].startPoint;

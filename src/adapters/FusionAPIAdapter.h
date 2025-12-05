@@ -147,7 +147,7 @@ class FusionWorkspace : public IWorkspace {
   adsk::core::Ptr<adsk::fusion::Profile> findProfileByEntityToken(const std::string& entityId);
 
   // Curve extraction operations (split for maintainability)
-  bool extractCurvesFromProfile(adsk::core::Ptr<adsk::fusion::Profile> profile,
+  bool extractCurvesFromProfile(const adsk::core::Ptr<adsk::fusion::Profile>& profile,
                                 std::vector<struct CurveData>& allCurves, TransformParams& transform);
 
   // ============================================================================

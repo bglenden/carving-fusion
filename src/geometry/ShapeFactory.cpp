@@ -36,7 +36,8 @@ std::unique_ptr<Shape> ShapeFactory::createFromJson(const std::string& shapeJson
     //                      " vertices");
     // }
     return createLeaf(vertices, radius, logger);
-  } else if (shapeType == "TRI_ARC") {
+  }
+  if (shapeType == "TRI_ARC") {
     std::vector<Point2D> vertices = extractVertices(shapeJson);
     std::vector<double> curvatures = extractCurvatures(shapeJson);
     // Debug logging disabled for performance
@@ -46,9 +47,8 @@ std::unique_ptr<Shape> ShapeFactory::createFromJson(const std::string& shapeJson
     //                      std::to_string(curvatures.size()) + " curvatures");
     // }
     return createTriArc(vertices, curvatures, logger);
-  } else {
-    throw std::runtime_error("Unknown shape type: " + shapeType);
   }
+  throw std::runtime_error("Unknown shape type: " + shapeType);
 }
 
 std::unique_ptr<Shape> ShapeFactory::createLeaf(const std::vector<Point2D>& vertices, double radius,

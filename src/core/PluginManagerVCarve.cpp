@@ -205,11 +205,7 @@ bool PluginManager::generateVCarveToolpaths(const std::vector<Geometry::MedialAx
       totalVCarvePaths += vcarveResults.totalPaths;
     }
 
-    if (totalVCarvePaths > 0) {
-      return true;
-    } else {
-      return false;
-    }
+    return totalVCarvePaths > 0;
   } catch (const std::exception& e) {
     logger_->logError("Exception in generateVCarveToolpaths: " + std::string(e.what()));
     return false;

@@ -1,0 +1,35 @@
+CompileFlags:
+  Add:
+    - "-Wno-unknown-warning-option"
+  Remove:
+    - "-W*"
+
+Diagnostics:
+  ClangTidy:
+    Add:
+      - performance-*
+      - readability-*
+      - google-readability-casting
+      - modernize-*
+      - bugprone-*
+      - misc-unused-using-decls
+    Remove:
+      - readability-magic-numbers
+      - readability-identifier-length
+      - readability-function-cognitive-complexity
+      - readability-identifier-naming
+      - readability-braces-around-statements
+      - modernize-use-trailing-return-type
+      - modernize-avoid-c-arrays
+      - modernize-use-nodiscard
+      - performance-enum-size
+    CheckOptions:
+      readability-implicit-bool-conversion.AllowPointerConditions: true
+      readability-implicit-bool-conversion.AllowIntegerConditions: true
+      readability-function-size.LineThreshold: 350
+      readability-function-size.BranchThreshold: 30
+
+  UnusedIncludes: Strict
+
+InlayHints:
+  Enabled: false

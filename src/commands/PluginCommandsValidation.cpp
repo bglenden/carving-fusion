@@ -33,8 +33,10 @@ bool GeneratePathsCommandHandler::isPartOfClosedProfile(adsk::core::Ptr<adsk::fu
   // Check each profile in the sketch
   for (int p = 0; p < static_cast<int>(profiles->count()); ++p) {
     auto profile = profiles->item(p);
-    if (!profile)
+    if (!profile || !profile->isValid()) {
+      LOG_DEBUG("Skipping invalid profile at index " << p);
       continue;
+    }
 
     // Check if this profile is closed (has area)
     auto areaProps = profile->areaProperties();
@@ -52,8 +54,10 @@ bool GeneratePathsCommandHandler::isPartOfClosedProfile(adsk::core::Ptr<adsk::fu
 
     for (size_t l = 0; l < profileLoops->count(); ++l) {
       auto loop = profileLoops->item(l);
-      if (!loop)
+      if (!loop || !loop->isValid()) {
+        LOG_DEBUG("Skipping invalid loop at index " << l);
         continue;
+      }
 
       auto loopCurves = loop->profileCurves();
       if (!loopCurves)
@@ -61,7 +65,9 @@ bool GeneratePathsCommandHandler::isPartOfClosedProfile(adsk::core::Ptr<adsk::fu
 
       for (size_t c = 0; c < loopCurves->count(); ++c) {
         auto profileCurve = loopCurves->item(c);
-        if (profileCurve && profileCurve->sketchEntity()) {
+        if (!profileCurve || !profileCurve->isValid())
+          continue;
+        if (profileCurve->sketchEntity()) {
           // Check if this is our curve
           if (profileCurve->sketchEntity()->entityToken() == curve->entityToken()) {
             return true;  // Found it in a closed profile
@@ -137,7 +143,7 @@ void GeneratePathsCommandHandler::validateAndCleanSelection(
         // Check each profile to see if we have all its curves selected
         for (int p = 0; p < static_cast<int>(profiles->count()); ++p) {
           auto profile = profiles->item(p);
-          if (!profile)
+          if (!profile || !profile->isValid())
             continue;
 
           // Only check closed profiles
@@ -153,7 +159,7 @@ void GeneratePathsCommandHandler::validateAndCleanSelection(
           if (profileLoops) {
             for (int l = 0; l < static_cast<int>(profileLoops->count()); ++l) {
               auto loop = profileLoops->item(l);
-              if (!loop)
+              if (!loop || !loop->isValid())
                 continue;
 
               auto loopCurves = loop->profileCurves();
@@ -163,7 +169,9 @@ void GeneratePathsCommandHandler::validateAndCleanSelection(
                 // Check if our selected curves match
                 for (int c = 0; c < static_cast<int>(loopCurves->count()); ++c) {
                   auto profileCurve = loopCurves->item(c);
-                  if (profileCurve && profileCurve->sketchEntity()) {
+                  if (!profileCurve || !profileCurve->isValid())
+                    continue;
+                  if (profileCurve->sketchEntity()) {
                     std::string curveToken = profileCurve->sketchEntity()->entityToken();
 
                     // Check if this curve is in our selection

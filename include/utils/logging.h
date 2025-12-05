@@ -86,4 +86,3 @@ LogLevel GetMinLogLevel();
       LogToConsole(LogLevel::ERROR, _error_stream.str());                          \
     }                                                                              \
   } while (0)
-

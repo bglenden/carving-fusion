@@ -128,8 +128,10 @@ bool PluginManager::executeMedialAxisGeneration(const Adapters::SketchSelection&
       try {
         // Log polygon bounds before medial axis computation
         if (!polygon.empty()) {
-          double minX = polygon[0].x, maxX = polygon[0].x;
-          double minY = polygon[0].y, maxY = polygon[0].y;
+          double minX = polygon[0].x;
+          double maxX = polygon[0].x;
+          double minY = polygon[0].y;
+          double maxY = polygon[0].y;
           for (const auto& pt : polygon) {
             minX = std::min(minX, pt.x);
             maxX = std::max(maxX, pt.x);
@@ -159,7 +161,9 @@ bool PluginManager::executeMedialAxisGeneration(const Adapters::SketchSelection&
             // FIXED: Medial axis results are already in world coordinates (cm),
             // don't convert again
             double minX = results.chains[0][0].x;  // Already in cm
-            double maxX = minX, minY = results.chains[0][0].y, maxY = minY;
+            double maxX = minX;
+            double minY = results.chains[0][0].y;
+            double maxY = minY;
             for (const auto& chain : results.chains) {
               for (const auto& pt : chain) {
                 double x_cm = pt.x;  // Already in cm

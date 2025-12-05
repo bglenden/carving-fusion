@@ -9,18 +9,12 @@
 #include "FusionWorkspaceProfileTypes.h"
 #include "utils/logging.h"
 
-using adsk::core::Base;
-using adsk::core::Curve3D;
-using adsk::core::CurveEvaluator3D;
-using adsk::core::Plane;
-using adsk::core::Point3D;
 using adsk::core::Ptr;
-using adsk::core::Vector3D;
 
 namespace ChipCarving {
 namespace Adapters {
 
-bool FusionWorkspace::extractCurvesFromProfile(adsk::core::Ptr<adsk::fusion::Profile> profile,
+bool FusionWorkspace::extractCurvesFromProfile(const adsk::core::Ptr<adsk::fusion::Profile>& profile,
                                                std::vector<CurveData>& allCurves, TransformParams& transform) {
   LOG_DEBUG("Starting curve extraction from profile");
 
@@ -49,7 +43,7 @@ bool FusionWorkspace::extractCurvesFromProfile(adsk::core::Ptr<adsk::fusion::Pro
         if (curve) {
           // Get the curve's is2D property if it exists
           // For now, just log the curve type
-          if (curve->objectType() && std::string(curve->objectType()).find("3D") != std::string::npos) {
+          if (curve->objectType() != nullptr && std::string(curve->objectType()).find("3D") != std::string::npos) {
             has3DCurves = true;
             LOG_WARNING("Found 3D curve at index " << i);
           }
@@ -113,8 +107,8 @@ bool FusionWorkspace::extractCurvesFromProfile(adsk::core::Ptr<adsk::fusion::Pro
 
   // Use the first loop (outer loop)
   Ptr<adsk::fusion::ProfileLoop> loop = loops->item(0);
-  if (!loop) {
-    LOG_ERROR("Could not get profile loop");
+  if (!loop || !loop->isValid()) {
+    LOG_ERROR("Could not get valid profile loop");
     return false;
   }
 
@@ -146,8 +140,8 @@ bool FusionWorkspace::extractCurvesFromProfile(adsk::core::Ptr<adsk::fusion::Pro
     curveData.used = false;
 
     Ptr<adsk::fusion::ProfileCurve> profileCurve = profileCurves->item(i);
-    if (!profileCurve) {
-      LOG_WARNING("Null profile curve at index " << i);
+    if (!profileCurve || !profileCurve->isValid()) {
+      LOG_WARNING("Invalid profile curve at index " << i);
       continue;
     }
 
@@ -201,7 +195,8 @@ bool FusionWorkspace::extractCurvesFromProfile(adsk::core::Ptr<adsk::fusion::Pro
     LOG_DEBUG("Got 3D curve evaluator for curve " << i);
 
     // Get parameter extents
-    double startParam, endParam;
+    double startParam = 0.0;
+    double endParam = 0.0;
     if (!evaluator->getParameterExtents(startParam, endParam)) {
       LOG_WARNING("Could not get parameter extents for curve " << i);
       continue;

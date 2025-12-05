@@ -86,30 +86,29 @@ double z_cm = Utils::mmToFusionLength(point.z);
 
 ---
 
-### Issue 3: Missing isValid() Checks in Collection Iterations (MEDIUM PRIORITY)
+### Issue 3: Missing isValid() Checks in Collection Iterations (MEDIUM PRIORITY) - ✅ IMPLEMENTED
 
-**Location:** `src/adapters/FusionWorkspaceProfile.cpp:65-80`
+**Location:** Multiple files (see below)
 
-**Problem:** When iterating over profiles or loops, individual items aren't checked for validity before use.
+**Problem:** When iterating over profiles, loops, or curves, individual items weren't checked for validity before use.
 
-**Current Code:**
+**Solution Implemented (Dec 2025):**
 
-```cpp
-for (size_t i = 0; i < profiles->count(); i++) {
-    auto profile = profiles->item(i);
-    // Uses profile without validity check
-    auto loops = profile->profileLoops();
-    // ...
-}
-```
+Added `isValid()` checks to collection iterations in the following files:
 
-**Recommended Fix:**
+- `src/adapters/FusionWorkspaceProfileSearch.cpp` - occurrences, sketches, profiles
+- `src/adapters/FusionWorkspaceCurveUtils.cpp` - sketches, profiles
+- `src/adapters/FusionWorkspaceProfileGeometry.cpp` - loops, curves
+- `src/adapters/FusionWorkspaceCurveExtraction.cpp` - loops, curves
+- `src/commands/PluginCommandsValidation.cpp` - profiles, loops, curves
+
+**Pattern Used:**
 
 ```cpp
 for (size_t i = 0; i < profiles->count(); i++) {
     auto profile = profiles->item(i);
     if (!profile || !profile->isValid()) {
-        logger_->warn("Skipping invalid profile at index " + std::to_string(i));
+        LOG_DEBUG("Skipping invalid profile at index " << i);
         continue;
     }
     auto loops = profile->profileLoops();
@@ -420,7 +419,7 @@ After implementing fixes, test these scenarios:
 | ----- | -------------------------------------- | -------- | -------------- | --------------------------------------- |
 | 1     | Event Handler Memory Management        | Medium   | ✅ Implemented | Added cleanup in destructors (Dec 2025) |
 | 2     | Inconsistent Unit Conversion in 3D     | Low      | Open           |                                         |
-| 3     | Missing isValid() Checks in Iterations | Medium   | Open           |                                         |
+| 3     | Missing isValid() Checks in Iterations | Medium   | ✅ Implemented | Added checks to 5 files (Dec 2025)      |
 | 4     | ValueInput Usage                       | N/A      | No Action      | Already correct                         |
 | 5     | Profile Caching Without Invalidation   | Low      | Open           |                                         |
 | 6     | Hard-Coded Tolerance Values            | Low      | Open           |                                         |

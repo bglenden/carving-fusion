@@ -14,7 +14,7 @@
 namespace ChipCarving {
 namespace Geometry {
 
-VCarveCalculator::VCarveCalculator() {}
+VCarveCalculator::VCarveCalculator() = default;
 
 VCarveResults VCarveCalculator::generateVCarvePaths(const MedialAxisResults& medialResults,
                                                     const Adapters::MedialAxisParameters& params) {
