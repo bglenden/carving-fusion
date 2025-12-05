@@ -230,24 +230,43 @@ bool PluginInitializer::InitializePlugin(const char* /* context */, PluginMode m
 }
 
 bool PluginInitializer::ShutdownPlugin() {
-  // Clean up UI elements
-  for (auto& control : commandControls) {
-    if (control && control->isValid()) {
-      control->deleteMe();
+  // Clean up UI elements - use try-catch for resilience
+  // If one cleanup step fails, continue with others
+  try {
+    for (auto& control : commandControls) {
+      if (control && control->isValid()) {
+        control->deleteMe();
+      }
     }
+  } catch (const std::exception& e) {
+    LOG_ERROR("Command control cleanup failed: " << e.what());
+  } catch (...) {
+    LOG_ERROR("Command control cleanup failed: Unknown error");
   }
   commandControls.clear();
 
-  for (auto& cmdDef : commandDefinitions) {
-    if (cmdDef && cmdDef->isValid()) {
-      cmdDef->deleteMe();
+  try {
+    for (auto& cmdDef : commandDefinitions) {
+      if (cmdDef && cmdDef->isValid()) {
+        cmdDef->deleteMe();
+      }
     }
+  } catch (const std::exception& e) {
+    LOG_ERROR("Command definition cleanup failed: " << e.what());
+  } catch (...) {
+    LOG_ERROR("Command definition cleanup failed: Unknown error");
   }
   commandDefinitions.clear();
 
-  if (pluginManager) {
-    pluginManager->shutdown();
-    pluginManager.reset();
+  try {
+    if (pluginManager) {
+      pluginManager->shutdown();
+      pluginManager.reset();
+    }
+  } catch (const std::exception& e) {
+    LOG_ERROR("Plugin manager cleanup failed: " << e.what());
+  } catch (...) {
+    LOG_ERROR("Plugin manager cleanup failed: Unknown error");
   }
 
   return true;
