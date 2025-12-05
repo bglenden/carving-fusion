@@ -418,7 +418,7 @@ After implementing fixes, test these scenarios:
 | Issue | Description                            | Priority | Status         | Notes                                   |
 | ----- | -------------------------------------- | -------- | -------------- | --------------------------------------- |
 | 1     | Event Handler Memory Management        | Medium   | ✅ Implemented | Added cleanup in destructors (Dec 2025) |
-| 2     | Inconsistent Unit Conversion in 3D     | Low      | Open           |                                         |
+| 2     | Inconsistent Unit Conversion in 3D     | Low      | ✅ Implemented | Use Utils::mmToFusionLength() in FusionSketch3D.cpp (Dec 2025) |
 | 3     | Missing isValid() Checks in Iterations | Medium   | ✅ Implemented | Added checks to 5 files (Dec 2025)      |
 | 4     | ValueInput Usage                       | N/A      | No Action      | Already correct                         |
 | 5     | Profile Caching Without Invalidation   | Low      | Open           |                                         |

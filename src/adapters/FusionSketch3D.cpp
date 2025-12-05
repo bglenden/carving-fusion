@@ -30,9 +30,9 @@ bool FusionSketch::addSpline3D(const std::vector<Geometry::Point3D>& points) {
 
   for (const auto& point : points) {
     // Convert from mm to cm (Fusion's internal units)
-    double x_cm = point.x / 10.0;
-    double y_cm = point.y / 10.0;
-    double z_cm = point.z / 10.0;
+    double x_cm = Utils::mmToFusionLength(point.x);
+    double y_cm = Utils::mmToFusionLength(point.y);
+    double z_cm = Utils::mmToFusionLength(point.z);
 
     adsk::core::Ptr<adsk::core::Point3D> fusionPoint = adsk::core::Point3D::create(x_cm, y_cm, z_cm);
     if (fusionPoint) {
@@ -60,12 +60,12 @@ bool FusionSketch::addLine3D(double x1, double y1, double z1, double x2, double 
   }
 
   // Convert from mm to cm (Fusion's internal units)
-  double x1_cm = x1 / 10.0;
-  double y1_cm = y1 / 10.0;
-  double z1_cm = z1 / 10.0;
-  double x2_cm = x2 / 10.0;
-  double y2_cm = y2 / 10.0;
-  double z2_cm = z2 / 10.0;
+  double x1_cm = Utils::mmToFusionLength(x1);
+  double y1_cm = Utils::mmToFusionLength(y1);
+  double z1_cm = Utils::mmToFusionLength(z1);
+  double x2_cm = Utils::mmToFusionLength(x2);
+  double y2_cm = Utils::mmToFusionLength(y2);
+  double z2_cm = Utils::mmToFusionLength(z2);
 
   // Create 3D points
   adsk::core::Ptr<adsk::core::Point3D> startPoint = adsk::core::Point3D::create(x1_cm, y1_cm, z1_cm);
@@ -91,9 +91,9 @@ bool FusionSketch::addPoint3D(double x, double y, double z) {
   }
 
   // Convert from mm to cm (Fusion's internal units)
-  double x_cm = x / 10.0;
-  double y_cm = y / 10.0;
-  double z_cm = z / 10.0;
+  double x_cm = Utils::mmToFusionLength(x);
+  double y_cm = Utils::mmToFusionLength(y);
+  double z_cm = Utils::mmToFusionLength(z);
 
   // Create 3D point
   adsk::core::Ptr<adsk::core::Point3D> point3D = adsk::core::Point3D::create(x_cm, y_cm, z_cm);
