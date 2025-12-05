@@ -13,7 +13,6 @@
 namespace ChipCarving {
 namespace Geometry {
 class Shape;
-struct Point2D;
 struct Point3D;
 }  // namespace Geometry
 }  // namespace ChipCarving
