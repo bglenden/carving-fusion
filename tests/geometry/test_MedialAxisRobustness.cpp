@@ -25,6 +25,11 @@ class MedialAxisRobustnessTest : public ::testing::Test {
     processor_ = std::make_unique<MedialAxisProcessor>();
   }
 
+  MedialAxisProcessor* processor() {
+    return processor_.get();
+  }
+
+ private:
   std::unique_ptr<MedialAxisProcessor> processor_;
 };
 
@@ -38,7 +43,7 @@ TEST_F(MedialAxisRobustnessTest, DuplicateConsecutiveVertices) {
                                            {1, 1},
                                            {0, 1}};
 
-  MedialAxisResults results = processor_->computeMedialAxis(polygonWithDupes);
+  MedialAxisResults results = processor()->computeMedialAxis(polygonWithDupes);
 
   // Should fail due to duplicate vertices
   EXPECT_FALSE(results.success);
@@ -55,7 +60,7 @@ TEST_F(MedialAxisRobustnessTest, NearlyDuplicateVertices) {
                                   {1, 1},
                                   {0, 1}};
 
-  MedialAxisResults results = processor_->computeMedialAxis(polygon);
+  MedialAxisResults results = processor()->computeMedialAxis(polygon);
 
   // Should fail due to near-duplicate vertices
   EXPECT_FALSE(results.success);
@@ -73,7 +78,7 @@ TEST_F(MedialAxisRobustnessTest, DegenerateTriangle) {
   // Our validation now catches this and returns a graceful error.
   // (Previously this test used EXPECT_DEATH assuming Debug-mode assertions,
   // but Release builds of OpenVoronoi hang instead of crashing.)
-  MedialAxisResults results = processor_->computeMedialAxis(collinear);
+  MedialAxisResults results = processor()->computeMedialAxis(collinear);
   EXPECT_FALSE(results.success);
   EXPECT_FALSE(results.errorMessage.empty());
   // Error message should indicate validation failure
@@ -88,7 +93,7 @@ TEST_F(MedialAxisRobustnessTest, VeryLargeCoordinates) {
   double largeVal = 1e6;
   std::vector<Point2D> largePolygon = {{0, 0}, {largeVal, 0}, {largeVal, largeVal}, {0, largeVal}};
 
-  MedialAxisResults results = processor_->computeMedialAxis(largePolygon);
+  MedialAxisResults results = processor()->computeMedialAxis(largePolygon);
 
   // Should succeed with proper scaling
   EXPECT_TRUE(results.success) << "Error: " << results.errorMessage;
@@ -108,7 +113,7 @@ TEST_F(MedialAxisRobustnessTest, TransformPrecisionRoundTrip) {
   // Create a polygon with specific coordinates
   std::vector<Point2D> original = {{123.456789, 234.567890}, {345.678901, 234.567890}, {234.567890, 456.789012}};
 
-  MedialAxisResults results = processor_->computeMedialAxis(original);
+  MedialAxisResults results = processor()->computeMedialAxis(original);
   EXPECT_TRUE(results.success);
 
   // Test round-trip transformation for a test point
@@ -140,7 +145,7 @@ TEST_F(MedialAxisRobustnessTest, ManyVerticesPolygon) {
     circle.push_back({cos(angle), sin(angle)});
   }
 
-  MedialAxisResults results = processor_->computeMedialAxis(circle);
+  MedialAxisResults results = processor()->computeMedialAxis(circle);
 
   // Should handle large polygon successfully
   EXPECT_TRUE(results.success) << "Error: " << results.errorMessage;
@@ -166,7 +171,7 @@ TEST_F(MedialAxisRobustnessTest, ConcavePolygon) {
     star.push_back({radius * cos(angle), radius * sin(angle)});
   }
 
-  MedialAxisResults results = processor_->computeMedialAxis(star);
+  MedialAxisResults results = processor()->computeMedialAxis(star);
 
   EXPECT_TRUE(results.success) << "Error: " << results.errorMessage;
 
@@ -185,12 +190,12 @@ TEST_F(MedialAxisRobustnessTest, MedialThresholdEffect) {
   std::vector<Point2D> rect = {{0, 0}, {4, 0}, {4, 1}, {0, 1}};
 
   // Test with strict threshold
-  processor_->setMedialThreshold(0.95);
-  MedialAxisResults strictResults = processor_->computeMedialAxis(rect);
+  processor()->setMedialThreshold(0.95);
+  MedialAxisResults strictResults = processor()->computeMedialAxis(rect);
 
   // Test with relaxed threshold
-  processor_->setMedialThreshold(0.5);
-  MedialAxisResults relaxedResults = processor_->computeMedialAxis(rect);
+  processor()->setMedialThreshold(0.5);
+  MedialAxisResults relaxedResults = processor()->computeMedialAxis(rect);
 
   EXPECT_TRUE(strictResults.success);
   EXPECT_TRUE(relaxedResults.success);
@@ -208,7 +213,7 @@ TEST_F(MedialAxisRobustnessTest, PolygonWithHoles) {
 
   // Note: We can't actually represent holes with simple polygon
   // This test documents expected behavior
-  MedialAxisResults results = processor_->computeMedialAxis(outer);
+  MedialAxisResults results = processor()->computeMedialAxis(outer);
 
   // Should process outer boundary normally
   EXPECT_TRUE(results.success);
@@ -225,8 +230,8 @@ TEST_F(MedialAxisRobustnessTest, PolygonWindingOrder) {
   // CW triangle (same shape, reversed order)
   std::vector<Point2D> cwTriangle = {{0, 0}, {0.5, 0.866}, {1, 0}};
 
-  MedialAxisResults ccwResults = processor_->computeMedialAxis(ccwTriangle);
-  MedialAxisResults cwResults = processor_->computeMedialAxis(cwTriangle);
+  MedialAxisResults ccwResults = processor()->computeMedialAxis(ccwTriangle);
+  MedialAxisResults cwResults = processor()->computeMedialAxis(cwTriangle);
 
   // Both should succeed
   EXPECT_TRUE(ccwResults.success) << "CCW Error: " << ccwResults.errorMessage;
@@ -245,7 +250,7 @@ TEST_F(MedialAxisRobustnessTest, NumericalEdgeCases) {
   std::vector<Point2D> edgeCases = {
       {0, 0}, {1, std::numeric_limits<double>::epsilon()}, {1, 1}, {std::numeric_limits<double>::epsilon(), 1}};
 
-  MedialAxisResults results = processor_->computeMedialAxis(edgeCases);
+  MedialAxisResults results = processor()->computeMedialAxis(edgeCases);
 
   // Should handle epsilon values
   EXPECT_TRUE(results.success) << "Error: " << results.errorMessage;
@@ -259,13 +264,13 @@ TEST_F(MedialAxisRobustnessTest, ErrorMessageQuality) {
 
   // Empty polygon
   std::vector<Point2D> empty;
-  MedialAxisResults emptyResults = processor_->computeMedialAxis(empty);
+  MedialAxisResults emptyResults = processor()->computeMedialAxis(empty);
   EXPECT_FALSE(emptyResults.success);
   EXPECT_TRUE(emptyResults.errorMessage.find("at least 3 vertices") != std::string::npos);
 
   // Two vertices
   std::vector<Point2D> twoPoints = {{0, 0}, {1, 1}};
-  MedialAxisResults twoResults = processor_->computeMedialAxis(twoPoints);
+  MedialAxisResults twoResults = processor()->computeMedialAxis(twoPoints);
   EXPECT_FALSE(twoResults.success);
   EXPECT_TRUE(twoResults.errorMessage.find("at least 3 vertices") != std::string::npos);
 }
@@ -277,9 +282,9 @@ TEST_F(MedialAxisRobustnessTest, DeterministicResults) {
   std::vector<Point2D> polygon = {{0, 0}, {2, 0}, {2, 1}, {1, 1}, {1, 2}, {0, 2}};
 
   // Run multiple times
-  MedialAxisResults results1 = processor_->computeMedialAxis(polygon);
-  MedialAxisResults results2 = processor_->computeMedialAxis(polygon);
-  MedialAxisResults results3 = processor_->computeMedialAxis(polygon);
+  MedialAxisResults results1 = processor()->computeMedialAxis(polygon);
+  MedialAxisResults results2 = processor()->computeMedialAxis(polygon);
+  MedialAxisResults results3 = processor()->computeMedialAxis(polygon);
 
   // All should succeed
   EXPECT_TRUE(results1.success);
