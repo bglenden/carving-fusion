@@ -5,8 +5,6 @@
 
 #pragma once
 
-#include <cmath>
-
 #include "Shape.h"
 
 namespace ChipCarving {
@@ -23,6 +21,9 @@ class Leaf : public Shape {
   Point2D focus2_;
   double radius_;
 
+  // Default radius factor when not specified (from TypeScript ShapeFactory)
+  static constexpr double DEFAULT_RADIUS_FACTOR = 0.65;
+
  public:
   /**
    * Constructor with automatic radius calculation
@@ -33,20 +34,20 @@ class Leaf : public Shape {
   Leaf(const Point2D& f1, const Point2D& f2, double radius = -1.0) : focus1_(f1), focus2_(f2) {
     if (radius < 0) {
       double dist = distance(f1, f2);
-      radius_ = dist * 0.65;  // Default from TypeScript ShapeFactory
+      radius_ = dist * DEFAULT_RADIUS_FACTOR;
     } else {
       radius_ = radius;
     }
   }
 
   // Getters
-  Point2D getFocus1() const {
+  [[nodiscard]] Point2D getFocus1() const {
     return focus1_;
   }
-  Point2D getFocus2() const {
+  [[nodiscard]] Point2D getFocus2() const {
     return focus2_;
   }
-  double getRadius() const {
+  [[nodiscard]] double getRadius() const {
     return radius_;
   }
 
@@ -68,35 +69,35 @@ class Leaf : public Shape {
    * Calculate the centers of the two arcs that form the leaf
    * @return pair of arc centers (first arc center, second arc center)
    */
-  std::pair<Point2D, Point2D> getArcCenters() const;
+  [[nodiscard]] std::pair<Point2D, Point2D> getArcCenters() const;
 
   /**
    * Get complete arc parameters for drawing both arcs in Fusion 360
    * @return pair of arc parameters for the two arcs that form the leaf
    */
-  std::pair<ArcParams, ArcParams> getArcParameters() const;
+  [[nodiscard]] std::pair<ArcParams, ArcParams> getArcParameters() const;
 
   /**
    * Calculate the sagitta (distance from chord midpoint to arc peak)
    * Used for shape editing and verification
    */
-  double getSagitta() const;
+  [[nodiscard]] double getSagitta() const;
 
   /**
    * Check if the leaf geometry is valid (radius large enough for chord length)
    */
-  bool isValidGeometry() const;
+  [[nodiscard]] bool isValidGeometry() const;
 
   // Shape interface implementation
-  std::vector<Point2D> getVertices() const override {
+  [[nodiscard]] std::vector<Point2D> getVertices() const override {
     return {focus1_, focus2_};
   }
 
   // NOTE: getPolygonVertices() removed - polygonization now handled by Fusion strokes
 
   void drawToSketch(Adapters::ISketch* sketch, Adapters::ILogger* logger) const override;
-  bool contains(const Point2D& point) const override;
-  Point2D getCentroid() const override;
+  [[nodiscard]] bool contains(const Point2D& point) const override;
+  [[nodiscard]] Point2D getCentroid() const override;
 
  private:
   /**

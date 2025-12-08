@@ -4,10 +4,13 @@
 
 #pragma once
 
-#include <cmath>
+#include <cmath>  // IWYU pragma: keep
 
 namespace ChipCarving {
 namespace Geometry {
+
+/// Tolerance for floating-point geometric comparisons
+static constexpr double GEOMETRY_EPSILON = 1e-9;
 
 /**
  * Simple 2D point structure
@@ -17,6 +20,13 @@ struct Point2D {
   double y;
 
   Point2D(double x = 0.0, double y = 0.0) : x(x), y(y) {}
+
+  // Explicitly defaulted special member functions with noexcept for move operations
+  Point2D(const Point2D&) = default;
+  Point2D& operator=(const Point2D&) = default;
+  Point2D(Point2D&&) noexcept = default;
+  Point2D& operator=(Point2D&&) noexcept = default;
+  ~Point2D() = default;
 
   // Basic operators
   Point2D operator+(const Point2D& other) const {
@@ -32,7 +42,7 @@ struct Point2D {
   }
 
   // Equality with tolerance
-  bool equals(const Point2D& other, double tolerance = 1e-9) const {
+  bool equals(const Point2D& other, double tolerance = GEOMETRY_EPSILON) const {
     return std::abs(x - other.x) < tolerance && std::abs(y - other.y) < tolerance;
   }
 };
@@ -63,7 +73,7 @@ inline Point2D perpendicular(const Point2D& p1, const Point2D& p2) {
   double dy = p2.y - p1.y;
   double len = std::sqrt(dx * dx + dy * dy);
 
-  if (len < 1e-9) {
+  if (len < GEOMETRY_EPSILON) {
     return Point2D(0.0, 0.0);
   }
 

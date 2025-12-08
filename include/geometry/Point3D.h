@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include <cmath>  // IWYU pragma: keep
+
 #include "Point2D.h"
 
 namespace ChipCarving {
@@ -23,10 +25,17 @@ struct Point3D {
   Point3D(double x_val, double y_val, double z_val) : x(x_val), y(y_val), z(z_val) {}
   Point3D(const Point2D& point2d, double z_val) : x(point2d.x), y(point2d.y), z(z_val) {}
 
+  // Explicitly defaulted special member functions with noexcept for move operations
+  Point3D(const Point3D&) = default;
+  Point3D& operator=(const Point3D&) = default;
+  Point3D(Point3D&&) noexcept = default;
+  Point3D& operator=(Point3D&&) noexcept = default;
+  ~Point3D() = default;
+
   // Equality operators
   bool operator==(const Point3D& other) const {
-    const double epsilon = 1e-10;
-    return std::abs(x - other.x) < epsilon && std::abs(y - other.y) < epsilon && std::abs(z - other.z) < epsilon;
+    return std::abs(x - other.x) < GEOMETRY_EPSILON && std::abs(y - other.y) < GEOMETRY_EPSILON &&
+           std::abs(z - other.z) < GEOMETRY_EPSILON;
   }
 
   bool operator!=(const Point3D& other) const {
@@ -73,7 +82,7 @@ struct Point3D {
   // Normalize to unit vector
   Point3D normalize() const {
     double mag = magnitude();
-    if (mag < 1e-10) {
+    if (mag < GEOMETRY_EPSILON) {
       return Point3D(0, 0, 0);
     }
     return Point3D(x / mag, y / mag, z / mag);

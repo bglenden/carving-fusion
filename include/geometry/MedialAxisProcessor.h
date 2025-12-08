@@ -72,14 +72,14 @@ class MedialAxisProcessor {
    * @param shape The shape to process
    * @return Complete medial axis results with chains and clearance radii
    */
-  MedialAxisResults computeMedialAxis(const Shape& shape);
+  [[nodiscard]] MedialAxisResults computeMedialAxis(const Shape& shape);
 
   /**
    * Compute medial axis from pre-polygonized vertices
    * @param polygon The polygon vertices in world coordinates
    * @return Complete medial axis results
    */
-  MedialAxisResults computeMedialAxis(const std::vector<Point2D>& polygon);
+  [[nodiscard]] MedialAxisResults computeMedialAxis(const std::vector<Point2D>& polygon);
 
   /**
    * Get sampled medial axis paths suitable for toolpath generation
@@ -87,17 +87,17 @@ class MedialAxisProcessor {
    * @param spacing Spacing between sampled points (mm)
    * @return Vector of sampled paths with uniform point spacing
    */
-  std::vector<SampledMedialPath> getSampledPaths(const MedialAxisResults& results, double spacing = 1.0);
+  [[nodiscard]] std::vector<SampledMedialPath> getSampledPaths(const MedialAxisResults& results, double spacing = 1.0);
 
   // Parameter accessors
-  double getPolygonTolerance() const {
+  [[nodiscard]] double getPolygonTolerance() const {
     return polygonTolerance_;
   }
   void setPolygonTolerance(double tolerance) {
     polygonTolerance_ = tolerance;
   }
 
-  double getMedialThreshold() const {
+  [[nodiscard]] double getMedialThreshold() const {
     return medialThreshold_;
   }
   void setMedialThreshold(double threshold) {
@@ -113,7 +113,7 @@ class MedialAxisProcessor {
   void setMedialAxisWalkPoints(int points) {
     medialAxisWalkPoints_ = points;
   }
-  int getMedialAxisWalkPoints() const {
+  [[nodiscard]] int getMedialAxisWalkPoints() const {
     return medialAxisWalkPoints_;
   }
 

@@ -33,33 +33,33 @@ class PluginManager {
   ~PluginManager() = default;
 
   // Plugin lifecycle
-  bool initialize();
+  [[nodiscard]] bool initialize();
   void shutdown();
 
   // Command implementations
-  bool executeImportDesign();
-  bool executeImportDesign(const std::string& filePath, const std::string& planeEntityId = "");
-  bool executeGeneratePaths();
+  [[nodiscard]] bool executeImportDesign();
+  [[nodiscard]] bool executeImportDesign(const std::string& filePath, const std::string& planeEntityId = "");
+  [[nodiscard]] bool executeGeneratePaths();
 
   // Enhanced UI Phase 5: Medial axis generation with construction geometry
-  bool executeMedialAxisGeneration(const Adapters::SketchSelection& selection,
-                                   const Adapters::MedialAxisParameters& params);
+  [[nodiscard]] bool executeMedialAxisGeneration(const Adapters::SketchSelection& selection,
+                                                 const Adapters::MedialAxisParameters& params);
 
   // Configuration methods
   void setMedialAxisParameters(double polygonTolerance, double medialThreshold);
 
   // Status and information
-  std::string getVersion() const;
-  std::string getName() const;
-  bool isInitialized() const {
+  [[nodiscard]] std::string getVersion() const;
+  [[nodiscard]] std::string getName() const;
+  [[nodiscard]] bool isInitialized() const {
     return initialized_;
   }
-  bool hasImportedShapes() const {
+  [[nodiscard]] bool hasImportedShapes() const {
     return !importedShapes_.empty();
   }
 
   // Access to factory for UI operations
-  Adapters::IFusionFactory* getFactory() const {
+  [[nodiscard]] Adapters::IFusionFactory* getFactory() const {
     return factory_.get();
   }
 

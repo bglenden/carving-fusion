@@ -16,7 +16,8 @@ namespace Commands {
 void GeneratePathsCommandHandler::executeMedialAxisProcessing(
     const adsk::core::Ptr<adsk::core::CommandInputs>& inputs) {
   // Use ErrorHandler to wrap the entire operation with user-facing error messages
-  Utils::ErrorHandler::executeFusionOperation(
+  // Return value intentionally ignored - errors are handled via UI within the operation
+  (void)Utils::ErrorHandler::executeFusionOperation(
       "ExecuteMedialAxisGeneration",
       [&]() {
         // LOG: Start of method execution

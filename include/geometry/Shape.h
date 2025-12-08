@@ -28,7 +28,7 @@ class Shape {
   /**
    * Get the vertices that define the shape
    */
-  virtual std::vector<Point2D> getVertices() const = 0;
+  [[nodiscard]] virtual std::vector<Point2D> getVertices() const = 0;
 
   /**
    * Get polygon approximation of the shape suitable for OpenVoronoi processing
@@ -39,7 +39,7 @@ class Shape {
    * 0.25mm)
    * @return Vector of points representing polygon approximation in counterclockwise order
    */
-  virtual std::vector<Point2D> getPolygonVertices(double maxError = 0.25) const {
+  [[nodiscard]] virtual std::vector<Point2D> getPolygonVertices(double maxError = 0.25) const {
     // Default implementation returns vertices - shapes should not implement polygonization
     (void)maxError;  // Suppress unused parameter warning
     return getVertices();
@@ -55,12 +55,12 @@ class Shape {
    * @param point The point to test
    * @return true if the point is inside or on the boundary
    */
-  virtual bool contains(const Point2D& point) const = 0;
+  [[nodiscard]] virtual bool contains(const Point2D& point) const = 0;
 
   /**
    * Get the centroid (geometric center) of the shape
    */
-  virtual Point2D getCentroid() const = 0;
+  [[nodiscard]] virtual Point2D getCentroid() const = 0;
 };
 
 /**

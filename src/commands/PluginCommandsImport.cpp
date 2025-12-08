@@ -206,7 +206,8 @@ void ImportDesignCommandHandler::executeImportDesign(const adsk::core::Ptr<adsk:
   }
 
   // Execute the import with the selected file and optional plane
-  pluginManager()->executeImportDesign(selectedFilePath_, planeEntityId);
+  // Return value intentionally ignored - errors are handled via UI within the operation
+  (void)pluginManager()->executeImportDesign(selectedFilePath_, planeEntityId);
 }
 
 }  // namespace Commands

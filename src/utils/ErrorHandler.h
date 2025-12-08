@@ -37,17 +37,17 @@ class Result {
     return Result<T>(T{}, false, error);
   }
 
-  bool isSuccess() const {
+  [[nodiscard]] bool isSuccess() const {
     return success_;
   }
-  bool hasError() const {
+  [[nodiscard]] bool hasError() const {
     return !success_;
   }
 
-  const T& getValue() const {
+  [[nodiscard]] const T& getValue() const {
     return value_;
   }
-  const std::string& getError() const {
+  [[nodiscard]] const std::string& getError() const {
     return error_;
   }
 
@@ -76,18 +76,19 @@ class ErrorHandler {
  public:
   // Execute function with standard error handling
   template <typename T>
-  static Result<T> executeWithHandling(const std::string& operation, std::function<T()> func,
-                                       ErrorCallback errorCallback = nullptr);
+  [[nodiscard]] static Result<T> executeWithHandling(const std::string& operation, const std::function<T()>& func,
+                                                     const ErrorCallback& errorCallback = nullptr);
 
   // Execute function with custom error handling
   template <typename T>
-  static Result<T> executeWithCustomHandling(const std::string& operation, std::function<T()> func,
-                                             std::function<void(const std::exception&)> stdExceptionHandler,
-                                             std::function<void()> unknownExceptionHandler);
+  [[nodiscard]] static Result<T> executeWithCustomHandling(
+      const std::string& operation, const std::function<T()>& func,
+      const std::function<void(const std::exception&)>& stdExceptionHandler,
+      const std::function<void()>& unknownExceptionHandler);
 
   // Fusion 360 specific error handling (returns false on error)
-  static bool executeFusionOperation(const std::string& operation, const std::function<bool()>& func,
-                                     bool showMessageToUser = false);
+  [[nodiscard]] static bool executeFusionOperation(const std::string& operation, const std::function<bool()>& func,
+                                                   bool showMessageToUser = false);
 
   // Void operations with error logging only
   static void executeWithLogging(const std::string& operation, const std::function<void()>& func);
@@ -111,8 +112,8 @@ class ErrorHandler {
 
 // Template implementations
 template <typename T>
-Result<T> ErrorHandler::executeWithHandling(const std::string& operation, std::function<T()> func,
-                                            ErrorCallback errorCallback) {
+Result<T> ErrorHandler::executeWithHandling(const std::string& operation, const std::function<T()>& func,
+                                            const ErrorCallback& errorCallback) {
   try {
     T result = func();
     return Result<T>::success(result);
@@ -142,9 +143,9 @@ Result<T> ErrorHandler::executeWithHandling(const std::string& operation, std::f
 }
 
 template <typename T>
-Result<T> ErrorHandler::executeWithCustomHandling(const std::string& operation, std::function<T()> func,
-                                                  std::function<void(const std::exception&)> stdExceptionHandler,
-                                                  std::function<void()> unknownExceptionHandler) {
+Result<T> ErrorHandler::executeWithCustomHandling(const std::string& operation, const std::function<T()>& func,
+                                                  const std::function<void(const std::exception&)>& stdExceptionHandler,
+                                                  const std::function<void()>& unknownExceptionHandler) {
   try {
     T result = func();
     return Result<T>::success(result);

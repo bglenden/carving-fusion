@@ -61,35 +61,35 @@ class TriArc : public Shape {
          const std::array<double, 3>& bulges = {DEFAULT_BULGE, DEFAULT_BULGE, DEFAULT_BULGE});
 
   // Shape interface implementation
-  std::vector<Point2D> getVertices() const override;
+  [[nodiscard]] std::vector<Point2D> getVertices() const override;
   // NOTE: getPolygonVertices() removed - polygonization now handled by Fusion strokes
   void drawToSketch(Adapters::ISketch* sketch, Adapters::ILogger* logger) const override;
-  bool contains(const Point2D& point) const override;
-  Point2D getCentroid() const override;
+  [[nodiscard]] bool contains(const Point2D& point) const override;
+  [[nodiscard]] Point2D getCentroid() const override;
 
   // TriArc-specific accessors
-  Point2D getVertex(int index) const;
-  double getBulgeFactor(int arcIndex) const;
-  const std::array<double, 3>& getBulgeFactors() const {
+  [[nodiscard]] Point2D getVertex(int index) const;
+  [[nodiscard]] double getBulgeFactor(int arcIndex) const;
+  [[nodiscard]] const std::array<double, 3>& getBulgeFactors() const {
     return bulgeFactors_;
   }
 
   /**
    * Get triangle centroid (center point)
    */
-  Point2D getCenter() const;
+  [[nodiscard]] Point2D getCenter() const;
 
   /**
    * Get arc parameters for each edge (for Fusion 360 drawing)
    * @return Array of 3 ArcParams, one for each edge
    */
-  std::array<ArcParams, 3> getArcParameters() const;
+  [[nodiscard]] std::array<ArcParams, 3> getArcParameters() const;
 
   /**
    * Get arc parameters for specific edge
    * @param arcIndex Edge index (0=v1→v2, 1=v2→v3, 2=v3→v1)
    */
-  ArcParams getArcParameters(int arcIndex) const;
+  [[nodiscard]] ArcParams getArcParameters(int arcIndex) const;
 
   /**
    * Calculate sagitta (arc height) from bulge factor and chord length
@@ -97,7 +97,7 @@ class TriArc : public Shape {
    * @param chordLength Length of chord
    * @return Sagitta distance (always positive)
    */
-  static double sagittaFromBulge(double bulge, double chordLength);
+  [[nodiscard]] static double sagittaFromBulge(double bulge, double chordLength);
 
   /**
    * Calculate bulge factor from sagitta and chord length
@@ -105,25 +105,25 @@ class TriArc : public Shape {
    * @param chordLength Length of chord
    * @return Bulge factor (negative for concave)
    */
-  static double bulgeFromSagitta(double sagitta, double chordLength);
+  [[nodiscard]] static double bulgeFromSagitta(double sagitta, double chordLength);
 
   /**
    * Get chord midpoint for specific edge
    * @param arcIndex Edge index (0=v1→v2, 1=v2→v3, 2=v3→v1)
    */
-  Point2D getChordMidpoint(int arcIndex) const;
+  [[nodiscard]] Point2D getChordMidpoint(int arcIndex) const;
 
   /**
    * Get perpendicular normal vector pointing toward triangle centroid
    * @param arcIndex Edge index (0=v1→v2, 1=v2→v3, 2=v3→v1)
    */
-  Point2D getPerpendicularNormal(int arcIndex) const;
+  [[nodiscard]] Point2D getPerpendicularNormal(int arcIndex) const;
 
   /**
    * Validate that all bulge factors are in valid range and negative
    * @return True if all bulge factors are valid
    */
-  bool hasValidBulgeFactors() const;
+  [[nodiscard]] bool hasValidBulgeFactors() const;
 
   /**
    * Clamp bulge factors to valid range [-0.99, -0.01]
@@ -134,13 +134,13 @@ class TriArc : public Shape {
    * Check if edge should be drawn as straight line (tiny bulge factor)
    * @param arcIndex Edge index
    */
-  bool isEdgeStraight(int arcIndex) const;
+  [[nodiscard]] bool isEdgeStraight(int arcIndex) const;
 
   /**
    * Get chord length for specific edge
    * @param arcIndex Edge index (0=v1→v2, 1=v2→v3, 2=v3→v1)
    */
-  double getChordLength(int arcIndex) const;
+  [[nodiscard]] double getChordLength(int arcIndex) const;
 
  private:
   /**

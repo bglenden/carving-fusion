@@ -69,7 +69,7 @@ void FusionLogger::logError(const std::string& message) const {
 
 void FusionLogger::writeLog(const std::string& message, const std::string& level) const {
   // Check and rotate log file if needed before writing
-  const_cast<FusionLogger*>(this)->checkAndRotateIfNeeded();
+  checkAndRotateIfNeeded();
 
   auto now = std::chrono::system_clock::now();
   auto time_t = std::chrono::system_clock::to_time_t(now);
@@ -108,7 +108,7 @@ void FusionLogger::writeLog(const std::string& message, const std::string& level
   // std::cout << fullMessage << std::endl;
 }
 
-void FusionLogger::rotateLogFile() {
+void FusionLogger::rotateLogFile() const {
   // Check if log file exists
   std::ifstream existingFile(logFilePath_);
   if (existingFile.good()) {
@@ -140,7 +140,7 @@ void FusionLogger::rotateLogFile() {
   }
 }
 
-void FusionLogger::checkAndRotateIfNeeded() {
+void FusionLogger::checkAndRotateIfNeeded() const {
   if (logFile_.is_open()) {
     // Check current file size
     size_t currentPos = logFile_.tellp();

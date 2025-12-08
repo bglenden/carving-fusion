@@ -36,8 +36,8 @@ class VCarveCalculator {
    * @param params Tool and V-carve parameters
    * @return V-carve toolpaths ready for 3D sketch generation
    */
-  VCarveResults generateVCarvePaths(const MedialAxisResults& medialResults,
-                                    const Adapters::MedialAxisParameters& params);
+  [[nodiscard]] VCarveResults generateVCarvePaths(const MedialAxisResults& medialResults,
+                                                  const Adapters::MedialAxisParameters& params);
 
   /**
    * Generate V-carve toolpaths from sampled medial paths
@@ -45,8 +45,8 @@ class VCarveCalculator {
    * @param params Tool and V-carve parameters
    * @return V-carve toolpaths ready for 3D sketch generation
    */
-  VCarveResults generateVCarvePaths(const std::vector<SampledMedialPath>& sampledPaths,
-                                    const Adapters::MedialAxisParameters& params);
+  [[nodiscard]] VCarveResults generateVCarvePaths(const std::vector<SampledMedialPath>& sampledPaths,
+                                                  const Adapters::MedialAxisParameters& params);
 
   /**
    * Function type for querying surface Z at XY location
@@ -64,9 +64,10 @@ class VCarveCalculator {
    * @param surfaceQuery Function to query surface Z at XY position
    * @return V-carve toolpaths projected onto surface
    */
-  VCarveResults generateVCarvePathsWithSurface(const std::vector<SampledMedialPath>& sampledPaths,
-                                               const Adapters::MedialAxisParameters& params, double sketchPlaneZ,
-                                               const SurfaceQueryFunction& surfaceQuery);
+  [[nodiscard]] VCarveResults generateVCarvePathsWithSurface(const std::vector<SampledMedialPath>& sampledPaths,
+                                                             const Adapters::MedialAxisParameters& params,
+                                                             double sketchPlaneZ,
+                                                             const SurfaceQueryFunction& surfaceQuery);
 
   /**
    * Calculate V-carve depth for a given clearance radius and tool
@@ -75,7 +76,7 @@ class VCarveCalculator {
    * @param maxDepth Maximum allowed depth (safety limit)
    * @return Calculated depth (mm, positive = below sketch plane)
    */
-  static double calculateVCarveDepth(double clearanceRadius, double toolAngle, double maxDepth);
+  [[nodiscard]] static double calculateVCarveDepth(double clearanceRadius, double toolAngle, double maxDepth);
 
  private:
   /**

@@ -322,6 +322,17 @@ Control via `CHIP_CARVING_PLUGIN_MODE` environment variable:
 5. **No Fusion API in tests**: Use mock adapters exclusively
 6. **C++14 standard**: Code must be compatible with C++14
 
+## Code Style Guidelines
+
+Code should generally follow the [C++ Core Guidelines](https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines) when practical. Key practices:
+
+- Use `[[nodiscard]]` for functions where ignoring return values is likely a bug
+- Mark move constructors and move assignment operators `noexcept` when they don't throw
+- Prefer named constants over magic numbers
+- Avoid `const_cast` - redesign if mutable access is needed in const context
+- Use RAII for resource management (already practiced throughout codebase)
+- Prefer `std::unique_ptr` for exclusive ownership (already practiced)
+
 ## Development Tips
 
 - When running lint, typically use `make format lint` to auto-format first

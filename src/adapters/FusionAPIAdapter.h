@@ -35,8 +35,8 @@ class FusionLogger : public ILogger {
   std::string logFilePath_{};
 
   void writeLog(const std::string& message, const std::string& level) const;
-  void rotateLogFile();
-  void checkAndRotateIfNeeded();
+  void rotateLogFile() const;
+  void checkAndRotateIfNeeded() const;
 };
 
 /**
