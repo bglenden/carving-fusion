@@ -52,3 +52,4 @@ src/version.h.bak
 src/version.h
 .cache/
 .cache/
+.claude/

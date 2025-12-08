@@ -150,6 +150,34 @@ Search for `->count()` in these directories to find iteration patterns to update
 
 ---
 
+## Issue 9: Recheck C++ Core Guidelines Compliance
+
+**Priority:** Low
+**Location:** All C++ source files
+
+### Background
+
+In v1.0.4, we applied C++ Core Guidelines recommendations including:
+- `[[nodiscard]]` attributes on functions where ignoring return value is a bug
+- `noexcept` specifiers on move operations (Point2D, Point3D)
+- Const correctness fixes (removed const_cast in FusionLogger)
+- Named constants instead of magic numbers (GEOMETRY_EPSILON, DEFAULT_RADIUS_FACTOR)
+- Passing `std::function` by const reference for performance
+
+### Task
+
+Periodically review the codebase against the C++ Core Guidelines to ensure:
+1. New code follows the established patterns
+2. No regressions in existing compliance
+3. Additional guidelines can be applied as the codebase evolves
+
+### Reference
+
+- C++ Core Guidelines: https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines
+- Key sections: F (Functions), C (Classes), R (Resource management), ES (Expressions/Statements)
+
+---
+
 ## Implementation Checklist
 
 When implementing either issue:
